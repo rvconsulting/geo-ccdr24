@@ -1,11 +1,16 @@
 ---
-title: "geo-ccdr24"
+title: "Armenia Country Climate and Development Report"
+subtitle: "Contributions from the Poverty Team"
 ---
 
-This is a Quarto website.
-
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+# Test
 
 ```{r}
-1 + 1
+#| warning: false
+adm1 <- sf::read_sf("data/gis/geo-adm1.shp") |> 
+  dplyr::select(ADM1_PCODE, ADM1_EN, ADM1_KA, geometry)
+
+tmap::tm_shape(adm1)+
+  tmap::tm_polygons("ADM1_EN", legend.show = FALSE) +
+  tmap::tm_text("ADM1_EN", size = 1/2)
 ```
