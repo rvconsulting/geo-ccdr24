@@ -2,7 +2,11 @@ project:
   type: website
 
 website:
-  title: "geo-ccdr24"
+  title: "Georgia CCDR"
+  repo-url: https://github.com/rvconsulting/geo-ccdr24/
+  issue-url: https://github.com/rvconsulting/geo-ccdr24/issues
+  repo-actions: [edit, issue]
+  repo-branch: master
   navbar:
     left:
       - href: index.qmd
@@ -11,7 +15,7 @@ website:
 
 format:
   html:
-    theme: cosmo
+    theme: yeti
     css: styles.css
     toc: true
 

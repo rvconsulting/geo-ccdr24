@@ -2,8 +2,10 @@
 title: "About"
 ---
 
-About this site
+This site was created for reproducibility purposes by World Bank consultant Renato Vargas.
 
-```{r}
-1 + 1
-```
+**Contact information:**
+
+- E-mail: *hvargasaldana [at] worldbank [dot] org*
+- LinkedIn: [https://www.linkedin.com/in/revargas/](https://www.linkedin.com/in/revargas/)
+- Website: [renatovargas.com](https://renatovargas.com/)
