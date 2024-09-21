@@ -570,10 +570,14 @@ pp_microsim <- pp_microsim %>%
 Since labor income was a key variable, which we needed to match with the future wage bill by economic activity, we first checked for missing values among employed individuals. We found that almost a third of respondents (28.6%) did not report income for either their primary or secondary job. To overcome this limitation, we used the available information from the remaining respondents to estimate an extended Mincer equation, as shown in @eq-labor-income-regression, and implemented in @lst-regression-model. For the respondents with available information, we also identified outliers as those outside of five standard deviations from the mean labor income.
 
 $$
-\ln(lab_i) = \beta_0 + \beta_1 \text{age}_i + \\ 
+\begin{equation}
+\begin{split}
+\ln(lab_i) = \\ \beta_0 + \beta_1 \text{age}_i + \\
 \beta_2 \text{gender}_i + \beta_3 \text{educy}_i + \\ 
 \beta_4 \text{age}^2_i + \beta_5 \text{marz}_i + \\
 \beta_6 \text{sector}_i + \epsilon_i
+\end{split}
+\end{equation}
 $$ {#eq-labor-income-regression}
 
 Where:

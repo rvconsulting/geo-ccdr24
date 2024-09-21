@@ -759,10 +759,14 @@ Listing&nbsp;6: No sector for OLF
 <h3 data-number="4.2" class="anchored" data-anchor-id="the-regression"><span class="header-section-number">4.2</span> The regression</h3>
 <p>Since labor income was a key variable, which we needed to match with the future wage bill by economic activity, we first checked for missing values among employed individuals. We found that almost a third of respondents (28.6%) did not report income for either their primary or secondary job. To overcome this limitation, we used the available information from the remaining respondents to estimate an extended Mincer equation, as shown in <a href="#eq-labor-income-regression" class="quarto-xref">Equation&nbsp;1</a>, and implemented in <a href="#lst-regression-model" class="quarto-xref">Listing&nbsp;7</a>. For the respondents with available information, we also identified outliers as those outside of five standard deviations from the mean labor income.</p>
 <p><span id="eq-labor-income-regression"><span class="math display">\[
-\ln(lab_i) = \beta_0 + \beta_1 \text{age}_i + \\
+\begin{equation}
+\begin{split}
+\ln(lab_i) = \\ \beta_0 + \beta_1 \text{age}_i + \\
 \beta_2 \text{gender}_i + \beta_3 \text{educy}_i + \\
 \beta_4 \text{age}^2_i + \beta_5 \text{marz}_i + \\
 \beta_6 \text{sector}_i + \epsilon_i
+\end{split}
+\end{equation}
 \tag{1}\]</span></span></p>
 <p>Where:</p>
 <ul>
