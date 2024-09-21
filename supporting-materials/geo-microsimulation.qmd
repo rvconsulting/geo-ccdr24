@@ -30,14 +30,14 @@ csl: apa-6th-edition.csl
 
 ## Introduction
 
-In this calculation file, we "age" the Georgian household survey according to demographic projections and different macroeconomic scenarios to explore the impact of climate-related risks and policy measures on the consumption expenditure distribution. It is part of a larger project with all background contributions to Georgia's CCDR.
+In this calculation file, we "age" the Georgian household survey according to demographic projections and different macroeconomic scenarios to explore the impact of climate-related risks and policy measures on the consumption expenditure distribution. It is part of a larger project with all background contributions to Georgia's CCDR, [available in this repository](https://rvconsulting.github.io/geo-ccdr24/supporting-materials/geo-microsimulation.html).
 
 
 ```{r}
 #| warning: false 
 #| message: false
 #| label: fig-map-adm1
-#| fig-cap: "Map of Georgia at administrative level 1 (ADM1)"
+#| fig-cap: "Map of Georgia at administrative level 1"
 
 # Georgia administrative level 1 shapefile
 adm1 <- sf::read_sf("data/gis/geo-adm1.shp") |> 
@@ -277,13 +277,12 @@ adm1 <- sf::read_sf("data/gis/geo-adm1.shp") |>
 
 ```
 
-And we plot it for reference (see @fig-map-example). This is done with the tmap R package and the code shown in @lst-map-example.
+And we plot it for reference (see @fig-map-adm1-2). This is done with the tmap R package and the code shown below.
 
 ```{r}
-#| warning: false
-#| echo: false
 #| label: fig-map-adm1-2
 #| fig-cap: "Map of Georgia at administrative level 1 (ADM1)"
+#| lst-label: lst-map-example
 
 tmap::tm_shape(adm1)+
   tmap::tm_fill("ADM1_EN", legend.show = FALSE, palette = "Set1") +

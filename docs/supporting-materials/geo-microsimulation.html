@@ -256,7 +256,7 @@ div.csl-indent {
 
 <section id="introduction" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">1</span> Introduction</h2>
-<p>In this calculation file, we “age” the Georgian household survey according to demographic projections and different macroeconomic scenarios to explore the impact of climate-related risks and policy measures on the consumption expenditure distribution. It is part of a larger project with all background contributions to Georgia’s CCDR.</p>
+<p>In this calculation file, we “age” the Georgian household survey according to demographic projections and different macroeconomic scenarios to explore the impact of climate-related risks and policy measures on the consumption expenditure distribution. It is part of a larger project with all background contributions to Georgia’s CCDR, <a href="https://rvconsulting.github.io/geo-ccdr24/supporting-materials/geo-microsimulation.html">available in this repository</a>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Georgia administrative level 1 shapefile</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>adm1 <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">read_sf</span>(<span class="st">"data/gis/geo-adm1.shp"</span>) <span class="sc">|&gt;</span> </span>
@@ -274,7 +274,7 @@ div.csl-indent {
 <img src="geo-microsimulation_files/figure-html/fig-map-adm1-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-map-adm1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Map of Georgia at administrative level 1 (ADM1)
+Figure&nbsp;1: Map of Georgia at administrative level 1
 </figcaption>
 </figure>
 </div>
@@ -441,8 +441,12 @@ Figure&nbsp;1: Map of Georgia at administrative level 1 (ADM1)
 <span id="lst-import-geodata-3"><a href="#lst-import-geodata-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(ADM1_PCODE, ADM1_EN, ADM1_KA, geometry) <span class="sc">|&gt;</span> </span>
 <span id="lst-import-geodata-4"><a href="#lst-import-geodata-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">arrange</span>(ADM1_PCODE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>And we plot it for reference (see <strong>?@fig-map-example</strong>). This is done with the tmap R package and the code shown in <strong>?@lst-map-example</strong>.</p>
+<p>And we plot it for reference (see <a href="#fig-map-adm1-2" class="quarto-xref">Figure&nbsp;2</a>). This is done with the tmap R package and the code shown below.</p>
 <div class="cell">
+<div class="sourceCode cell-code" id="lst-map-example"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-map-example-1"><a href="#lst-map-example-1" aria-hidden="true" tabindex="-1"></a>tmap<span class="sc">::</span><span class="fu">tm_shape</span>(adm1)<span class="sc">+</span></span>
+<span id="lst-map-example-2"><a href="#lst-map-example-2" aria-hidden="true" tabindex="-1"></a>  tmap<span class="sc">::</span><span class="fu">tm_fill</span>(<span class="st">"ADM1_EN"</span>, <span class="at">legend.show =</span> <span class="cn">FALSE</span>, <span class="at">palette =</span> <span class="st">"Set1"</span>) <span class="sc">+</span></span>
+<span id="lst-map-example-3"><a href="#lst-map-example-3" aria-hidden="true" tabindex="-1"></a>  tmap<span class="sc">::</span><span class="fu">tm_text</span>(<span class="st">"ADM1_EN"</span>, <span class="at">size =</span> <span class="fl">0.65</span>, <span class="at">auto.placement =</span> T, <span class="at">col =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
+<span id="lst-map-example-4"><a href="#lst-map-example-4" aria-hidden="true" tabindex="-1"></a>  tmap<span class="sc">::</span><span class="fu">tm_layout</span>(<span class="at">frame =</span> F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-map-adm1-2" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
