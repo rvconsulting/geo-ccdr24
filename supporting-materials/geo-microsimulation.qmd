@@ -14,9 +14,9 @@ format:
     number-depth: 3
     highlight-style: github
   docx:
-    toc: true
+    toc: false
     number-sections: true
-    highlight-style: github
+    highlight-style: arrow
   # pdf:
   #   toc: true
   #   number-sections: true
@@ -61,7 +61,7 @@ some_variable <- some_function(some_object, some_parameter = TRUE)
 
 We assume that the reader has created an Rstudio project and is familiar with basic R functions. Within that project we recommend the following file structure:
 
-``` {txt}
+``` {.txt}
 #| eval: false
 root/
 ├── supporting-materials
@@ -137,7 +137,7 @@ library(tmap)      # for static and interactive maps
 
 ## Datasets
 
-We then load the datasets that we need for this study. These are based on Georgia's Integrated Living Conditions Survey 2022 [@armstat_integrated_2023]. We take this oportunity to standardize the household identification variable to `household_id`.
+We then load the datasets that we need for this study. These are based on Georgia's Integrated Living Conditions Survey 2022 [@geostat_integrated_2023]. We take this oportunity to standardize the household identification variable to `household_id`.
 
 ```{r}
 #| warning: false

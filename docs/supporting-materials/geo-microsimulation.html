@@ -286,20 +286,19 @@ Figure&nbsp;1: Map of Georgia at administrative level 1 (ADM1)
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>some_variable <span class="ot">&lt;-</span> <span class="fu">some_function</span>(some_object, <span class="at">some_parameter =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We assume that the reader has created an Rstudio project and is familiar with basic R functions. Within that project we recommend the following file structure:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>root/</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>├── supporting-materials</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>│   ├── my_script.R</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>|   └── my_script.qmd</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>|   └── my_script.do</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>├── data/</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>|   ├── my_data.sav</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>|   ├── my_data.dta</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>|   └── my_data.csv</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>└── output</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    ├── my_output1.csv</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    └── my_output2.xlsx</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>#| eval: false</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>root/</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>├── supporting-materials</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>│   ├── my_script.R</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>|   └── my_script.qmd</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>|   └── my_script.do</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>├── data/</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>|   ├── my_data.sav</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>|   ├── my_data.dta</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>|   └── my_data.csv</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>└── output</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    ├── my_output1.csv</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    └── my_output2.xlsx</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Using RStudio project makes it possible to not use <code>setwd()</code> to establish the root directory and refer to subdirectories in a relative manner, making interoperability easier within teams and not hard coding a particular computer’s file structure into the code. If you are not using RStudio, just add <code>setwd(r'(C:\My\path\to\project\root)')</code> at the beginning of your coding session.</p>
 </section>
 <section id="preamble" class="level2" data-number="2">
@@ -350,7 +349,7 @@ Figure&nbsp;1: Map of Georgia at administrative level 1 (ADM1)
 </section>
 <section id="datasets" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="datasets"><span class="header-section-number">3</span> Datasets</h2>
-<p>We then load the datasets that we need for this study. These are based on Georgia’s Integrated Living Conditions Survey 2022 <span class="citation" data-cites="armstat_integrated_2023">(<a href="#ref-armstat_integrated_2023" role="doc-biblioref">ARMSTAT, 2023</a>)</span>. We take this oportunity to standardize the household identification variable to <code>household_id</code>.</p>
+<p>We then load the datasets that we need for this study. These are based on Georgia’s Integrated Living Conditions Survey 2022 <span class="citation" data-cites="geostat_integrated_2023">(<a href="#ref-geostat_integrated_2023" role="doc-biblioref">GEOSTAT, 2023</a>)</span>. We take this oportunity to standardize the household identification variable to <code>household_id</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="original-datasets"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="original-datasets-1"><a href="#original-datasets-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Household size (includes no. of family members and weights)</span></span>
 <span id="original-datasets-2"><a href="#original-datasets-2" aria-hidden="true" tabindex="-1"></a>hh_size <span class="ot">&lt;-</span> <span class="fu">read_sav</span>(</span>
@@ -726,8 +725,8 @@ Listing&nbsp;6: No sector for OLF
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
-<div id="ref-armstat_integrated_2023" class="csl-entry" role="listitem">
-ARMSTAT. (2023). <em>Integrated <span>Living</span> <span>Conditions</span> <span>Survey</span> 2022</em>.
+<div id="ref-geostat_integrated_2023" class="csl-entry" role="listitem">
+GEOSTAT. (2023). <em>Integrated <span>Living</span> <span>Conditions</span> <span>Survey</span> 2023</em>.
 </div>
 </div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
