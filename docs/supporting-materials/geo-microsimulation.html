@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.549">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Renato Vargas">
+
+<title>Georgia CCDR - Georgia CCDR Microsimulation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Georgia CCDR</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../supporting-materials/geo-microsimulation.html">Supporting materials</a></li><li class="breadcrumb-item"><a href="../supporting-materials/geo-microsimulation.html">Georgia CCDR Microsimulation</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Supporting materials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../supporting-materials/geo-microsimulation.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Georgia CCDR Microsimulation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
+  <li><a href="#preamble" id="toc-preamble" class="nav-link" data-scroll-target="#preamble"><span class="header-section-number">2</span> Preamble</a></li>
+  <li><a href="#datasets" id="toc-datasets" class="nav-link" data-scroll-target="#datasets"><span class="header-section-number">3</span> Datasets</a></li>
+  <li><a href="#data-preparation-income-outliers-and-missings" id="toc-data-preparation-income-outliers-and-missings" class="nav-link" data-scroll-target="#data-preparation-income-outliers-and-missings"><span class="header-section-number">4</span> Data preparation income outliers and missings</a>
+  <ul class="collapse">
+  <li><a href="#demographic-characteristics-education-labor-force" id="toc-demographic-characteristics-education-labor-force" class="nav-link" data-scroll-target="#demographic-characteristics-education-labor-force"><span class="header-section-number">4.1</span> Demographic characteristics, education, labor force</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/rvconsulting/geo-ccdr24/edit/master/supporting-materials/geo-microsimulation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/rvconsulting/geo-ccdr24/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="geo-microsimulation.docx"><i class="bi bi-file-word"></i>MS Word</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../supporting-materials/geo-microsimulation.html">Supporting materials</a></li><li class="breadcrumb-item"><a href="../supporting-materials/geo-microsimulation.html">Georgia CCDR Microsimulation</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Georgia CCDR Microsimulation</h1>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Author</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Renato Vargas <a href="mailto:renovargas@gmail.com" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Consultant for The World Bank
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">1</span> Introduction</h2>
+<p>In this calculation file, we “age” the Georgian household survey according to demographic projections and different macroeconomic scenarios to explore the impact of climate-related risks and policy measures on the consumption expenditure distribution. It is part of a larger project with all background contributions to Georgia’s CCDR.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Georgia administrative level 1 shapefile</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>adm1 <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">read_sf</span>(<span class="st">"data/gis/geo-adm1.shp"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(ADM1_PCODE, ADM1_EN, ADM1_KA, geometry) <span class="sc">|&gt;</span> </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">arrange</span>(ADM1_PCODE)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>tmap<span class="sc">::</span><span class="fu">tm_shape</span>(adm1)<span class="sc">+</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  tmap<span class="sc">::</span><span class="fu">tm_fill</span>(<span class="st">"ADM1_EN"</span>, <span class="at">legend.show =</span> <span class="cn">FALSE</span>, <span class="at">palette =</span> <span class="st">"Set1"</span>) <span class="sc">+</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  tmap<span class="sc">::</span><span class="fu">tm_text</span>(<span class="st">"ADM1_EN"</span>, <span class="at">size =</span> <span class="fl">0.65</span>, <span class="at">auto.placement =</span> T, <span class="at">col =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  tmap<span class="sc">::</span><span class="fu">tm_layout</span>(<span class="at">frame =</span> F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-map-adm1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-map-adm1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="geo-microsimulation_files/figure-html/fig-map-adm1-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-map-adm1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Map of Georgia at administrative level 1 (ADM1)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>As a convention, code is presented in the following format in this guide:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Some comment that is not evaluated by R</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>some_variable <span class="ot">&lt;-</span> <span class="fu">some_function</span>(some_object, <span class="at">some_parameter =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We assume that the reader has created an Rstudio project and is familiar with basic R functions. Within that project we recommend the following file structure:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>root/</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>├── supporting-materials</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>│   ├── my_script.R</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>|   └── my_script.qmd</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>|   └── my_script.do</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>├── data/</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>|   ├── my_data.sav</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>|   ├── my_data.dta</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>|   └── my_data.csv</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>└── output</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    ├── my_output1.csv</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    └── my_output2.xlsx</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Using RStudio project makes it possible to not use <code>setwd()</code> to establish the root directory and refer to subdirectories in a relative manner, making interoperability easier within teams and not hard coding a particular computer’s file structure into the code. If you are not using RStudio, just add <code>setwd(r'(C:\My\path\to\project\root)')</code> at the beginning of your coding session.</p>
+</section>
+<section id="preamble" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="preamble"><span class="header-section-number">2</span> Preamble</h2>
+<p>We start with a clean environment, making sure that any objects from a previous session are not present. We take this opportunity to keep our country ISO code in a variable <code>iso</code> in case we need it later.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean workspace</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Georgia country ISO code</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>iso <span class="ot">&lt;-</span> <span class="st">"GEO"</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Survey year</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>survey_year <span class="ot">&lt;-</span> <span class="dv">2023</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Exchange rate USD per GEL</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>er <span class="ot">&lt;-</span> <span class="fl">0.37</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Years of interest for our macroeconomic scenario analysis</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>analysis_years <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2030</span>, <span class="dv">2050</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We call the appropriate libraries.</p>
+<p>Rather than calling our libraries as we go, we will make sure we have everything we need from the beginning.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="lst-load-packages"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-load-packages-1"><a href="#lst-load-packages-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># includes dplyr, ggplot2, purr...</span></span>
+<span id="lst-load-packages-2"><a href="#lst-load-packages-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven)     <span class="co"># to read SPSS and Stata datasets</span></span>
+<span id="lst-load-packages-3"><a href="#lst-load-packages-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)    <span class="co"># to read from MS-Excel</span></span>
+<span id="lst-load-packages-4"><a href="#lst-load-packages-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(openxlsx)  <span class="co"># to write to MS-Excel.</span></span>
+<span id="lst-load-packages-5"><a href="#lst-load-packages-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)        <span class="co"># pretty tables</span></span>
+<span id="lst-load-packages-6"><a href="#lst-load-packages-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)       <span class="co"># companion to applied regression</span></span>
+<span id="lst-load-packages-7"><a href="#lst-load-packages-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modelr)    <span class="co"># regression models</span></span>
+<span id="lst-load-packages-8"><a href="#lst-load-packages-8" aria-hidden="true" tabindex="-1"></a><span class="co">#library(anesrake)  </span></span>
+<span id="lst-load-packages-9"><a href="#lst-load-packages-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Raking reweighting but we don't load it, because </span></span>
+<span id="lst-load-packages-10"><a href="#lst-load-packages-10" aria-hidden="true" tabindex="-1"></a><span class="co"># it changes the meaning of summarize from dplyr, </span></span>
+<span id="lst-load-packages-11"><a href="#lst-load-packages-11" aria-hidden="true" tabindex="-1"></a><span class="co"># so we use the form anesrake::anesrake() when using it.</span></span>
+<span id="lst-load-packages-12"><a href="#lst-load-packages-12" aria-hidden="true" tabindex="-1"></a><span class="co">#library(ebal)      # Entropy reweighting (not used)</span></span>
+<span id="lst-load-packages-13"><a href="#lst-load-packages-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)   <span class="co"># pretty subtotals</span></span>
+<span id="lst-load-packages-14"><a href="#lst-load-packages-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)     <span class="co"># More regressions</span></span>
+<span id="lst-load-packages-15"><a href="#lst-load-packages-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(zoo)       <span class="co"># Calculate moving window average and max value</span></span>
+<span id="lst-load-packages-16"><a href="#lst-load-packages-16" aria-hidden="true" tabindex="-1"></a><span class="co"># library(ineq) # Inequality measures</span></span>
+<span id="lst-load-packages-17"><a href="#lst-load-packages-17" aria-hidden="true" tabindex="-1"></a><span class="co"># library(acid)</span></span>
+<span id="lst-load-packages-18"><a href="#lst-load-packages-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-load-packages-19"><a href="#lst-load-packages-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Geopackages</span></span>
+<span id="lst-load-packages-20"><a href="#lst-load-packages-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)        <span class="co"># to read and write shapefile maps</span></span>
+<span id="lst-load-packages-21"><a href="#lst-load-packages-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)     <span class="co"># to perform geocalculations</span></span>
+<span id="lst-load-packages-22"><a href="#lst-load-packages-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tmap)      <span class="co"># for static and interactive maps</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="datasets" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="datasets"><span class="header-section-number">3</span> Datasets</h2>
+<p>We then load the datasets that we need for this study. These are based on Georgia’s Integrated Living Conditions Survey 2022 <span class="citation" data-cites="armstat_integrated_2023">(<a href="#ref-armstat_integrated_2023" role="doc-biblioref">ARMSTAT, 2023</a>)</span>. We take this oportunity to standardize the household identification variable to <code>household_id</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="original-datasets"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="original-datasets-1"><a href="#original-datasets-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Household size (includes no. of family members and weights)</span></span>
+<span id="original-datasets-2"><a href="#original-datasets-2" aria-hidden="true" tabindex="-1"></a>hh_size <span class="ot">&lt;-</span> <span class="fu">read_sav</span>(</span>
+<span id="original-datasets-3"><a href="#original-datasets-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/ilcs_2023/familysize.sav"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="original-datasets-4"><a href="#original-datasets-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">household_id =</span> UID)</span>
+<span id="original-datasets-5"><a href="#original-datasets-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="original-datasets-6"><a href="#original-datasets-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Processed income at household level</span></span>
+<span id="original-datasets-7"><a href="#original-datasets-7" aria-hidden="true" tabindex="-1"></a>hh_income <span class="ot">&lt;-</span> <span class="fu">read_sav</span>(</span>
+<span id="original-datasets-8"><a href="#original-datasets-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/ilcs_2023/tblincomes.sav"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="original-datasets-9"><a href="#original-datasets-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">household_id =</span> UID)</span>
+<span id="original-datasets-10"><a href="#original-datasets-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="original-datasets-11"><a href="#original-datasets-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Consumption aggregate at household level </span></span>
+<span id="original-datasets-12"><a href="#original-datasets-12" aria-hidden="true" tabindex="-1"></a>hh_expenditure <span class="ot">&lt;-</span> <span class="fu">read_sav</span>(</span>
+<span id="original-datasets-13"><a href="#original-datasets-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/ilcs_2023/tblexpenditures.sav"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="original-datasets-14"><a href="#original-datasets-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">household_id =</span> UID,</span>
+<span id="original-datasets-15"><a href="#original-datasets-15" aria-hidden="true" tabindex="-1"></a>         <span class="co"># rename total expenditure variables</span></span>
+<span id="original-datasets-16"><a href="#original-datasets-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">total_expenditure =</span> MTlianixarjebi_,</span>
+<span id="original-datasets-17"><a href="#original-datasets-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">total_expenditure_aeq06 =</span> MTlianimoxmareba_EqAdScale,</span>
+<span id="original-datasets-18"><a href="#original-datasets-18" aria-hidden="true" tabindex="-1"></a>         <span class="at">total_expenditure_aeq08 =</span> Mtlianimoxmareba_EqAdScale_08)</span>
+<span id="original-datasets-19"><a href="#original-datasets-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="original-datasets-20"><a href="#original-datasets-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Characteristics of the dwelling</span></span>
+<span id="original-datasets-21"><a href="#original-datasets-21" aria-hidden="true" tabindex="-1"></a>hh_chars <span class="ot">&lt;-</span> <span class="fu">read_sav</span>(</span>
+<span id="original-datasets-22"><a href="#original-datasets-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/ilcs_2023/tblshinda01.sav"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="original-datasets-23"><a href="#original-datasets-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">household_id =</span> UID)</span>
+<span id="original-datasets-24"><a href="#original-datasets-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="original-datasets-25"><a href="#original-datasets-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Household location</span></span>
+<span id="original-datasets-26"><a href="#original-datasets-26" aria-hidden="true" tabindex="-1"></a>hh_location <span class="ot">&lt;-</span> <span class="fu">read_sav</span>(</span>
+<span id="original-datasets-27"><a href="#original-datasets-27" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/ilcs_2023/sysschedule.sav"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="original-datasets-28"><a href="#original-datasets-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">household_id =</span> UID)</span>
+<span id="original-datasets-29"><a href="#original-datasets-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="original-datasets-30"><a href="#original-datasets-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Persons (pp)</span></span>
+<span id="original-datasets-31"><a href="#original-datasets-31" aria-hidden="true" tabindex="-1"></a>pp <span class="ot">&lt;-</span> <span class="fu">read_sav</span>(</span>
+<span id="original-datasets-32"><a href="#original-datasets-32" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/ilcs_2023/tblshinda02.sav"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="original-datasets-33"><a href="#original-datasets-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">household_id =</span> UID)</span>
+<span id="original-datasets-34"><a href="#original-datasets-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="original-datasets-35"><a href="#original-datasets-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Food diary</span></span>
+<span id="original-datasets-36"><a href="#original-datasets-36" aria-hidden="true" tabindex="-1"></a>food_q <span class="ot">&lt;-</span> <span class="fu">read_sav</span>(</span>
+<span id="original-datasets-37"><a href="#original-datasets-37" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/ilcs_2023/tblconsumption.sav"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="original-datasets-38"><a href="#original-datasets-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">household_id =</span> UID)</span>
+<span id="original-datasets-39"><a href="#original-datasets-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="original-datasets-40"><a href="#original-datasets-40" aria-hidden="true" tabindex="-1"></a>food_price <span class="ot">&lt;-</span> <span class="fu">read_sav</span>( </span>
+<span id="original-datasets-41"><a href="#original-datasets-41" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/ilcs_2023/tblavgprices.sav"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We also have Continuous Labor Survey data at the individual level, which will come in handy if we do not get access to the labor part of the ILCS. See data folder for documents describing the datasets.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="labor-survey"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="labor-survey-1"><a href="#labor-survey-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Labor Force Survey</span></span>
+<span id="labor-survey-2"><a href="#labor-survey-2" aria-hidden="true" tabindex="-1"></a>lfs_2023 <span class="ot">&lt;-</span> <span class="fu">read_sav</span>(</span>
+<span id="labor-survey-3"><a href="#labor-survey-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/lfs_2023/LFS_ECSTAT_ENG_2023.sav"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="labor-survey-4"><a href="#labor-survey-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">household_id =</span> UID)</span>
+<span id="labor-survey-5"><a href="#labor-survey-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="labor-survey-6"><a href="#labor-survey-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Labor Force Survey Demographic Characteristics</span></span>
+<span id="labor-survey-7"><a href="#labor-survey-7" aria-hidden="true" tabindex="-1"></a>lfs_2023_dem <span class="ot">&lt;-</span> <span class="fu">read_sav</span>(</span>
+<span id="labor-survey-8"><a href="#labor-survey-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/lfs_2023/LFS_Demographic_ENG_2023.sav"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="labor-survey-9"><a href="#labor-survey-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">household_id =</span> UID)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We will work non-destructively, meaning we will not rewrite these data sets and we will only create intermediate data frame objects from them to perform transformations, selections and other data management tasks. For example, we will keep household assignment to poverty status and consumption deciles handy by creating a subset of our <code>hh_expenditure</code> data with only our household identifiers, deciles, and poverty if available.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="lst-deciles"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-deciles-1"><a href="#lst-deciles-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We will estimate deciles from consumption</span></span>
+<span id="lst-deciles-2"><a href="#lst-deciles-2" aria-hidden="true" tabindex="-1"></a>deciles <span class="ot">&lt;-</span> hh_expenditure <span class="sc">%&gt;%</span> </span>
+<span id="lst-deciles-3"><a href="#lst-deciles-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>( </span>
+<span id="lst-deciles-4"><a href="#lst-deciles-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Keep household id and expenditure variables</span></span>
+<span id="lst-deciles-5"><a href="#lst-deciles-5" aria-hidden="true" tabindex="-1"></a>    household_id, </span>
+<span id="lst-deciles-6"><a href="#lst-deciles-6" aria-hidden="true" tabindex="-1"></a>    total_expenditure,</span>
+<span id="lst-deciles-7"><a href="#lst-deciles-7" aria-hidden="true" tabindex="-1"></a>    total_expenditure_aeq06, <span class="co"># Adult equivalent * 0.6</span></span>
+<span id="lst-deciles-8"><a href="#lst-deciles-8" aria-hidden="true" tabindex="-1"></a>    total_expenditure_aeq08) <span class="co"># Adult equivalent * 0.8</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Our population data comes from UN’s projections.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="lst-population-projections"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-population-projections-1"><a href="#lst-population-projections-1" aria-hidden="true" tabindex="-1"></a>population_projections <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">"data/population/UN2022_population.dta"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="lst-population-projections-2"><a href="#lst-population-projections-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">==</span> iso) <span class="co"># we filter for Georgia</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The macro scenario dataset is an input provided by the Macroeconomic CGE simulation team, with yearly information on GDP, working age population, employment by economic activity (for an aggregation of three sectors: agriculture, manufacturing, and services), wages by economic activity, value added by economic activity, remittances, consumer price index, food price index and energy price index (for a bundle of gas, oil, coal, electricity) by decile (10 representative households in the macro model), and carbon tax revenue transfers to household deciles.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="lst-import-macro-scenarios"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-import-macro-scenarios-1"><a href="#lst-import-macro-scenarios-1" aria-hidden="true" tabindex="-1"></a>scenario_file <span class="ot">&lt;-</span> <span class="st">"data/ARM-Microsimulation/GEO_MacroScenarioInformation.xlsx"</span></span>
+<span id="lst-import-macro-scenarios-2"><a href="#lst-import-macro-scenarios-2" aria-hidden="true" tabindex="-1"></a><span class="co"># scenario_varlist &lt;- read_xlsx(</span></span>
+<span id="lst-import-macro-scenarios-3"><a href="#lst-import-macro-scenarios-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   "data/ARM-Microsimulation/ARM_Macro_varlist.xlsx")</span></span>
+<span id="lst-import-macro-scenarios-4"><a href="#lst-import-macro-scenarios-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prices_2030 &lt;- </span></span>
+<span id="lst-import-macro-scenarios-5"><a href="#lst-import-macro-scenarios-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   read.csv("data/ARM-Microsimulation/prices2030.csv")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Economic Activities in the Survey is in Georgian. The following dataset is a lookup table with the English names.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="lst-import-economic-activity-codes"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-import-economic-activity-codes-1"><a href="#lst-import-economic-activity-codes-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pending</span></span>
+<span id="lst-import-economic-activity-codes-2"><a href="#lst-import-economic-activity-codes-2" aria-hidden="true" tabindex="-1"></a>sectors <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"data/ARM-HH-survey/economic_activity_codes.xlsx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We also have geographical information for level 1 in Shapefile format, which we import with the <code>sf</code> package. We rename the column with the name of the administrative region to match our household survey data set conventions to ease mergers. The <code>dplyr</code> package from the <code>tidyverse</code> meta package allows us to “pipe” or link processing steps using the <code>%&gt;%</code> pipe. Although there is no geoprocessing in this analysis, this will come in handy for graphical presentations.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="lst-import-geodata"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-import-geodata-1"><a href="#lst-import-geodata-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Georgia administrative level 1 shapefile</span></span>
+<span id="lst-import-geodata-2"><a href="#lst-import-geodata-2" aria-hidden="true" tabindex="-1"></a>adm1 <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">read_sf</span>(<span class="st">"data/gis/geo-adm1.shp"</span>) <span class="sc">|&gt;</span> </span>
+<span id="lst-import-geodata-3"><a href="#lst-import-geodata-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(ADM1_PCODE, ADM1_EN, ADM1_KA, geometry) <span class="sc">|&gt;</span> </span>
+<span id="lst-import-geodata-4"><a href="#lst-import-geodata-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">arrange</span>(ADM1_PCODE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And we plot it for reference (see <strong>?@fig-map-example</strong>). This is done with the tmap R package and the code shown in <strong>?@lst-map-example</strong>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-map-adm1-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-map-adm1-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="geo-microsimulation_files/figure-html/fig-map-adm1-2-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-map-adm1-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Map of Georgia at administrative level 1 (ADM1)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="data-preparation-income-outliers-and-missings" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="data-preparation-income-outliers-and-missings"><span class="header-section-number">4</span> Data preparation income outliers and missings</h2>
+<p>We start with various renames for standardization. Naming conventions in the guidance code use traditional abbreviations like <code>nli</code> for non-lablor income. We are opting for more descriptive variable names like <code>non_labor_income</code>, <code>labor_income</code>, etc. to have more easily readable code. We make an exception for total consumption (<code>tc</code>), because it’s a variable that we use in every scenario and it supersedes lenght limits when adding scenario identifiers.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Uncomment the correct total expenditure variable below</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ex <span class="ot">&lt;-</span> hh_expenditure <span class="sc">%&gt;%</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">tc =</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>      total_expenditure</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>      <span class="co">#total_expenditure_aeq06 # Adult equivalent * 0.6</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>      <span class="co">#total_expenditure_aeq08 # Adult equivalent * 0.8</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="demographic-characteristics-education-labor-force" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="demographic-characteristics-education-labor-force"><span class="header-section-number">4.1</span> Demographic characteristics, education, labor force</h3>
+<p>Here the original code calls for Zone data, which is not present in our dataset, due to the different administrative structure of Georgia. However, we use <code>hh_01_code</code> (settlement) for this purpose. In the end, this variable was never used.</p>
+<p>Demographic data, merge with zone data Note that ed_03 (educy) below is not years of education, but education level (primary, general, secondary, etc.) However, it is ordered in a way that higher levels imply more years of education. We perform several steps within the first pipe call. The variable <code>lstatus</code> (Labor Force Status) here is very important for the reweigthing of the dataset later on. Note that from here onwards we will be creating <code>_microsim</code> versions of our datasets with the transformations needed for calculations. That way we avoid changing our original data and can refer to it later without fearing we’ve left things behind.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Demographic characteristics</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Unique person id</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">person_id =</span> <span class="fu">paste0</span>(household_id, <span class="st">"-"</span>, <span class="fu">str_pad</span>(MemberNo, <span class="dv">2</span>, <span class="at">pad =</span> <span class="st">"0"</span>)),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">head =</span> <span class="fu">ifelse</span>(Relations <span class="sc">==</span> <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Education level</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">educy =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(Education), <span class="dv">0</span>, Education),</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Labor Force Status</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">lstatus =</span> <span class="fu">case_when</span>(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>      <span class="co"># 1. Employed</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>      est_03 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> est_04 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> est_05 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        est_06 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> est_08 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">1</span>L,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      <span class="co"># 2. Unemployed (available, and searching)</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>      est_10 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">2</span>L,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      <span class="co"># 3. Inactive (available, not searching)</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>      est_10 <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="dv">3</span>L,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Out of the labor force</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">.default =</span> <span class="dv">4</span>L <span class="co"># Default to OLF</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">employed =</span> (lstatus <span class="sc">==</span> <span class="dv">1</span>),</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Salaried status (1. paid employee; 2 self-employed)</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">salaried =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>      <span class="sc">!</span><span class="fu">is.na</span>(emp_11a),</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>      <span class="dv">1</span>L,</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ifelse</span>(<span class="fu">is.na</span>(emp_11a) <span class="sc">&amp;</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>               employed <span class="sc">==</span> <span class="cn">TRUE</span>, <span class="dv">0</span>L, <span class="cn">NA_integer_</span>)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">rel =</span> mem_03, <span class="co"># relationship to HH head</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>         <span class="at">gender =</span> mem_02,</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>         <span class="at">age =</span> mem_05)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Later, when we conduct the reweighting of the dataset, we need to summarize into three levels of education.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">calif =</span> <span class="fu">case_when</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    educy <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> educy <span class="sc">&lt;=</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"None - General"</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    educy <span class="sc">&gt;</span> <span class="dv">3</span> <span class="sc">&amp;</span> educy <span class="sc">&lt;=</span> <span class="dv">9</span> <span class="sc">~</span> <span class="st">"Secondary - Vocational"</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    educy <span class="sc">&gt;</span> <span class="dv">7</span> <span class="sc">&amp;</span> educy <span class="sc">&lt;=</span> <span class="dv">13</span> <span class="sc">~</span> <span class="st">"Higher +"</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_character_</span>  <span class="co"># Values outside the specified ranges</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Count the number of employed persons by household. Note that it is necessary to explicitly tell R to ignore missing values(<code>NA</code>). This is different from Stata where <code>1 + .= 1</code> (where <code>.</code> is “missing”). In R 1 + <code>NA</code> = <code>NA</code> (where <code>NA</code> means “not available”). Not adding <code>na.rm = TRUE</code> to aggregation functions such as <code>sum()</code> in <a href="#lst-employed-hh" class="quarto-xref">Listing&nbsp;1</a> below will not throw an error and only provide a column with <code>NA</code> for households where at least one individidual has an employed status of <code>NA</code>.</p>
+<div class="cell">
+<div id="lst-employed-hh" class="r cell-code listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-employed-hh-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;1: Employed in household
+</figcaption>
+<div aria-describedby="lst-employed-hh-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-employed-hh"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-employed-hh-1"><a href="#lst-employed-hh-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pending data from pp_ecstat</span></span>
+<span id="lst-employed-hh-2"><a href="#lst-employed-hh-2" aria-hidden="true" tabindex="-1"></a>hh_labor <span class="ot">&lt;-</span> pp_ecstat <span class="sc">%&gt;%</span> </span>
+<span id="lst-employed-hh-3"><a href="#lst-employed-hh-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">employed =</span> (Status <span class="sc">==</span> <span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="lst-employed-hh-4"><a href="#lst-employed-hh-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(household_id) <span class="sc">%&gt;%</span> </span>
+<span id="lst-employed-hh-5"><a href="#lst-employed-hh-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Count within each household</span></span>
+<span id="lst-employed-hh-6"><a href="#lst-employed-hh-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">employed_hh =</span> <span class="fu">sum</span>(employed, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span>   </span>
+<span id="lst-employed-hh-7"><a href="#lst-employed-hh-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>Here the original Stata code calculates income variables and aggregates them by household. We skip that because the dataset <code>ic</code> already has these elements calculated by the WB poverty team. We’ll add them later as we need them.</p>
+<p>However, as we’ll see later labor income information is heavily non-reported in the dataset. Labor income is a crucial step in merging the dataset with macroeconomic information and so we will predict income for those that do not report it below. These variables are related to labor income, amount and frequency, which we have to standardized to a monthly or yearly value.</p>
+<p><strong>Primary and Secondary Job income:</strong></p>
+<ul>
+<li><strong>emp_11</strong> How much was %rostertitle%’s payment for wages/salary/income for last month?</li>
+<li><strong>emp_12</strong> What period of time was the wage/income for?</li>
+<li><strong>emp_25</strong> How much was %rostertitle%’s payment for wages/salary/income for last month?</li>
+<li><strong>emp_26</strong> What period of time was the wage/income for?</li>
+</ul>
+<p>Bonus, In-Kind, and food from job was not asked in Georgia, If it were, you should add a <code>mutate()</code> statement like the ones below for each subcategory in <a href="#lst-annualized-labor-income" class="quarto-xref">Listing&nbsp;2</a>. We use <code>coalesce(colname, 0)</code> when adding the <code>annual_labor_total</code> again to prevent sums of <code>NA</code>’s. This function replaces a value with 0 within the calculation if it’s missing, but doesn’t change its value permanently.</p>
+<div class="cell">
+<div id="lst-annualized-labor-income" class="r cell-code listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-annualized-labor-income-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;2: Annualized labor income
+</figcaption>
+<div aria-describedby="lst-annualized-labor-income-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-annualized-labor-income"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-annualized-labor-income-1"><a href="#lst-annualized-labor-income-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span> </span>
+<span id="lst-annualized-labor-income-2"><a href="#lst-annualized-labor-income-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Labor income primary job</span></span>
+<span id="lst-annualized-labor-income-3"><a href="#lst-annualized-labor-income-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">annual_labor_income_primary =</span> <span class="fu">case_when</span>(</span>
+<span id="lst-annualized-labor-income-4"><a href="#lst-annualized-labor-income-4" aria-hidden="true" tabindex="-1"></a>    emp_12 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> emp_11 <span class="sc">*</span> <span class="dv">365</span>,</span>
+<span id="lst-annualized-labor-income-5"><a href="#lst-annualized-labor-income-5" aria-hidden="true" tabindex="-1"></a>    emp_12 <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> (emp_11<span class="sc">/</span><span class="dv">7</span>) <span class="sc">*</span> <span class="dv">365</span>,  <span class="co"># Assuming weekly rate </span></span>
+<span id="lst-annualized-labor-income-6"><a href="#lst-annualized-labor-income-6" aria-hidden="true" tabindex="-1"></a>    emp_12 <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> (emp_11<span class="sc">/</span><span class="dv">14</span>) <span class="sc">*</span> <span class="dv">365</span>,</span>
+<span id="lst-annualized-labor-income-7"><a href="#lst-annualized-labor-income-7" aria-hidden="true" tabindex="-1"></a>    emp_12 <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> emp_11 <span class="sc">*</span> <span class="dv">12</span>,</span>
+<span id="lst-annualized-labor-income-8"><a href="#lst-annualized-labor-income-8" aria-hidden="true" tabindex="-1"></a>    emp_12 <span class="sc">==</span> <span class="dv">5</span> <span class="sc">~</span> emp_11 <span class="sc">*</span> <span class="dv">2</span>,</span>
+<span id="lst-annualized-labor-income-9"><a href="#lst-annualized-labor-income-9" aria-hidden="true" tabindex="-1"></a>    emp_12 <span class="sc">==</span> <span class="dv">6</span> <span class="sc">~</span> emp_11,</span>
+<span id="lst-annualized-labor-income-10"><a href="#lst-annualized-labor-income-10" aria-hidden="true" tabindex="-1"></a>    emp_12 <span class="sc">==</span> <span class="dv">7</span> <span class="sc">~</span> <span class="cn">NA</span></span>
+<span id="lst-annualized-labor-income-11"><a href="#lst-annualized-labor-income-11" aria-hidden="true" tabindex="-1"></a>  ))   <span class="sc">%&gt;%</span> </span>
+<span id="lst-annualized-labor-income-12"><a href="#lst-annualized-labor-income-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Labor income secondary job</span></span>
+<span id="lst-annualized-labor-income-13"><a href="#lst-annualized-labor-income-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">annual_labor_income_secondary =</span> <span class="fu">case_when</span>(</span>
+<span id="lst-annualized-labor-income-14"><a href="#lst-annualized-labor-income-14" aria-hidden="true" tabindex="-1"></a>    emp_26 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> emp_25 <span class="sc">*</span> <span class="dv">365</span>,</span>
+<span id="lst-annualized-labor-income-15"><a href="#lst-annualized-labor-income-15" aria-hidden="true" tabindex="-1"></a>    emp_26 <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> (emp_25<span class="sc">/</span><span class="dv">7</span>) <span class="sc">*</span> <span class="dv">365</span>,  <span class="co"># Assuming weekly rate </span></span>
+<span id="lst-annualized-labor-income-16"><a href="#lst-annualized-labor-income-16" aria-hidden="true" tabindex="-1"></a>    emp_26 <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> (emp_25<span class="sc">/</span><span class="dv">14</span>) <span class="sc">*</span> <span class="dv">365</span>,</span>
+<span id="lst-annualized-labor-income-17"><a href="#lst-annualized-labor-income-17" aria-hidden="true" tabindex="-1"></a>    emp_26 <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> emp_25 <span class="sc">*</span> <span class="dv">12</span>,</span>
+<span id="lst-annualized-labor-income-18"><a href="#lst-annualized-labor-income-18" aria-hidden="true" tabindex="-1"></a>    emp_26 <span class="sc">==</span> <span class="dv">5</span> <span class="sc">~</span> emp_25 <span class="sc">*</span> <span class="dv">2</span>,</span>
+<span id="lst-annualized-labor-income-19"><a href="#lst-annualized-labor-income-19" aria-hidden="true" tabindex="-1"></a>    emp_26 <span class="sc">==</span> <span class="dv">6</span> <span class="sc">~</span> emp_25,</span>
+<span id="lst-annualized-labor-income-20"><a href="#lst-annualized-labor-income-20" aria-hidden="true" tabindex="-1"></a>    emp_26 <span class="sc">==</span> <span class="dv">7</span> <span class="sc">~</span> <span class="cn">NA</span></span>
+<span id="lst-annualized-labor-income-21"><a href="#lst-annualized-labor-income-21" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span> </span>
+<span id="lst-annualized-labor-income-22"><a href="#lst-annualized-labor-income-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Annual labor total in thousands of dram</span></span>
+<span id="lst-annualized-labor-income-23"><a href="#lst-annualized-labor-income-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">annual_labor_total =</span> </span>
+<span id="lst-annualized-labor-income-24"><a href="#lst-annualized-labor-income-24" aria-hidden="true" tabindex="-1"></a>           (<span class="fu">coalesce</span>(annual_labor_income_primary, <span class="dv">0</span>) <span class="sc">+</span> </span>
+<span id="lst-annualized-labor-income-25"><a href="#lst-annualized-labor-income-25" aria-hidden="true" tabindex="-1"></a>           <span class="fu">coalesce</span>(annual_labor_income_secondary, <span class="dv">0</span>))<span class="sc">/</span><span class="dv">1000</span>)</span>
+<span id="lst-annualized-labor-income-26"><a href="#lst-annualized-labor-income-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-annualized-labor-income-27"><a href="#lst-annualized-labor-income-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Restore annual_labor_total to NA if both NA</span></span>
+<span id="lst-annualized-labor-income-28"><a href="#lst-annualized-labor-income-28" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span> </span>
+<span id="lst-annualized-labor-income-29"><a href="#lst-annualized-labor-income-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">annual_labor_total =</span></span>
+<span id="lst-annualized-labor-income-30"><a href="#lst-annualized-labor-income-30" aria-hidden="true" tabindex="-1"></a>           <span class="fu">if_else</span>(</span>
+<span id="lst-annualized-labor-income-31"><a href="#lst-annualized-labor-income-31" aria-hidden="true" tabindex="-1"></a>             <span class="fu">is.na</span>(annual_labor_income_primary)</span>
+<span id="lst-annualized-labor-income-32"><a href="#lst-annualized-labor-income-32" aria-hidden="true" tabindex="-1"></a>             <span class="sc">&amp;</span> <span class="fu">is.na</span>(annual_labor_income_secondary),</span>
+<span id="lst-annualized-labor-income-33"><a href="#lst-annualized-labor-income-33" aria-hidden="true" tabindex="-1"></a>         <span class="cn">NA</span>, </span>
+<span id="lst-annualized-labor-income-34"><a href="#lst-annualized-labor-income-34" aria-hidden="true" tabindex="-1"></a>         annual_labor_total))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>Now we need to check the share of individuals that are employed, but did not report income. This is done in <a href="#lst-employed-no-income" class="quarto-xref">Listing&nbsp;3</a> below.</p>
+<div class="cell">
+<div id="lst-employed-no-income" class="r cell-code listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-employed-no-income-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;3: Employed with no income reported
+</figcaption>
+<div aria-describedby="lst-employed-no-income-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-employed-no-income"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-employed-no-income-1"><a href="#lst-employed-no-income-1" aria-hidden="true" tabindex="-1"></a>total_employed_no_income <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="lst-employed-no-income-2"><a href="#lst-employed-no-income-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(employed <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;</span> <span class="fu">is.na</span>(annual_labor_total)) <span class="sc">%&gt;%</span> </span>
+<span id="lst-employed-no-income-3"><a href="#lst-employed-no-income-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
+<span id="lst-employed-no-income-4"><a href="#lst-employed-no-income-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-employed-no-income-5"><a href="#lst-employed-no-income-5" aria-hidden="true" tabindex="-1"></a>total_employed <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="lst-employed-no-income-6"><a href="#lst-employed-no-income-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(employed <span class="sc">==</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="lst-employed-no-income-7"><a href="#lst-employed-no-income-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
+<span id="lst-employed-no-income-8"><a href="#lst-employed-no-income-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-employed-no-income-9"><a href="#lst-employed-no-income-9" aria-hidden="true" tabindex="-1"></a>percent_employed_no_income <span class="ot">&lt;-</span> </span>
+<span id="lst-employed-no-income-10"><a href="#lst-employed-no-income-10" aria-hidden="true" tabindex="-1"></a>  (total_employed_no_income <span class="sc">/</span> total_employed) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="lst-employed-no-income-11"><a href="#lst-employed-no-income-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-employed-no-income-12"><a href="#lst-employed-no-income-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(</span>
+<span id="lst-employed-no-income-13"><a href="#lst-employed-no-income-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(</span>
+<span id="lst-employed-no-income-14"><a href="#lst-employed-no-income-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"There is "</span>,</span>
+<span id="lst-employed-no-income-15"><a href="#lst-employed-no-income-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">format</span>(</span>
+<span id="lst-employed-no-income-16"><a href="#lst-employed-no-income-16" aria-hidden="true" tabindex="-1"></a>      percent_employed_no_income,<span class="at">digits =</span> <span class="dv">2</span>, <span class="at">nsmall=</span><span class="dv">2</span></span>
+<span id="lst-employed-no-income-17"><a href="#lst-employed-no-income-17" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="lst-employed-no-income-18"><a href="#lst-employed-no-income-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"% of the employed population that reports no income."</span>)</span>
+<span id="lst-employed-no-income-19"><a href="#lst-employed-no-income-19" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>We also need to mark income outliers as those with incomes outside 5 standard deviations.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim  <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate standard deviation</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> <span class="fu">sd</span>(annual_labor_total, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">d =</span> annual_labor_total <span class="sc">/</span> sd,                </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Combined outlier condition</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">outlier =</span> (d <span class="sc">&gt;</span> <span class="dv">5</span>) <span class="sc">|</span> (employed <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;</span> annual_labor_total <span class="sc">==</span> <span class="dv">0</span>), </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Mark potential missings</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">missings =</span> <span class="fu">if_else</span>(employed <span class="sc">==</span> <span class="cn">TRUE</span>, <span class="fu">is.na</span>(annual_labor_total), <span class="cn">NA</span>) </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Economic sector. The economic sectors dataset contains a lookup table for sector aggregation which we add to the <code>pp_microsim</code> database in <a href="#lst-sector-aggregation" class="quarto-xref">Listing&nbsp;4</a>.</p>
+<div class="cell">
+<div id="lst-sector-aggregation" class="r cell-code listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-sector-aggregation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;4: Sector aggregation
+</figcaption>
+<div aria-describedby="lst-sector-aggregation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-sector-aggregation"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-sector-aggregation-1"><a href="#lst-sector-aggregation-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="lst-sector-aggregation-2"><a href="#lst-sector-aggregation-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">emp_04 =</span> <span class="fu">as.integer</span>(emp_04)) <span class="sc">%&gt;%</span> </span>
+<span id="lst-sector-aggregation-3"><a href="#lst-sector-aggregation-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(sectors, <span class="fu">join_by</span>(<span class="st">"emp_04"</span> <span class="sc">==</span> <span class="st">"economic_activity_code"</span>) ) <span class="sc">%&gt;%</span> </span>
+<span id="lst-sector-aggregation-4"><a href="#lst-sector-aggregation-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">sector =</span> ea_shortcode)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>Some individuals report no sector for either their primary or secondary job. In <a href="#lst-assign-sector" class="quarto-xref">Listing&nbsp;5</a> we find out the sector of other family members in their home and assign the sector of whoever is closest using <code>fill( other_sector, .direction = "downup")</code>.</p>
+<div class="cell">
+<div id="lst-assign-sector" class="r cell-code listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-assign-sector-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;5: Assign sector to those who don’t report one
+</figcaption>
+<div aria-describedby="lst-assign-sector-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-assign-sector"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-assign-sector-1"><a href="#lst-assign-sector-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="lst-assign-sector-2"><a href="#lst-assign-sector-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(household_id) <span class="sc">%&gt;%</span></span>
+<span id="lst-assign-sector-3"><a href="#lst-assign-sector-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="lst-assign-sector-4"><a href="#lst-assign-sector-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a temporary variable 'other_sector'</span></span>
+<span id="lst-assign-sector-5"><a href="#lst-assign-sector-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># which captures the sector of any employed </span></span>
+<span id="lst-assign-sector-6"><a href="#lst-assign-sector-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># individual in the household</span></span>
+<span id="lst-assign-sector-7"><a href="#lst-assign-sector-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">other_sector =</span> </span>
+<span id="lst-assign-sector-8"><a href="#lst-assign-sector-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">if_else</span>(employed <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(sector), sector, <span class="cn">NA_real_</span>)</span>
+<span id="lst-assign-sector-9"><a href="#lst-assign-sector-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="lst-assign-sector-10"><a href="#lst-assign-sector-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Use 'fill' to propagate 'other_sector' values within the household</span></span>
+<span id="lst-assign-sector-11"><a href="#lst-assign-sector-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fill</span>(other_sector, <span class="at">.direction =</span> <span class="st">"downup"</span>) <span class="sc">%&gt;%</span></span>
+<span id="lst-assign-sector-12"><a href="#lst-assign-sector-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="lst-assign-sector-13"><a href="#lst-assign-sector-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Impute missing 'sector' values based on the 'other_sector'</span></span>
+<span id="lst-assign-sector-14"><a href="#lst-assign-sector-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">sector =</span> </span>
+<span id="lst-assign-sector-15"><a href="#lst-assign-sector-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">if_else</span>(<span class="fu">is.na</span>(sector) <span class="sc">&amp;</span> employed <span class="sc">==</span> <span class="cn">TRUE</span>, other_sector, sector)</span>
+<span id="lst-assign-sector-16"><a href="#lst-assign-sector-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="lst-assign-sector-17"><a href="#lst-assign-sector-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Drop the temporary 'other_sector' variable</span></span>
+<span id="lst-assign-sector-18"><a href="#lst-assign-sector-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>other_sector) <span class="sc">%&gt;%</span></span>
+<span id="lst-assign-sector-19"><a href="#lst-assign-sector-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>We then assign a specific value for missing sectors for those employed with no one else in the hh to assign value. We select services as it’s the heaviest sector in the dataset (we do it like this, instead of say, any matching technique, because it’s only 2 observations).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="lst-sector-no-alternatives"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-sector-no-alternatives-1"><a href="#lst-sector-no-alternatives-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="lst-sector-no-alternatives-2"><a href="#lst-sector-no-alternatives-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sector =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(sector) <span class="sc">&amp;</span> employed <span class="sc">==</span> <span class="cn">TRUE</span>, <span class="dv">3</span>, sector))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We provide value labels for sector factors.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="lst-sector-labels"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-sector-labels-1"><a href="#lst-sector-labels-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="lst-sector-labels-2"><a href="#lst-sector-labels-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sector_name =</span> <span class="fu">factor</span>(sector, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
+<span id="lst-sector-labels-3"><a href="#lst-sector-labels-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Agriculture"</span>, </span>
+<span id="lst-sector-labels-4"><a href="#lst-sector-labels-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"Manufacturing"</span>, </span>
+<span id="lst-sector-labels-5"><a href="#lst-sector-labels-5" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"Services"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We make sure that those outside the labor force (OLF) do not report a sector, which we replace with <code>NA</code> for those who meet the condition.</p>
+<div class="cell">
+<div id="lst-no-sector-olf" class="r cell-code listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-no-sector-olf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;6: No sector for OLF
+</figcaption>
+<div aria-describedby="lst-no-sector-olf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-no-sector-olf"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-no-sector-olf-1"><a href="#lst-no-sector-olf-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="lst-no-sector-olf-2"><a href="#lst-no-sector-olf-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lstatus =</span> <span class="fu">as.numeric</span>(lstatus),</span>
+<span id="lst-no-sector-olf-3"><a href="#lst-no-sector-olf-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">sector =</span> </span>
+<span id="lst-no-sector-olf-4"><a href="#lst-no-sector-olf-4" aria-hidden="true" tabindex="-1"></a>           <span class="fu">if_else</span>(lstatus <span class="sc">==</span> <span class="dv">4</span>, </span>
+<span id="lst-no-sector-olf-5"><a href="#lst-no-sector-olf-5" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">as.character</span>(<span class="cn">NA</span>), </span>
+<span id="lst-no-sector-olf-6"><a href="#lst-no-sector-olf-6" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">as.character</span>(sector)),</span>
+<span id="lst-no-sector-olf-7"><a href="#lst-no-sector-olf-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">industry =</span> <span class="fu">as.factor</span>(sector)) <span class="sc">%&gt;%</span></span>
+<span id="lst-no-sector-olf-8"><a href="#lst-no-sector-olf-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># We need this for reweighting and </span></span>
+<span id="lst-no-sector-olf-9"><a href="#lst-no-sector-olf-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># not messing up the regression below.</span></span>
+<span id="lst-no-sector-olf-10"><a href="#lst-no-sector-olf-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sector_w =</span> sector)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+
+
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-armstat_integrated_2023" class="csl-entry" role="listitem">
+ARMSTAT. (2023). <em>Integrated <span>Living</span> <span>Conditions</span> <span>Survey</span> 2022</em>.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/rvconsulting/geo-ccdr24/edit/master/supporting-materials/geo-microsimulation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/rvconsulting/geo-ccdr24/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
