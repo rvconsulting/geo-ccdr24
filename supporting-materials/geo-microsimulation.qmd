@@ -14,7 +14,7 @@ format:
     number-depth: 3
     highlight-style: github
   docx:
-    toc: false
+    toc: true
     number-sections: true
     highlight-style: arrow
   # pdf:
