@@ -122,6 +122,35 @@ div.csl-indent {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -215,7 +244,10 @@ div.csl-indent {
   <li><a href="#data-preparation-income-outliers-and-missings" id="toc-data-preparation-income-outliers-and-missings" class="nav-link" data-scroll-target="#data-preparation-income-outliers-and-missings"><span class="header-section-number">4</span> Data preparation income outliers and missings</a>
   <ul class="collapse">
   <li><a href="#demographic-characteristics-education-labor-force" id="toc-demographic-characteristics-education-labor-force" class="nav-link" data-scroll-target="#demographic-characteristics-education-labor-force"><span class="header-section-number">4.1</span> Demographic characteristics, education, labor force</a></li>
+  <li><a href="#the-regression" id="toc-the-regression" class="nav-link" data-scroll-target="#the-regression"><span class="header-section-number">4.2</span> The regression</a></li>
+  <li><a href="#total-income-and-shares" id="toc-total-income-and-shares" class="nav-link" data-scroll-target="#total-income-and-shares"><span class="header-section-number">4.3</span> Total income and shares</a></li>
   </ul></li>
+  <li><a href="#un-population-projections" id="toc-un-population-projections" class="nav-link" data-scroll-target="#un-population-projections"><span class="header-section-number">5</span> UN Population Projections</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/rvconsulting/geo-ccdr24/edit/master/supporting-materials/geo-microsimulation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/rvconsulting/geo-ccdr24/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="geo-microsimulation.docx"><i class="bi bi-file-word"></i>MS Word</a></li></ul></div></nav>
     </div>
@@ -722,10 +754,238 @@ Listing&nbsp;6: No sector for OLF
 </figure>
 </div>
 </div>
-
-
-
 </section>
+<section id="the-regression" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="the-regression"><span class="header-section-number">4.2</span> The regression</h3>
+<p>Since labor income was a key variable, which we needed to match with the future wage bill by economic activity, we first checked for missing values among employed individuals. We found that almost a third of respondents (28.6%) did not report income for either their primary or secondary job. To overcome this limitation, we used the available information from the remaining respondents to estimate an extended Mincer equation, as shown in <a href="#eq-labor-income-regression" class="quarto-xref">Equation&nbsp;1</a>, and implemented in <a href="#lst-regression-model" class="quarto-xref">Listing&nbsp;7</a>. For the respondents with available information, we also identified outliers as those outside of five standard deviations from the mean labor income.</p>
+<p><span id="eq-labor-income-regression"><span class="math display">\[
+\ln(lab_i) = \beta_0 + \beta_1 \text{age}_i + \\
+\beta_2 \text{gender}_i + \beta_3 \text{educy}_i + \\
+\beta_4 \text{age}^2_i + \beta_5 \text{marz}_i + \\
+\beta_6 \text{sector}_i + \epsilon_i
+\tag{1}\]</span></span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(\ln(lab_i)\)</span> is the natural logarithm of labor income for individual <span class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(\beta_0\)</span> is the intercept term.</li>
+<li><span class="math inline">\(\beta_1, \beta_2, \beta_3, \beta_4, \beta_5, \beta_6\)</span> are the coefficients for the respective independent variables.</li>
+<li><span class="math inline">\(\text{age}_i\)</span> is the age of individual <span class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(\text{gender}_i\)</span> is a binary variable indicating the gender of individual <span class="math inline">\(i\)</span> (1 for male, 2 for female).</li>
+<li><span class="math inline">\(\text{educy}_i\)</span> represents the level of education for individual <span class="math inline">\(i\)</span> (ordered: 1) None to General, 2) Secondary to Vocational, 3) Higher education).</li>
+<li><span class="math inline">\(\text{age}^2_i\)</span> is the square of the age of individual <span class="math inline">\(i\)</span>, included to capture non-linear effects of age on labor income.</li>
+<li><span class="math inline">\(\text{marz}_i\)</span> represents the region where individual <span class="math inline">\(i\)</span> resides.</li>
+<li><span class="math inline">\(\text{sector}_i\)</span> represents the sector of employment for individual <span class="math inline">\(i\)</span> (i.e., agriculture, manufacturing or services).</li>
+<li><span class="math inline">\(\epsilon_i\)</span> is the error term for individual <span class="math inline">\(i\)</span>.</li>
+</ul>
+<p>We first prepare our variables for the regression.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">educy2 =</span> educy<span class="sc">^</span><span class="dv">2</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">age2 =</span> age<span class="sc">^</span><span class="dv">2</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">male =</span> <span class="fu">case_when</span>(</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>      gender <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>      gender <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="dv">0</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">lnlab =</span> <span class="fu">log</span>(annual_labor_total),</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">simuli =</span> <span class="cn">NA_real_</span> <span class="co"># Initialize simuli</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Filter the data for regression conditions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>regression_data <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(employed <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;</span> outlier <span class="sc">==</span> <span class="cn">FALSE</span> <span class="sc">&amp;</span> missings <span class="sc">==</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Regression model.</p>
+<div class="cell">
+<div id="lst-regression-model" class="r cell-code listing quarto-float">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-regression-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;7: Income regression model
+</figcaption>
+<div aria-describedby="lst-regression-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-regression-model"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="lst-regression-model-1"><a href="#lst-regression-model-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(lnlab <span class="sc">~</span> age <span class="sc">+</span> gender <span class="sc">+</span> educy <span class="sc">+</span> age2 <span class="sc">+</span> marz <span class="sc">+</span> sector, </span>
+<span id="lst-regression-model-2"><a href="#lst-regression-model-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> regression_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>Predict for specific conditions</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">condition =</span> (lstatus <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> (outlier <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">|</span> missings <span class="sc">==</span> <span class="cn">TRUE</span>))</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Applying predictions.</p>
+<p>Note: The ‘predict’ function in R does not directly support conditions within the function call, so we handle this by filtering or subsetting the data as needed.</p>
+<p>temp2 equivalent - Note: ‘type = “response”’ might be needed depending on model type.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>pp_microsim<span class="sc">$</span>simuli[pp_microsim<span class="sc">$</span>condition<span class="sc">==</span><span class="cn">TRUE</span>] <span class="ot">&lt;-</span> <span class="fu">exp</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">predict</span>(model, pp_microsim[pp_microsim<span class="sc">$</span>condition<span class="sc">==</span><span class="cn">TRUE</span>, ], <span class="at">type =</span> <span class="st">"response"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Handling negative values in ‘simuli’.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">simuli =</span> <span class="fu">if_else</span>(simuli <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="dv">0</span>, simuli)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>There were 8 observations that met the criteria:</p>
+<p>We will replace <code>annual_labor_total</code> with this value for those observations.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">annual_labor_total =</span> <span class="fu">if_else</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    employed <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;</span> (outlier <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">|</span> missings <span class="sc">==</span> <span class="cn">TRUE</span>),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    simuli, annual_labor_total))</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># And get monthly incomes for everyone</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span> </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">monthly_labor_income =</span> annual_labor_total <span class="sc">/</span> <span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Merging datasets.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(poverty_designations, <span class="at">by =</span> <span class="st">"household_id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="total-income-and-shares" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="total-income-and-shares"><span class="header-section-number">4.3</span> Total income and shares</h3>
+<p>Total labor income at HH level.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(household_id) <span class="sc">%&gt;%</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lab_hh =</span> <span class="fu">sum</span>(annual_labor_total, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Monthly incomes come from the <code>ic</code> data set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>incomes <span class="ot">&lt;-</span> ic <span class="sc">%&gt;%</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(household_id, inc1, inc2, inc3, inc4, inc5, inc6, inc7, inc8)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Total income at HH level (the commented out portion was a less efficient way of accomplishing the same result of coalescing NAs to 0 so that the sum can be performed). Note that here we need to use the magittr pipe <code>%&gt;%</code> instead of the newer Native Pipe <code>%&gt;%</code> , because we need to reference the correct scope with the dot <code>.</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(incomes, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"household_id"</span> <span class="ot">=</span> <span class="st">"household_id"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(inc5<span class="sc">:</span>inc8, <span class="sc">~</span><span class="fu">replace_na</span>(., <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">nli_hh =</span> <span class="dv">12</span> <span class="sc">*</span> <span class="fu">rowSums</span>(<span class="fu">select</span>(., inc5<span class="sc">:</span>inc8), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">income_hh =</span> lab_hh <span class="sc">+</span> nli_hh)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co"># pp_microsim &lt;- pp_microsim %&gt;%</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">#   left_join(incomes, join_by(household_id == household_id)) %&gt;% </span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   mutate(nli_hh = (  coalesce(inc5) + </span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co">#                      coalesce(inc6) +</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co">#                      coalesce(inc7) +</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co">#                      coalesce(inc8)) * 12) %&gt;% </span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co">#   mutate(income_hh = lab_hh + nli_hh)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Final subset of data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>pp_microsim <span class="ot">&lt;-</span> pp_microsim <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(household_id, person_id, industry, salaried,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>         rural_dummy, hhsize,hhsize_R, marz_no, aepc, weight, </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>         Foodpovln2022, Lpovln2022, Upovln2022, Avpovln2022, </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>         poor_Foodpovln2022, poor_Lpovln2022, poor_Upovln2022, </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>         poor_Avpovln2022, decile, settlement, urban_rural,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>         gender, age, head, rel, educy, calif, sector, sector_name,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>         annual_labor_total,annual_labor_income_primary,</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>         annual_labor_income_secondary,monthly_labor_income,</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>         lstatus, sector_w, marz.x ) <span class="sc">%&gt;%</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">marz =</span> marz.x)</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Exporting to Stata (might be necessary for reweigthing with wentropy)</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co"># write_dta(pp_microsim, path = "outputs/pp_microsim.dta", version = 10)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="un-population-projections" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="un-population-projections"><span class="header-section-number">5</span> UN Population Projections</h2>
+<p>Now we are ready to move to our demographic projections and macroeconomic model information.</p>
+<p>First, filtering based on country (our <code>iso</code> variable).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>population_projections <span class="ot">&lt;-</span> population_projections  <span class="sc">%&gt;%</span>  </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">==</span> iso)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Collapsing data by summing up variables starting with “yf” and “ym” and reshaping data to long format.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>population_projections <span class="ot">&lt;-</span> population_projections <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Variant, country, cohort) <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">starts_with</span>(<span class="fu">c</span>(<span class="st">"yf"</span>, <span class="st">"ym"</span>)), sum)) <span class="sc">%&gt;%</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>population_projections <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(population_projections,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>                              <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="fu">c</span>(<span class="st">"yf"</span>, <span class="st">"ym"</span>)),</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>                              <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">".value"</span>, <span class="st">"year"</span>),</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>                              <span class="at">names_pattern =</span> <span class="st">"(yf|ym)(.*)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Creating new variable <code>total_population</code> as the sum of <code>yf</code> and <code>ym</code>. Dropping <code>country</code> variables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>population_projections <span class="ot">&lt;-</span> population_projections <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_population =</span> yf <span class="sc">+</span> ym) <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>( <span class="sc">-</span>country) <span class="sc">%&gt;%</span> </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.numeric</span>(year))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Summarizing the year to find the range.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>minyear <span class="ot">&lt;-</span> survey_year <span class="co"># Make sure `survey_year` is correctly defined</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>maxyear <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="fu">as.numeric</span>(population_projections<span class="sc">$</span>year))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We have that the “Min Year” is <code>minyear</code> and the “Max Year” is <code>maxyear</code>. Now we create a population growth rate by demographic variant dataset. We initialize an empty list to store our data by variant and we loop over variants to create this list.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># With minyear and maxyear defined above</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize a list to store growth data</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>pop_growth <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop over variants</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>variants <span class="ot">&lt;-</span> <span class="fu">unique</span>(population_projections<span class="sc">$</span>Variant)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (variant <span class="cf">in</span> variants) {</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> minyear<span class="sc">:</span>maxyear) {</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate population for year t</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    pop_t <span class="ot">&lt;-</span> population_projections <span class="sc">%&gt;%</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(year <span class="sc">==</span> t, Variant <span class="sc">==</span> variant) <span class="sc">%&gt;%</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarize</span>(<span class="at">sum_pop =</span> <span class="fu">sum</span>(total_population)) <span class="sc">%&gt;%</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pull</span>(sum_pop)</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate population for base year</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>    pop_base <span class="ot">&lt;-</span> population_projections <span class="sc">%&gt;%</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(year <span class="sc">==</span> minyear, Variant <span class="sc">==</span> variant) <span class="sc">%&gt;%</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarize</span>(<span class="at">sum_pop =</span> <span class="fu">sum</span>(total_population)) <span class="sc">%&gt;%</span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pull</span>(sum_pop)</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate growth rate and store in list with dynamic naming</span></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>    growth_rate <span class="ot">&lt;-</span> pop_t <span class="sc">/</span> pop_base</span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>    pop_growth[[<span class="fu">paste0</span>(t, <span class="st">"_"</span>, variant)]] <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">growth_rate =</span> growth_rate, <span class="at">pop_t =</span> pop_t</span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>With the list ready, we convert back to dataframe by stitching the list elements one on top of the other.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert list to dataframe</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>pop_growth <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">names</span>(pop_growth), <span class="cf">function</span>(x) {</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extract year and variant from the name</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  parts <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">strsplit</span>(x, <span class="st">"_"</span>))</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  year <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(parts[<span class="dv">1</span>])</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  variant <span class="ot">&lt;-</span> parts[<span class="dv">2</span>]</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create a tibble for each entry</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">year =</span> year, </span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">variant =</span> variant, </span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">total_population =</span> pop_growth[[x]]<span class="sc">$</span>pop_t,</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">pop_growth_rate =</span> pop_growth[[x]]<span class="sc">$</span>growth_rate)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Arrange the dataframe for better readability</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>pop_growth <span class="ot">&lt;-</span> <span class="fu">arrange</span>(pop_growth, variant, year)</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first few rows of the dataframe</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>pop_growth[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">09</span>),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">

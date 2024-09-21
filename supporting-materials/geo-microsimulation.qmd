@@ -564,3 +564,288 @@ pp_microsim <- pp_microsim %>%
   mutate(sector_w = sector)
 ```
 
+
+### The regression
+
+Since labor income was a key variable, which we needed to match with the future wage bill by economic activity, we first checked for missing values among employed individuals. We found that almost a third of respondents (28.6%) did not report income for either their primary or secondary job. To overcome this limitation, we used the available information from the remaining respondents to estimate an extended Mincer equation, as shown in @eq-labor-income-regression, and implemented in @lst-regression-model. For the respondents with available information, we also identified outliers as those outside of five standard deviations from the mean labor income.
+
+$$
+\ln(lab_i) = \beta_0 + \beta_1 \text{age}_i + \\ 
+\beta_2 \text{gender}_i + \beta_3 \text{educy}_i + \\ 
+\beta_4 \text{age}^2_i + \beta_5 \text{marz}_i + \\
+\beta_6 \text{sector}_i + \epsilon_i
+$$ {#eq-labor-income-regression}
+
+Where:
+
+-   $\ln(lab_i)$ is the natural logarithm of labor income for individual $i$.
+-   $\beta_0$ is the intercept term.
+-   $\beta_1, \beta_2, \beta_3, \beta_4, \beta_5, \beta_6$ are the coefficients for the respective independent variables.
+-   $\text{age}_i$ is the age of individual $i$.
+-   $\text{gender}_i$ is a binary variable indicating the gender of individual $i$ (1 for male, 2 for female).
+-   $\text{educy}_i$ represents the level of education for individual $i$ (ordered: 1) None to General, 2) Secondary to Vocational, 3) Higher education).
+-   $\text{age}^2_i$ is the square of the age of individual $i$, included to capture non-linear effects of age on labor income.
+-   $\text{marz}_i$ represents the region where individual $i$ resides.
+-   $\text{sector}_i$ represents the sector of employment for individual $i$ (i.e., agriculture, manufacturing or services).
+-   $\epsilon_i$ is the error term for individual $i$.
+
+We first prepare our variables for the regression.
+
+```{r}
+#| eval: false
+pp_microsim <- pp_microsim %>%
+  mutate(
+    educy2 = educy^2,
+    age2 = age^2,
+    male = case_when(
+      gender == 1 ~ 1,
+      gender == 2 ~ 0
+    ),
+    lnlab = log(annual_labor_total),
+    simuli = NA_real_ # Initialize simuli
+  )
+```
+
+Filter the data for regression conditions.
+
+```{r}
+#| eval: false
+regression_data <- pp_microsim %>%
+  filter(employed == TRUE & outlier == FALSE & missings == FALSE)
+```
+
+Regression model.
+
+```{r}
+#| eval: false
+#| lst-label: lst-regression-model
+#| lst-cap: "Income regression model"
+
+model <- lm(lnlab ~ age + gender + educy + age2 + marz + sector, 
+            data = regression_data)
+```
+
+Predict for specific conditions
+
+```{r}
+#| eval: false
+pp_microsim <- pp_microsim %>%
+  mutate(
+    condition = (lstatus == 1 & (outlier == TRUE | missings == TRUE))
+  )
+```
+
+Applying predictions.
+
+Note: The 'predict' function in R does not directly support conditions within the function call, so we handle this by filtering or subsetting the data as needed.
+
+temp2 equivalent - Note: 'type = "response"' might be needed depending on model type.
+
+```{r}
+#| eval: false
+pp_microsim$simuli[pp_microsim$condition==TRUE] <- exp(
+  predict(model, pp_microsim[pp_microsim$condition==TRUE, ], type = "response"))
+```
+
+Handling negative values in 'simuli'.
+
+```{r}
+#| eval: false
+pp_microsim <- pp_microsim %>%
+  mutate(
+    simuli = if_else(simuli < 0, 0, simuli)
+  )
+```
+
+There were 8 observations that met the criteria:
+
+We will replace `annual_labor_total` with this value for those observations.
+
+```{r}
+#| eval: false
+pp_microsim <- pp_microsim %>%
+  mutate(annual_labor_total = if_else(
+    employed == TRUE & (outlier == TRUE | missings == TRUE),
+    simuli, annual_labor_total))
+
+# And get monthly incomes for everyone
+pp_microsim <- pp_microsim %>% 
+  mutate(monthly_labor_income = annual_labor_total / 12)
+
+```
+
+Merging datasets.
+
+```{r}
+#| eval: false
+pp_microsim <- pp_microsim %>%
+  left_join(poverty_designations, by = "household_id")
+```
+
+### Total income and shares
+
+Total labor income at HH level.
+
+```{r}
+#| eval: false
+pp_microsim <- pp_microsim %>%
+  group_by(household_id) %>%
+  mutate(lab_hh = sum(annual_labor_total, na.rm = TRUE)) %>%
+  ungroup()
+```
+
+Monthly incomes come from the `ic` data set.
+
+```{r}
+#| eval: false
+incomes <- ic %>% 
+  select(household_id, inc1, inc2, inc3, inc4, inc5, inc6, inc7, inc8)
+```
+
+Total income at HH level (the commented out portion was a less efficient way of accomplishing the same result of coalescing NAs to 0 so that the sum can be performed). Note that here we need to use the magittr pipe `%>%` instead of the newer Native Pipe `%>%` , because we need to reference the correct scope with the dot `.`.
+
+```{r}
+#| eval: false
+pp_microsim <- pp_microsim %>%
+  left_join(incomes, by = c("household_id" = "household_id")) %>%
+  mutate(across(inc5:inc8, ~replace_na(., 0))) %>%
+  mutate(nli_hh = 12 * rowSums(select(., inc5:inc8), na.rm = TRUE)) %>%
+  mutate(income_hh = lab_hh + nli_hh)
+
+# pp_microsim <- pp_microsim %>%
+#   left_join(incomes, join_by(household_id == household_id)) %>% 
+#   mutate(nli_hh = (  coalesce(inc5) + 
+#                      coalesce(inc6) +
+#                      coalesce(inc7) +
+#                      coalesce(inc8)) * 12) %>% 
+#   mutate(income_hh = lab_hh + nli_hh)
+```
+
+
+Final subset of data.
+
+```{r}
+#| eval: false
+pp_microsim <- pp_microsim %>%
+  select(household_id, person_id, industry, salaried,
+         rural_dummy, hhsize,hhsize_R, marz_no, aepc, weight, 
+         Foodpovln2022, Lpovln2022, Upovln2022, Avpovln2022, 
+         poor_Foodpovln2022, poor_Lpovln2022, poor_Upovln2022, 
+         poor_Avpovln2022, decile, settlement, urban_rural,
+         gender, age, head, rel, educy, calif, sector, sector_name,
+         annual_labor_total,annual_labor_income_primary,
+         annual_labor_income_secondary,monthly_labor_income,
+         lstatus, sector_w, marz.x ) %>%
+  rename(marz = marz.x)
+
+# Exporting to Stata (might be necessary for reweigthing with wentropy)
+# write_dta(pp_microsim, path = "outputs/pp_microsim.dta", version = 10)
+```
+
+## UN Population Projections
+
+Now we are ready to move to our demographic projections and macroeconomic model information.
+
+First, filtering based on country (our `iso` variable).
+
+```{r}
+#| eval: false
+population_projections <- population_projections  %>%  
+  filter(country == iso)
+```
+
+Collapsing data by summing up variables starting with "yf" and "ym" and reshaping data to long format.
+
+```{r}
+#| eval: false
+#| warning: false
+#| message: false
+
+population_projections <- population_projections %>%
+  group_by(Variant, country, cohort) %>%
+  summarize(across(starts_with(c("yf", "ym")), sum)) %>%
+  ungroup()
+
+population_projections <- pivot_longer(population_projections,
+                              cols = starts_with(c("yf", "ym")),
+                              names_to = c(".value", "year"),
+                              names_pattern = "(yf|ym)(.*)")
+```
+
+Creating new variable `total_population` as the sum of `yf` and `ym`. Dropping `country` variables.
+
+```{r}
+#| eval: false
+population_projections <- population_projections %>%
+  mutate(total_population = yf + ym) %>%
+  select( -country) %>% 
+  mutate(year = as.numeric(year))
+```
+
+Summarizing the year to find the range.
+
+```{r}
+#| eval: false
+minyear <- survey_year # Make sure `survey_year` is correctly defined
+maxyear <- max(as.numeric(population_projections$year))
+```
+
+We have that the "Min Year" is `minyear` and the "Max Year" is `maxyear`. Now we create a population growth rate by demographic variant dataset. We initialize an empty list to store our data by variant and we loop over variants to create this list.
+
+```{r}
+#| eval: false
+# With minyear and maxyear defined above
+# Initialize a list to store growth data
+pop_growth <- list()
+
+# Loop over variants
+variants <- unique(population_projections$Variant)
+for (variant in variants) {
+  for (t in minyear:maxyear) {
+    
+    # Calculate population for year t
+    pop_t <- population_projections %>%
+      filter(year == t, Variant == variant) %>%
+      summarize(sum_pop = sum(total_population)) %>%
+      pull(sum_pop)
+    
+    # Calculate population for base year
+    pop_base <- population_projections %>%
+      filter(year == minyear, Variant == variant) %>%
+      summarize(sum_pop = sum(total_population)) %>%
+      pull(sum_pop)
+    
+    # Calculate growth rate and store in list with dynamic naming
+    growth_rate <- pop_t / pop_base
+    pop_growth[[paste0(t, "_", variant)]] <- list(
+      growth_rate = growth_rate, pop_t = pop_t
+      )
+  }
+}
+```
+
+With the list ready, we convert back to dataframe by stitching the list elements one on top of the other.
+
+```{r}
+#| eval: false
+# Convert list to dataframe
+pop_growth <- do.call(rbind, lapply(names(pop_growth), function(x) {
+  # Extract year and variant from the name
+  parts <- unlist(strsplit(x, "_"))
+  year <- as.integer(parts[1])
+  variant <- parts[2]
+  
+  # Create a tibble for each entry
+  tibble(year = year, 
+         variant = variant, 
+         total_population = pop_growth[[x]]$pop_t,
+         pop_growth_rate = pop_growth[[x]]$growth_rate)
+}))
+
+# Arrange the dataframe for better readability
+pop_growth <- arrange(pop_growth, variant, year)
+
+# Display the first few rows of the dataframe
+pop_growth[c(1:09),]
+```
+
