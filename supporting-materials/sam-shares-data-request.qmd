@@ -1,0 +1,157 @@
+---
+title: "SAM Shares Data Request"
+subtitle: "Georgia Country Climate and Development Report"
+author:
+  - name: "Renato Vargas"
+    id: rv
+    email: renovargas@gmail.com
+    affiliation: 
+      - name: Consultant for The World Bank
+format: html
+---
+
+## Introduction
+
+In this data request, we estimate shares to disaggregate the Social Accounting Matrix for the Macroeconomic team.
+
+### Objectives for this session
+
+1.  HH split: Split our representative household into income quintiles and rural/urban households.
+2.  Labor split: Split labor into 6 types according to gender and skill level.
+
+### Preliminaries
+
+```{r}
+#| warning: false
+#| message: false
+#| label: preliminaries
+
+# Clean workspace
+rm(list = ls())
+
+# Georgia country ISO code
+iso <- "GEO"
+
+# Survey year
+survey_year <- 2023
+
+# Exchange rate USD per GEL
+er <- 0.37
+
+# Years of interest for our macroeconomic scenario analysis
+# analysis_years <- c(2030, 2050)
+```
+
+We will use the following libraries for this exercise.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: libs
+
+library(tidyverse)
+library(haven)
+library(gt)
+```
+
+We use data from the 2023 survey for the Labor Split and data from the 2022 survey for the household expenditure and capital shares in In mil. GEL per year per household type.
+
+
+```{r}
+#| warning: false
+#| message: false
+#| label: datasets
+
+ #| lst-label: original-datasets
+
+# Household Unique ID, Weights, Location and other basic variables
+hh_basics <- read_sav(
+  "data/ilcs_2023/sysschedule.sav") %>% 
+  rename(household_id = UID)
+
+# Household size (includes no. of family members)
+hh_size <- read_sav(
+  "data/ilcs_2023/familysize.sav") %>% 
+  rename(household_id = UID)
+
+# Processed income at household level
+hh_income <- read_sav(
+  "data/ilcs_2023/tblincomes.sav") %>% 
+  rename(household_id = UID)
+
+# Consumption aggregate at household level 
+hh_expenditure <- read_sav(
+  "data/ilcs_2023/tblexpenditures.sav") %>% 
+  rename(household_id = UID,
+         # rename total expenditure variables
+         total_expenditure = MTlianixarjebi_,
+         total_expenditure_aeq06 = MTlianimoxmareba_EqAdScale,
+         total_expenditure_aeq08 = Mtlianimoxmareba_EqAdScale_08)
+
+# Characteristics of the dwelling
+hh_chars <- read_sav(
+  "data/ilcs_2023/tblshinda01.sav") %>% 
+  rename(household_id = UID)
+
+# Persons (pp)
+pp <- read_sav(
+  "data/ilcs_2023/tblshinda02.sav") |> 
+  rename(household_id = UID)
+
+# Labor (pp)
+pp_labor <- read_sav(
+  "data/ilcs_2023/tblshinda05_1.sav") |> 
+  rename(household_id = UID) |> 
+  mutate(
+    household_id = as.integer(household_id),
+    MemberNo = as.integer(MemberNo),
+    Q5 = as.integer(Q5))
+
+# Poverty
+poverty <- read_dta(
+  "data/ilcs_2023/POVERTY_stata.dta") |> 
+  rename(household_id = UID)
+
+# Ind. Poverty
+ind_poverty <- read_dta(
+  "data/ilcs_2023/IND_POVERTY_stata.dta") |> 
+  rename(household_id = UID)
+```
+
+First we check that our dataset amounts to population totals.
+
+
+```{r}
+#| warning: false
+#| message: false
+#| label: pop-totals-all-quarters
+
+weights <- hh_basics |> 
+  select(household_id, QuartNo, Weights)
+
+hh_size |> 
+  left_join(weights, join_by(household_id)) |> 
+  filter(QuartNo == 110) |> 
+  summarize(
+    tot_pop = sum(FamilySize * Weights, na.rm = T),
+    tot_households = sum(Weights, na.rm = T))
+```
+
+Upon first exploration, we see that the population amounts to 14,861,930 individuals, living in 4,499,690 households, when in reality we have a total population estimate of 3,702,130 individuals, living in 1,109,130 households. This is because the survey covers four quarters and households are interviewed four times in the year. So we need to drop households for our estimates and keep only those related to one quarter. Since we need information for 2022, but our dataset is for 2023, we will use the first quarter (Q1), which is closer to the required year.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: pop-totals-per-quarter
+
+pop_by_quarter <- hh_size |> 
+  left_join(weights, join_by(household_id)) |> 
+  group_by(QuartNo) |> 
+  summarize(
+    "Population" = sum(FamilySize * Weights, na.rm = T),
+    "Households" = sum(Weights, na.rm = T))
+
+pop_by_quarter |> 
+  gt()
+```
+
