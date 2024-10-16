@@ -8,6 +8,8 @@ author:
     affiliation: 
       - name: Consultant for The World Bank
 format: html
+editor_options: 
+  chunk_output_type: console
 ---
 
 ## Introduction
@@ -155,3 +157,4 @@ pop_by_quarter |>
   gt()
 ```
 
+Skill level
