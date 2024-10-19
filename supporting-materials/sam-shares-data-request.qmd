@@ -133,10 +133,12 @@ weights <- hh_basics |>
 
 hh_size |> 
   left_join(weights, join_by(household_id)) |> 
-  filter(QuartNo == 110) |> 
+#  filter(QuartNo == 110) |> 
   summarize(
-    tot_pop = sum(FamilySize * Weights, na.rm = T),
-    tot_households = sum(Weights, na.rm = T))
+    "Population" = sum(FamilySize * Weights, na.rm = T),
+    "Households" = sum(Weights, na.rm = T)) |> 
+  gt()
+
 ```
 
 Upon first exploration, we see that the population amounts to 14,861,930 individuals, living in 4,499,690 households, when in reality we have a total population estimate of 3,702,130 individuals, living in 1,109,130 households. This is because the survey covers four quarters and households are interviewed four times in the year. So we need to drop households for our estimates and keep only those related to one quarter. Since we need information for 2022, but our dataset is for 2023, we will use the first quarter (Q1), which is closer to the required year.
@@ -157,4 +159,4 @@ pop_by_quarter |>
   gt()
 ```
 
-Skill level
+For skill level, we will use information on schooling from 
