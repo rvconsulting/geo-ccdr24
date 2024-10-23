@@ -7,7 +7,18 @@ author:
     email: renovargas@gmail.com
     affiliation: 
       - name: Consultant for The World Bank
-format: html
+format: 
+  html:
+    toc: true
+  docx:
+    toc: true
+    number-sections: true
+    highlight-style: arrow
+  pdf:
+    # prefer-html: true
+    toc: true
+    number-sections: true
+    colorlinks: true
 editor_options: 
   chunk_output_type: console
 ---
@@ -16,10 +27,12 @@ editor_options:
 
 In this data request, we estimate shares to disaggregate the Social Accounting Matrix for the Macroeconomic team.
 
-### Objectives for this session
+### Objectives
 
-1.  HH split: Split our representative household into income quintiles and rural/urban households.
-2.  Labor split: Split labor into 6 types according to gender and skill level.
+1. HH split: Split our representative household into income quintiles and rural/urban households.
+2. Labor split: Split labor into 6 types according to gender and skill level.
+3. Economic activity split: Split wages and capital by economic activities.
+4. Split household consumption by urban/rural, quintiles and economic activity.
 
 ### Preliminaries
 
@@ -459,6 +472,8 @@ is.na(flab$FLab) <- 0
 
 ### Filling out the templates 
 
+We first get a table with all the possible combinations, so we can make sure f-lab and f-surp have the data that we need.
+
 ```{r}
 #| warning: false
 #| message: false
@@ -486,9 +501,6 @@ factor_income <- flab |>
     names_from = c(SkillLevel),
     values_from = c(Female, Male) ) |>
   mutate(across(5:10, ~replace_na(., 0)))
-
-factor_income |> 
-  gt()
 ```
 
 Salaries from employees, salaries paid to business owners, and own account workers (mixed income).
@@ -521,7 +533,8 @@ factor_income_comprehensive <- flab |>
     values_from = c(Female, Male) ) |>
   mutate(across(5:10, ~replace_na(., 0)))
 
-factor_income_comprehensive |> 
+# Sneak peak
+head(factor_income_comprehensive[,c(1:7)]) |> 
   gt()
 ```
 
@@ -642,6 +655,8 @@ factor_income_capital_activity |>
 ```
 
 ### Exports to Excel
+
+Here we export to the same Excel we are using as template, but we don't overwrite the original template, just so we can compare the result to the request.
 
 ```{r}
 #| warning: false
