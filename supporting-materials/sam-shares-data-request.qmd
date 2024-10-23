@@ -19,6 +19,9 @@ format:
     toc: true
     number-sections: true
     colorlinks: true
+    include-in-header:
+      text: |
+        \setcounter{section}{-1}
 editor_options: 
   chunk_output_type: console
 ---
@@ -254,7 +257,9 @@ High skill (10 - 13): Higher professional program through Doctor.
 
 pp_factor_descriptors <- pp |>
   select(UID, MemberNo, Gender, Age, Education) |> 
-  mutate(MemberId = paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |>
+  mutate(
+    MemberId = 
+      paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |>
   mutate(Gender = factor(
     Gender,
     levels = c(1, 2),
@@ -317,7 +322,9 @@ We work with labor status from `Shinda05_1`. Since, upon import NACE 1 codes are
 #| label: nace-codes
 
 pp_emstatus <- pp_labor |> 
-  mutate(MemberId = paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |>
+  mutate(
+    MemberId = 
+      paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |>
   mutate(
     # Job 1 NACE Rev 1 code. 
     Q5  = paste0(sprintf("%04d", Q5)),
@@ -349,7 +356,9 @@ pp_emstatus <- pp_labor |>
       )
   )
 
-head(pp_emstatus[c(18, 34, 40, 41, 67),c("UID", "MemberNo", "SAM_job1", "SAM_job2")]) |> 
+head(
+  pp_emstatus[c(18, 34, 40, 41, 67),
+  c("UID", "MemberNo", "SAM_job1", "SAM_job2")]) |> 
   gt()
 ```
 
@@ -363,22 +372,32 @@ Before making our multi-dimensional tables, we need to identify different types 
 pp_emstatus <- pp_emstatus |> 
   mutate(
     # We add accross three months for each source (and coalesce the NAs to 0)
-    flab_job1 = rowSums(across(starts_with("Q8_faqti_"), \(x) coalesce(x, 0))),
-    flab_job2 = rowSums(across(starts_with("Q14_faqti_"), \(x) coalesce(x, 0))),
-    fsurp = rowSums(across(starts_with("Q10_faqti_"), \(x) coalesce(x, 0)))
+    flab_job1 = 
+      rowSums(
+        across(starts_with("Q8_faqti_"), \(x) coalesce(x, 0))),
+    flab_job2 = 
+      rowSums(
+        across(starts_with("Q14_faqti_"), \(x) coalesce(x, 0))),
+    fsurp = 
+      rowSums(
+        across(starts_with("Q10_faqti_"), \(x) coalesce(x, 0)))
   ) |> 
   # We also add factor labels to Employment Status
   mutate(
     Q7 = factor(
       Q7,
       levels = c(1:6),
-      labels = c("Employee", "Employer", "Own Account (Non-Ag.)", "Own Account (Ag.)", "Unpaid Worker", "Other"))
+      labels = c(
+        "Employee", "Employer", "Own Account (Non-Ag.)", 
+        "Own Account (Ag.)", "Unpaid Worker", "Other"))
     ) |> 
   mutate(
     Q13 = factor(
       Q13,
       levels = c(1:6),
-      labels = c("Employee", "Employer", "Own Account (Non-Ag.)", "Own Account (Ag.)", "Unpaid Worker", "Other"))
+      labels = c(
+        "Employee", "Employer", "Own Account (Non-Ag.)", 
+        "Own Account (Ag.)", "Unpaid Worker", "Other"))
     )
 ```
 
