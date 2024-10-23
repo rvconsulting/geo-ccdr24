@@ -17,11 +17,8 @@ format:
   pdf:
     # prefer-html: true
     toc: true
-    number-sections: true
+    number-sections: false
     colorlinks: true
-    include-in-header:
-      text: |
-        \setcounter{section}{-1}
 editor_options: 
   chunk_output_type: console
 ---
