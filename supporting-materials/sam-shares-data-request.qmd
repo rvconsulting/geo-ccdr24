@@ -53,8 +53,12 @@ We will use the following libraries for this exercise.
 
 library(tidyverse)
 library(haven)
+library(readxl)
+library(openxlsx)
 library(gt)
 ```
+
+## Datasets and correspondence tables
 
 We use data from the 2023 survey for the Labor Split and data from the 2022 survey for the household expenditure and capital shares in In mil. GEL per year per household type.
 
@@ -68,60 +72,106 @@ We use data from the 2023 survey for the Labor Split and data from the 2022 surv
 
 # Household Unique ID, Weights, Location and other basic variables
 hh_basics <- read_sav(
-  "data/ilcs_2023/sysschedule.sav") %>% 
-  rename(household_id = UID)
+  "data/ilcs_2023/sysschedule.sav") |>
+  mutate(
+    UID = as.integer(UID))
 
 # Household size (includes no. of family members)
 hh_size <- read_sav(
-  "data/ilcs_2023/familysize.sav") %>% 
-  rename(household_id = UID)
+  "data/ilcs_2023/familysize.sav")|> 
+  mutate(
+    UID = as.integer(UID))
 
 # Processed income at household level
 hh_income <- read_sav(
-  "data/ilcs_2023/tblincomes.sav") %>% 
-  rename(household_id = UID)
+  "data/ilcs_2023/tblincomes.sav")|> 
+  mutate(
+    UID = as.integer(UID))
 
 # Consumption aggregate at household level 
 hh_expenditure <- read_sav(
-  "data/ilcs_2023/tblexpenditures.sav") %>% 
-  rename(household_id = UID,
-         # rename total expenditure variables
+  "data/ilcs_2023/tblexpenditures.sav")|> 
+  rename(# rename total expenditure variables
          total_expenditure = MTlianixarjebi_,
          total_expenditure_aeq06 = MTlianimoxmareba_EqAdScale,
-         total_expenditure_aeq08 = Mtlianimoxmareba_EqAdScale_08)
+         total_expenditure_aeq08 = Mtlianimoxmareba_EqAdScale_08) |> 
+  mutate(
+    UID = as.integer(UID))
 
 # Characteristics of the dwelling
 hh_chars <- read_sav(
-  "data/ilcs_2023/tblshinda01.sav") %>% 
-  rename(household_id = UID)
+  "data/ilcs_2023/tblshinda01.sav")|>
+  mutate(
+    UID = as.integer(UID))
 
 # Persons (pp)
 pp <- read_sav(
   "data/ilcs_2023/tblshinda02.sav") |> 
-  rename(household_id = UID)
+  mutate(
+    UID = as.integer(UID),
+    MemberNo = as.integer(MemberNo))
 
 # Labor (pp)
 pp_labor <- read_sav(
   "data/ilcs_2023/tblshinda05_1.sav") |> 
-  rename(household_id = UID) |> 
   mutate(
-    household_id = as.integer(household_id),
+    UID = as.integer(UID),
     MemberNo = as.integer(MemberNo),
-    Q5 = as.integer(Q5))
+    Q5  = as.integer(Q5),
+    Q12 = as.integer(Q12)) 
 
 # Poverty
 poverty <- read_dta(
   "data/ilcs_2023/POVERTY_stata.dta") |> 
-  rename(household_id = UID)
+  mutate(
+    UID = as.integer(UID))
 
 # Ind. Poverty
 ind_poverty <- read_dta(
   "data/ilcs_2023/IND_POVERTY_stata.dta") |> 
-  rename(household_id = UID)
+  rename(MemberNo = memberno) |> 
+  mutate(
+    UID = as.integer(UID),
+    MemberNo = as.integer(MemberNo))
 ```
 
-First we check that our dataset amounts to population totals.
+We also need look-up tables.
 
+```{r}
+#| warning: false
+#| message: false
+#| label: look-up-tables
+
+sam_activities <- read_excel(
+    "data/sam/classifications.xlsx",
+    sheet = "SAM Correspondence",
+    col_names = T,
+    col_types = "text",
+  )
+
+sam_factors <- read_excel(
+    "data/sam/classifications.xlsx",
+    sheet = "SAM factors",
+    col_names = T,
+    col_types = "text",
+  )
+
+coicop <- read_excel(
+    "data/sam/classifications.xlsx",
+    sheet = "COICOP",
+    col_names = T,
+    col_types = "text",
+  ) |> 
+  mutate(simple_code = as.integer(gsub("\\.", "", Coicop)))
+
+coicop_filtered <- coicop |> 
+  filter( nchar(as.character(simple_code)) >= 5)
+
+```
+
+## Population totals
+
+First we check that our dataset amounts to population totals.
 
 ```{r}
 #| warning: false
@@ -129,10 +179,10 @@ First we check that our dataset amounts to population totals.
 #| label: pop-totals-all-quarters
 
 weights <- hh_basics |> 
-  select(household_id, QuartNo, Weights)
+  select(UID, QuartNo, Weights)
 
 hh_size |> 
-  left_join(weights, join_by(household_id)) |> 
+  left_join(weights, join_by(UID)) |> 
 #  filter(QuartNo == 110) |> 
   summarize(
     "Population" = sum(FamilySize * Weights, na.rm = T),
@@ -149,7 +199,7 @@ Upon first exploration, we see that the population amounts to 14,861,930 individ
 #| label: pop-totals-per-quarter
 
 pop_by_quarter <- hh_size |> 
-  left_join(weights, join_by(household_id)) |> 
+  left_join(weights, join_by(UID)) |> 
   group_by(QuartNo) |> 
   summarize(
     "Population" = sum(FamilySize * Weights, na.rm = T),
@@ -159,4 +209,486 @@ pop_by_quarter |>
   gt()
 ```
 
-For skill level, we will use information on schooling from 
+## Descriptors (SAM disaggregates)
+
+For skill level, we will use information on schooling from `pp$Education` (`TblShinda02)`, which has the following levels:
+
+1.  Illiterate
+2.  Do not have primary education but can read and write
+3.  Pre-primary education
+4.  Primary education
+5.  Lower secondary education
+6.  Upper secondary education
+7.  Vocational education without secondary general education
+8.  Vocational education on the base of lower secondary education with secondary general education certificate
+9.  Vocational education on the base of secondary general education (except higher professional education)
+10. Higher professional program
+11. Bachelor or equivalent
+12. Master or equivalent
+13. Doctor or equivalent
+
+We need three skill levels for our SAM template, so we map these levels to:
+
+Low skill (1 - 5): Illiterate through lower secondary.
+Medium skill (6 - 9): Upper secondary through vocational education.
+High skill (10 - 13): Higher professional program through Doctor.
+
+
+```{r}
+#| warning: false
+#| message: false
+#| label: skill-level
+
+pp_factor_descriptors <- pp |>
+  select(UID, MemberNo, Gender, Age, Education) |> 
+  mutate(MemberId = paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |>
+  mutate(Gender = factor(
+    Gender,
+    levels = c(1, 2),
+    labels = c("Female", "Male")
+  )) |> 
+  mutate(
+    SkillLevel = case_when(
+      Education >= 0 & Education <= 5 ~ 1,
+      Education > 5 & Education <= 9 ~ 2,
+      Education > 9 & Education <= 13 ~ 3,
+      TRUE ~ NA ) ) |> 
+  mutate(
+    SkillLevel = factor(
+      SkillLevel, 
+      levels = c( 1, 2, 3),
+      labels = c( "Low Skill", "Medium Skill", "High Skill"))
+  )
+```
+
+Now that we have skill levels, we need to add information on urban/rural (from `hh_basics`) and quintile (from `ind_poverty`), and type of income earner (from `pp_labor`).
+
+```{r}
+#| warning: false
+#| message: false
+#| label: factor-income-descriptors
+
+urb_rur <- hh_basics |> 
+  select(UID, UrbanOrRural, RegNo, Weights) |> 
+  mutate(
+    UrbanOrRural = factor(
+      UrbanOrRural,
+      levels = c(2,1),
+      labels = c("Rural", "Urban")
+    )
+  )
+
+quintiles <- poverty |> 
+  select(UID, quintilc) |> 
+  rename(Quintile = quintilc) |> 
+  mutate(
+    Quintile = factor(
+      Quintile,
+      levels = c(1:5),
+      labels = c("Q1", "Q2", "Q3", "Q4", "Q5")
+    )
+  )
+
+pp_factor_descriptors <- pp_factor_descriptors |> 
+  left_join(urb_rur, join_by(UID)) |> 
+  left_join(quintiles, join_by(UID))
+```
+
+## Labor status
+
+We work with labor status from `Shinda05_1`. Since, upon import NACE 1 codes are converted to numbers, we need to convert them back to text, so that we can keep zeros to the left for proper order. We then extract the first two digits and match with 2-digit NACE Rev. 1 and find the correspondence to Rev. 2 from the SAM using the look-up table `sam_activities`. For proper order, we convert the SAM activities columns for job 1 and job 2 to factor, using the order from the dataset `sam_factors`.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: nace-codes
+
+pp_emstatus <- pp_labor |> 
+  mutate(MemberId = paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |>
+  mutate(
+    # Job 1 NACE Rev 1 code. 
+    Q5  = paste0(sprintf("%04d", Q5)),
+    # Job 2 NACE Rev 1 code.
+    Q12 = paste0(sprintf("%04d", Q12))) |> 
+  mutate(
+    job1 = substr(Q5, 1, 2),
+    job2 = substr(Q12, 1, 2)
+  ) |> 
+  # We match to Rev 2 and SAM classifications (for job 1 and job 2)
+  left_join(
+    sam_activities[,c(1,4)], 
+    join_by(job1 == rev1_2d)) |> 
+  left_join(
+    sam_activities[,c(1,4)],
+    join_by(job2 == rev1_2d),
+    suffix = c("_job1", "_job2")) |> 
+  # And convert to factors for proper order
+  mutate(
+    SAM_job1 = factor(
+      SAM_job1, 
+      levels = sam_factors$SAM,
+      # labels = sam_factors$SAM_description
+      ),
+    SAM_job2 = factor(
+      SAM_job2, 
+      levels = sam_factors$SAM,
+      # labels = sam_factors$SAM_description
+      )
+  )
+
+head(pp_emstatus[c(18, 34, 40, 41, 67),c("UID", "MemberNo", "SAM_job1", "SAM_job2")]) |> 
+  gt()
+```
+
+Before making our multi-dimensional tables, we need to identify different types of income. f-lab (wages) and f-surp (capital income). The instruction is that f-surp needs to be split into wages to entrepreneurs/self employed and capital income.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: identify-incomes
+
+pp_emstatus <- pp_emstatus |> 
+  mutate(
+    # We add accross three months for each source (and coalesce the NAs to 0)
+    flab_job1 = rowSums(across(starts_with("Q8_faqti_"), \(x) coalesce(x, 0))),
+    flab_job2 = rowSums(across(starts_with("Q14_faqti_"), \(x) coalesce(x, 0))),
+    fsurp = rowSums(across(starts_with("Q10_faqti_"), \(x) coalesce(x, 0)))
+  ) |> 
+  # We also add factor labels to Employment Status
+  mutate(
+    Q7 = factor(
+      Q7,
+      levels = c(1:6),
+      labels = c("Employee", "Employer", "Own Account (Non-Ag.)", "Own Account (Ag.)", "Unpaid Worker", "Other"))
+    ) |> 
+  mutate(
+    Q13 = factor(
+      Q13,
+      levels = c(1:6),
+      labels = c("Employee", "Employer", "Own Account (Non-Ag.)", "Own Account (Ag.)", "Unpaid Worker", "Other"))
+    )
+```
+
+And we add our labor market variables to our `pp_factor_descriptors` dataset.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: join-factor-descriptors-EmStatus
+
+pp_emstatus <- pp_emstatus |>
+  select(-UID,-MemberNo) |> 
+  left_join(pp_factor_descriptors, join_by(MemberId)) |> 
+  relocate(c(UID, MemberNo, MemberId), .before = 1)
+```
+
+## Multidimensional Tables
+
+Now we can put together our tables.
+
+### Wages and Surplus income
+
+```{r}
+#| warning: false
+#| message: false
+#| label: flab-data
+
+flab1 <- pp_emstatus |> 
+  select(
+    Q7, 
+    UrbanOrRural, 
+    Quintile, 
+    SkillLevel,
+    Gender, 
+    flab_job1, 
+    SAM_job1, 
+    Weights) |> 
+  rename(
+    EmStatus = Q7,
+    FLab = flab_job1,
+    SAM = SAM_job1
+  ) |> 
+  mutate(
+    FLab = coalesce(FLab, 0) * Weights,
+    FactorType = "f-lab"
+  )
+
+flab2 <- pp_emstatus |> 
+  select(
+    Q13, 
+    UrbanOrRural, 
+    Quintile, 
+    SkillLevel,
+    Gender, 
+    flab_job2, 
+    SAM_job2, 
+    Weights) |> 
+  rename(
+    EmStatus = Q13,
+    FLab = flab_job2,
+    SAM = SAM_job2
+  ) |> 
+  mutate(
+    FLab = coalesce(FLab, 0) * Weights,
+    FactorType = "f-lab"
+  )
+
+fsurp <- pp_emstatus |> 
+  select(
+    Q7, 
+    UrbanOrRural, 
+    Quintile, 
+    SkillLevel,
+    Gender, 
+    fsurp, 
+    SAM_job1, 
+    Weights) |> 
+  rename(
+    EmStatus = Q7,
+    FLab = fsurp,
+    SAM = SAM_job1
+  ) |> 
+  mutate(
+    FLab = coalesce(FLab, 0) * Weights,
+    FactorType = "f-surp"
+  )
+
+flab <- rbind(flab1, flab2, fsurp)
+is.na(flab$FLab) <- 0
+``` 
+
+### Filling out the templates 
+
+```{r}
+#| warning: false
+#| message: false
+#| label: income-pivot 
+
+factor_income <- flab |>
+  filter(
+    as.numeric(EmStatus) < 6
+  ) |> 
+  group_by(
+    FactorType,
+    EmStatus, 
+    UrbanOrRural, 
+    Quintile, 
+    SkillLevel,
+    Gender) |> 
+  summarize(FLab = sum(FLab, na.rm = T)) |> 
+  ungroup() |> 
+  pivot_wider(
+    id_cols = c(FactorType, EmStatus, UrbanOrRural, Quintile, SkillLevel),
+    names_from = c(Gender),
+    values_from = FLab ) |>
+  pivot_wider(
+    id_cols = c(FactorType, EmStatus, UrbanOrRural, Quintile),
+    names_from = c(SkillLevel),
+    values_from = c(Female, Male) ) |>
+  mutate(across(5:10, ~replace_na(., 0)))
+
+factor_income |> 
+  gt()
+```
+
+Salaries from employees, salaries paid to business owners, and own account workers (mixed income).
+
+```{r}
+#| warning: false
+#| message: false
+#| label: factor-income-comprehensive
+
+factor_income_comprehensive <- flab |>
+  filter(
+    as.numeric(EmStatus) < 6
+  ) |> 
+  group_by(
+    FactorType,
+    EmStatus, 
+    UrbanOrRural, 
+    Quintile, 
+    SkillLevel,
+    Gender) |> 
+  summarize(FLab = sum(FLab, na.rm = T)) |> 
+  ungroup() |> 
+  pivot_wider(
+    id_cols = c(FactorType, EmStatus, UrbanOrRural, Quintile, SkillLevel),
+    names_from = c(Gender),
+    values_from = FLab ) |>
+  pivot_wider(
+    id_cols = c(FactorType, EmStatus, UrbanOrRural, Quintile),
+    names_from = c(SkillLevel),
+    values_from = c(Female, Male) ) |>
+  mutate(across(5:10, ~replace_na(., 0)))
+
+factor_income_comprehensive |> 
+  gt()
+```
+
+Now we single out wages.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: factor-income-wages
+
+factor_income_wages <- flab |>
+  filter(
+    as.numeric(EmStatus) < 6,
+    FactorType == "f-lab"
+  ) |> 
+  group_by( 
+    UrbanOrRural, 
+    Quintile, 
+    SkillLevel,
+    Gender) |> 
+  summarize(FLab = sum(FLab, na.rm = T)) |> 
+  ungroup() |> 
+  pivot_wider(
+    id_cols = c(UrbanOrRural, Quintile, SkillLevel),
+    names_from = c(Gender),
+    values_from = FLab ) |>
+  pivot_wider(
+    id_cols = c(UrbanOrRural, Quintile),
+    names_from = c(SkillLevel),
+    values_from = c(Female, Male) ) |>
+  mutate(across(3:8, ~replace_na(., 0)))
+
+factor_income_wages |> 
+  gt()
+```
+
+And Capital.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: factor-income-capital
+
+factor_income_capital <- flab |>
+  filter(
+    as.numeric(EmStatus) < 6,
+    FactorType == "f-surp"
+  ) |> 
+  group_by( 
+    UrbanOrRural, 
+    Quintile, 
+    ) |> 
+  summarize(Capital = sum(FLab, na.rm = T)) |> 
+  ungroup()
+
+factor_income_capital |> 
+  gt()
+```
+
+And now, differentiated by economic activity.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: factor-income-wages-activity
+
+factor_income_wages_activity <- flab |>
+  filter(
+    as.numeric(EmStatus) < 6,
+    FactorType == "f-lab"
+  ) |> 
+  group_by( 
+    SkillLevel,
+    Gender,
+    SAM) |> 
+  summarize(FLab = sum(FLab, na.rm = T)) |> 
+  ungroup() |> 
+  pivot_wider(
+    id_cols = c(Gender,SkillLevel),
+    names_from = c(SAM),
+    names_expand = T,
+    names_sort = T,
+    values_from = FLab ) |> 
+  mutate(across(3:40, ~replace_na(., 0)))
+
+factor_income_wages_activity |> 
+  gt()
+```
+
+And Capital.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: factor-income-capital-activity
+
+factor_income_capital_activity <- flab |>
+  filter(
+    as.numeric(EmStatus) < 6,
+    FactorType == "f-surp"
+  ) |> 
+  group_by( 
+    SAM) |> 
+  summarize(
+    Capital = "Capital",
+    FLab = sum(FLab, na.rm = T)) |> 
+  ungroup() |> 
+  pivot_wider(
+    id_cols = c(Capital),
+    names_from = c(SAM),
+    names_expand = T,
+    names_sort = T,
+    values_from = FLab ) |> 
+  mutate(across(2:39, ~replace_na(., 0)))
+
+factor_income_capital_activity |> 
+  gt()
+```
+
+### Exports to Excel
+
+```{r}
+#| warning: false
+#| message: false
+#| label: save-to-excel
+
+wb <- loadWorkbook("data/sam/SAMshares_GEO.xlsx")
+names(wb)
+writeData(
+  wb, 
+  "factor income comprehensive", 
+  factor_income_comprehensive , 
+  startRow = 1, 
+  startCol = 1, 
+  rowNames = FALSE)
+writeData(
+  wb, 
+  "factor income", 
+  factor_income_wages , 
+  startRow = 21, 
+  startCol = 2, 
+  rowNames = FALSE)
+writeData(
+  wb, 
+  "factor income", 
+  factor_income_capital , 
+  startRow = 5, 
+  startCol = 13, 
+  rowNames = FALSE)
+writeData(
+  wb, 
+  "factor payments", 
+  factor_income_wages_activity , 
+  startRow = 27, 
+  startCol = 1, 
+  rowNames = FALSE)
+writeData(
+  wb, 
+  "factor payments", 
+  factor_income_capital_activity , 
+  startRow = 37, 
+  startCol = 2, 
+  rowNames = FALSE)
+saveWorkbook(
+  wb,
+  "data/sam/SAMshares_GEO.xlsx",
+  overwrite = T)
+```
+
+## References
