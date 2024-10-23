@@ -17,24 +17,24 @@ format:
   pdf:
     # prefer-html: true
     toc: true
-    number-sections: false
+    number-sections: true
     colorlinks: true
 editor_options: 
   chunk_output_type: console
 ---
 
-## Introduction
+# Introduction
 
 In this data request, we estimate shares to disaggregate the Social Accounting Matrix for the Macroeconomic team.
 
-### Objectives
+## Objectives
 
 1. HH split: Split our representative household into income quintiles and rural/urban households.
 2. Labor split: Split labor into 6 types according to gender and skill level.
 3. Economic activity split: Split wages and capital by economic activities.
 4. Split household consumption by urban/rural, quintiles and economic activity.
 
-### Preliminaries
+## Preliminaries
 
 ```{r}
 #| warning: false
@@ -222,7 +222,9 @@ pop_by_quarter |>
   gt()
 ```
 
-## Descriptors (SAM disaggregates)
+# Generating descriptor variables (SAM disaggregates)
+
+## Skill level
 
 For skill level, we will use information on schooling from `pp$Education` (`TblShinda02)`, which has the following levels:
 
@@ -309,7 +311,7 @@ pp_factor_descriptors <- pp_factor_descriptors |>
   left_join(quintiles, join_by(UID))
 ```
 
-## Labor status
+## Labor status and Economic Activities
 
 We work with labor status from `Shinda05_1`. Since, upon import NACE 1 codes are converted to numbers, we need to convert them back to text, so that we can keep zeros to the left for proper order. We then extract the first two digits and match with 2-digit NACE Rev. 1 and find the correspondence to Rev. 2 from the SAM using the look-up table `sam_activities`. For proper order, we convert the SAM activities columns for job 1 and job 2 to factor, using the order from the dataset `sam_factors`.
 
@@ -358,6 +360,8 @@ head(
   c("UID", "MemberNo", "SAM_job1", "SAM_job2")]) |> 
   gt()
 ```
+
+## Types of income
 
 Before making our multi-dimensional tables, we need to identify different types of income. f-lab (wages) and f-surp (capital income). The instruction is that f-surp needs to be split into wages to entrepreneurs/self employed and capital income.
 
@@ -411,11 +415,11 @@ pp_emstatus <- pp_emstatus |>
   relocate(c(UID, MemberNo, MemberId), .before = 1)
 ```
 
-## Multidimensional Tables
+# Multidimensional Tables
 
 Now we can put together our tables.
 
-### Wages and Surplus income
+## Wages and Surplus income
 
 ```{r}
 #| warning: false
@@ -486,7 +490,7 @@ flab <- rbind(flab1, flab2, fsurp)
 is.na(flab$FLab) <- 0
 ``` 
 
-### Filling out the templates 
+## Filling out the templates 
 
 We first get a table with all the possible combinations, so we can make sure f-lab and f-surp have the data that we need.
 
@@ -670,7 +674,7 @@ factor_income_capital_activity |>
   gt()
 ```
 
-### Exports to Excel
+# Exports to Excel
 
 Here we export to the same Excel we are using as template, but we don't overwrite the original template, just so we can compare the result to the request.
 
@@ -722,4 +726,4 @@ saveWorkbook(
   overwrite = T)
 ```
 
-## References
+
