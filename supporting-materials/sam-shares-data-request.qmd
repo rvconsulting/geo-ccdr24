@@ -157,7 +157,7 @@ We also need look-up tables.
 
 sam_activities <- read_excel(
     "data/sam/classifications.xlsx",
-    sheet = "SAM Correspondence",
+    sheet = "SAM-REV2",
     col_names = T,
     col_types = "text",
   )
@@ -326,21 +326,22 @@ pp_emstatus <- pp_labor |>
       paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |>
   mutate(
     # Job 1 NACE Rev 1 code. 
-    Q5  = paste0(sprintf("%04d", Q5)),
+    Q5  = if_else(!is.na(Q5),paste0(sprintf("%04d", Q5)), NA),
     # Job 2 NACE Rev 1 code.
-    Q12 = paste0(sprintf("%04d", Q12))) |> 
+    Q12 = if_else(!is.na(Q12),paste0(sprintf("%04d", Q12)), NA)) |> 
   mutate(
-    job1 = substr(Q5, 1, 2),
-    job2 = substr(Q12, 1, 2)
+    job1 = if_else(!is.na(Q5),substr(Q5, 1, 2), NA),
+    job2 = if_else(!is.na(Q12),substr(Q12, 1, 2), NA)
   ) |> 
   # We match to Rev 2 and SAM classifications (for job 1 and job 2)
   left_join(
-    sam_activities[,c(1,4)], 
-    join_by(job1 == rev1_2d)) |> 
+    sam_activities[,c(1,3)], 
+    join_by(job1 == rev2_2d)) |> 
   left_join(
-    sam_activities[,c(1,4)],
-    join_by(job2 == rev1_2d),
-    suffix = c("_job1", "_job2")) |> 
+    sam_activities[,c(1,3)],
+    join_by(job2 == rev2_2d),
+    suffix = 
+      c("_job1", "_job2")) |> 
   # And convert to factors for proper order
   mutate(
     SAM_job1 = factor(
@@ -435,7 +436,8 @@ flab1 <- pp_emstatus |>
     Gender, 
     flab_job1, 
     SAM_job1, 
-    Weights) |> 
+    Weights) |>
+  filter(!is.na(flab_job1) & flab_job1 > 0) |> 
   rename(
     EmStatus = Q7,
     FLab = flab_job1,
@@ -456,6 +458,7 @@ flab2 <- pp_emstatus |>
     flab_job2, 
     SAM_job2, 
     Weights) |> 
+  filter(!is.na(flab_job2) & flab_job2 > 0) |>
   rename(
     EmStatus = Q13,
     FLab = flab_job2,
@@ -475,7 +478,8 @@ fsurp <- pp_emstatus |>
     Gender, 
     fsurp, 
     SAM_job1, 
-    Weights) |> 
+    Weights) |>
+  filter(!is.na(fsurp)) |> 
   rename(
     EmStatus = Q7,
     FLab = fsurp,
@@ -554,7 +558,7 @@ factor_income_comprehensive <- flab |>
   mutate(across(5:10, ~replace_na(., 0)))
 
 # Sneak peak
-head(factor_income_comprehensive[,c(1:7)]) |> 
+head(factor_income_comprehensive[,c(3:7)]) |> 
   gt()
 ```
 
@@ -627,21 +631,21 @@ factor_income_wages_activity <- flab |>
     FactorType == "f-lab"
   ) |> 
   group_by( 
-    SkillLevel,
     Gender,
+    SkillLevel,
     SAM) |> 
   summarize(FLab = sum(FLab, na.rm = T)) |> 
   ungroup() |> 
   pivot_wider(
-    id_cols = c(Gender,SkillLevel),
+    #id_cols = c(Gender, SkillLevel),
     names_from = c(SAM),
     names_expand = T,
     names_sort = T,
     values_from = FLab ) |> 
-  mutate(across(3:40, ~replace_na(., 0)))
+  mutate(across(3:39, ~replace_na(., 0)))
 
-factor_income_wages_activity |> 
-  gt()
+# factor_income_wages_activity |> 
+#   gt()
 ```
 
 And Capital.
@@ -668,10 +672,216 @@ factor_income_capital_activity <- flab |>
     names_expand = T,
     names_sort = T,
     values_from = FLab ) |> 
-  mutate(across(2:39, ~replace_na(., 0)))
+  mutate(across(2:38, ~replace_na(., 0)))
 
-factor_income_capital_activity |> 
-  gt()
+# factor_income_capital_activity |> 
+#   gt()
+```
+
+# Household Consumption
+
+## Datasets (ILCS 2022)
+
+```{r}
+#| warning: false
+#| message: false
+#| lst-label: original-datasets-2022
+
+# Household Unique ID, Weights, Location and other basic variables
+hh_basics_22 <- read_dta(
+  "data/ilcs_2022/sysschedule.dta") |>
+  mutate(
+    UID = as.integer(UID))
+
+# Household size (includes no. of family members)
+hh_size_22 <- read_dta(
+  "data/ilcs_2022/familysize.dta")|> 
+  mutate(
+    UID = as.integer(UID))
+
+# Processed income at household level
+hh_income_22 <- read_dta(
+  "data/ilcs_2022/tblincomes.dta")|> 
+  mutate(
+    UID = as.integer(UID))
+
+# Consumption aggregate at household level 
+hh_expenditure_22 <- read_dta(
+  "data/ilcs_2022/tblexpenditures.dta")|> 
+  rename(# rename total expenditure variables
+         total_expenditure = MTlianixarjebi_,
+         total_expenditure_aeq06 = MTlianimoxmareba_EqAdScale,
+         total_expenditure_aeq08 = Mtlianimoxmareba_EqAdScale_08) |> 
+  mutate(
+    UID = as.integer(UID))
+
+# Characteristics of the dwelling
+hh_chars_22 <- read_dta(
+  "data/ilcs_2022/tblshinda01.dta")|>
+  mutate(
+    UID = as.integer(UID))
+
+# Persons (pp)
+pp_22 <- read_dta(
+  "data/ilcs_2022/tblshinda02.dta") |> 
+  mutate(
+    UID = as.integer(UID),
+    MemberNo = as.integer(MemberNo))
+
+
+# Poverty
+poverty_22 <- read_dta(
+  "data/ilcs_2022/POVERTY.dta") |> 
+  mutate(
+    UID = as.integer(UID))
+```
+
+Here we have the issue that for Household Expenditures the documentation claims to use COICOP, but we have a simple 5 digit structure that doesn't match any of the forms of COICOP. There's a processed dataset that summarizes the following:
+
+**Total cash consumption expenditure**
+- On food, beverages, tobacco
+- On clothing and footwear
+- On household goods
+- On health care
+- On fuel and electricity
+- On transport
+- On education
+
+**Other consumption expenditure**
+- Non-consumption cash expenditure
+- On agricultural activity
+- On transfers
+- On saving and lending
+- On property acquisition
+
+We will create pivot tables out of that with the 2022 Household Survey.
+## Descriptors
+
+```{r}
+#| warning: false
+#| message: false
+#| label: factor-income-descriptors
+
+urb_rur_22 <- hh_basics_22 |> 
+  select(UID, UrbanOrRural, RegNo, Weights) |> 
+  mutate(
+    UrbanOrRural = factor(
+      UrbanOrRural,
+      levels = c(2,1),
+      labels = c("Rural", "Urban")
+    )
+  )
+
+quintiles_22 <- poverty_22 |> 
+  select(UID, quintilc) |> 
+  rename(Quintile = quintilc) |> 
+  mutate(
+    Quintile = factor(
+      Quintile,
+      levels = c(1:5),
+      labels = c("Q1", "Q2", "Q3", "Q4", "Q5")
+    )
+  )
+
+hh_consumption_22 <- hh_expenditure_22 |> 
+  left_join(urb_rur_22, join_by(UID)) |> 
+  left_join(quintiles_22, join_by(UID)) |> 
+  rename(
+    "CE. Food, beverages, and tobacco" = sursati__sasmeli__Tambaqo,
+    "CE. Clothing and footwear" = tansacmeli,
+    "CE. Household goods" = saojaxo,
+    "CE. Health care" = samedicino,
+    "CE. Fuel and electricity" = energia,
+    "CE. Transport" = transporti,
+    "CE. Education" = ganatleba,
+    "CE. Other consumption expenditure" = sxva,
+    "Total cash consumption expenditure" = samomxmXarjebi,
+    "NC. Agricultural activity" = sasoflo,
+    "NC. Transfers" = transferti,
+    "NC. Saving and lending" = DazogvaAnCasesxeba,
+    "NC. Property acquisition" = qonebis_seZena,
+    "Non-consumption cash expenditure" = SxvaGasavlebi,
+    "Non-cash expenditure" = Arafuladi_moxm_,
+    "Cash expenditure, total" = fuladixarjebi,
+    "Consumption expenditure, total" = MTlianimoxmareba_,
+  )
+```
+
+## Template
+
+First we pivot our expenditures longer.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: hh-consumption-22-pivot-longer
+
+hh_consumption_22 <- hh_consumption_22 |>
+  select(
+    -c(
+      `Total cash consumption expenditure`, `Non-consumption cash expenditure`, 
+      `Non-cash expenditure`, `Cash expenditure, total`, `Consumption expenditure, total`,
+      total_expenditure, total_expenditure_aeq06, total_expenditure_aeq08)) |> 
+  pivot_longer(
+    cols = c(
+    "CE. Food, beverages, and tobacco",
+    "CE. Clothing and footwear",
+    "CE. Household goods",
+    "CE. Health care",
+    "CE. Fuel and electricity",
+    "CE. Transport",
+    "CE. Education",
+    "CE. Other consumption expenditure",
+    "NC. Agricultural activity",
+    "NC. Transfers",
+    "NC. Saving and lending",
+    "NC. Property acquisition"
+    ),
+    names_to = "ConsumptionCategory", 
+    values_to = "Consumption"
+  ) |> 
+  mutate(
+    ConsumptionCategory = factor(
+      ConsumptionCategory,
+      levels = c(
+        "CE. Food, beverages, and tobacco",
+        "CE. Clothing and footwear",
+        "CE. Household goods",
+        "CE. Fuel and electricity",
+        "CE. Transport",
+        "CE. Education",
+        "CE. Health care",
+        "CE. Other consumption expenditure",
+        "NC. Agricultural activity",
+        "NC. Transfers",
+        "NC. Saving and lending",
+        "NC. Property acquisition"
+      )
+    )
+  )
+```
+
+And now we can fill our template.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: hh-consumption-22
+
+hh_consumption_pivot <- hh_consumption_22 |>
+  group_by( 
+    ConsumptionCategory,
+    UrbanOrRural, 
+    Quintile) |> 
+  summarize(
+    Consumption = sum((coalesce(Consumption, 0) * Weights), na.rm = T)) |> 
+  ungroup() |> 
+  pivot_wider(
+    #id_cols = c(Capital),
+    names_from = c(UrbanOrRural, Quintile),
+    names_expand = T,
+    names_sort = T,
+    values_from = Consumption )
 ```
 
 # Exports to Excel
@@ -719,6 +929,13 @@ writeData(
   factor_income_capital_activity , 
   startRow = 37, 
   startCol = 2, 
+  rowNames = FALSE)
+writeData(
+  wb, 
+  "HH Consumption", 
+  hh_consumption_pivot , 
+  startRow = 45, 
+  startCol = 3, 
   rowNames = FALSE)
 saveWorkbook(
   wb,
