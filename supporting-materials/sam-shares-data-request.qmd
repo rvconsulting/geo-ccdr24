@@ -760,7 +760,7 @@ We will create pivot tables out of that with the 2022 Household Survey.
 ```{r}
 #| warning: false
 #| message: false
-#| label: factor-income-descriptors
+#| label: factor-income-descriptors-22
 
 urb_rur_22 <- hh_basics_22 |> 
   select(UID, UrbanOrRural, RegNo, Weights) |> 
