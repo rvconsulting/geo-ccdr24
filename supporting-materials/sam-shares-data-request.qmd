@@ -34,6 +34,12 @@ In this data request, we estimate shares to disaggregate the Social Accounting M
 3. Economic activity split: Split wages and capital by economic activities.
 4. Split household consumption by urban/rural, quintiles and economic activity.
 
+(Addendum)
+
+5. Fill out the wages and the quantity per employment status (Paid employee, Employer, self-employed and non-paid employees) (cells in yellow in file: `SAMshares_GEO_v03.xlsx`).
+6. Split transfers (this part from ILCS 2023).
+
+
 ## Preliminaries
 
 ```{r}
@@ -527,6 +533,8 @@ factor_income <- flab |>
   mutate(across(5:10, ~replace_na(., 0)))
 ```
 
+### Salaries and mixed income
+
 Salaries from employees, salaries paid to business owners, and own account workers (mixed income).
 
 ```{r}
@@ -562,6 +570,8 @@ head(factor_income_comprehensive[,c(3:7)]) |>
   gt()
 ```
 
+### Wages
+
 Now we single out wages.
 
 ```{r}
@@ -594,6 +604,8 @@ factor_income_wages <- flab |>
 factor_income_wages |> 
   gt()
 ```
+
+### Capital
 
 And Capital.
 
@@ -677,6 +689,44 @@ factor_income_capital_activity <- flab |>
 # factor_income_capital_activity |> 
 #   gt()
 ```
+
+### Addendum: wages and quantity per employment status.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: factor-income-wages-emstatus-activity
+
+factor_income_wages_emStatus_activity <- flab |>
+  filter(
+    as.numeric(EmStatus) < 5,
+    # FactorType == "f-lab"
+  ) |>
+  group_by(
+    FactorType,
+    EmStatus,
+    Gender,
+    SkillLevel,
+    SAM) |> 
+  summarize(FLab = sum(FLab, na.rm = T),
+            .groups = "keep") |> 
+  ungroup() |> 
+  pivot_wider(
+    #id_cols = c(Gender, SkillLevel),
+    names_from = c(SAM),
+    names_expand = T,
+    names_sort = T,
+    values_fill = 0,
+    values_from = FLab ) |> 
+  complete(
+    FactorType,
+    EmStatus,
+    Gender,
+    SkillLevel
+  ) |> 
+  mutate(across(5:41, ~replace_na(., 0)))
+```
+
 
 # Household Consumption
 
@@ -940,6 +990,31 @@ writeData(
 saveWorkbook(
   wb,
   "data/sam/SAMshares_GEO.xlsx",
+  overwrite = T)
+```
+
+Addendum:
+
+
+```{r}
+#| warning: false
+#| message: false
+#| label: save-to-excel
+
+wb <- loadWorkbook("data/sam/SAMshares_GEO_v03.xlsx")
+names(wb)
+
+writeData(
+  wb, 
+  "factor payments_split", 
+  factor_income_wages_emStatus_activity , 
+  startRow = 92, 
+  startCol = 1, 
+  rowNames = FALSE)
+
+saveWorkbook(
+  wb,
+  "data/sam/SAMshares_GEO_v03.xlsx",
   overwrite = T)
 ```
 

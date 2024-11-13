@@ -1,0 +1,71 @@
+---
+title: "SAM Shares Data Request - Labour Force Survey"
+subtitle: "Georgia Country Climate and Development Report"
+author:
+  - name: "Renato Vargas"
+    id: rv
+    # email: hvargasaldana@worldbank.org
+    affiliation: 
+      - name: Consultant for The World Bank
+  - name: "Noe Nicolas Reidt"
+    id: nr
+    # email: nreidt@worldbank.org
+    affiliation: 
+      - name: The World Bank
+format: 
+  html:
+    toc: true
+  # docx:
+  #   toc: true
+  #   number-sections: true
+  #   highlight-style: arrow
+  pdf:
+    # prefer-html: true
+    toc: true
+    number-sections: true
+    colorlinks: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Introduction
+
+In this data request, we estimate shares to disaggregate the Social Accounting Matrix for the Macroeconomic team. Originally, these estimations were done with the Integrated Living Conditions Survey, because the poverty team uses it for scenario analysis. However, labor is reported from the Labor Force Survey and it makes more sense to use that data source to complement the SAM.
+
+## Objectives
+
+1. HH split: Split our representative household into income quintiles and rural/urban households.
+2. Labor split: Split labor into 6 types according to gender and skill level.
+3. Economic activity split: Split wages and capital by economic activities.
+4. Split household consumption by urban/rural, quintiles and economic activity.
+
+(Addendum)
+
+5. Fill out the wages and the quantity per employment status (Paid employee, Employer, self-employed and non-paid employees) (cells in yellow in file: `SAMshares_GEO_v03.xlsx`).
+6. Split transfers (this part from ILCS 2023).
+
+## Preliminaries
+
+```{r}
+#| warning: false
+#| message: false
+#| label: preliminaries
+
+# Clean workspace
+rm(list = ls())
+
+# Georgia country ISO code
+iso <- "GEO"
+
+# Survey year
+ilcs_survey_year <- 2023
+lfs_survey_year  <- 2022
+
+# Exchange rate USD per GEL
+er <- 0.37
+
+# Years of interest for our macroeconomic scenario analysis
+# analysis_years <- c(2030, 2050)
+```
+
+
