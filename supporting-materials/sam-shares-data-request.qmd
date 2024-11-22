@@ -292,7 +292,7 @@ Now that we have skill levels, we need to add information on urban/rural (from `
 #| label: factor-income-descriptors
 
 urb_rur <- hh_basics |> 
-  select(UID, UrbanOrRural, RegNo, Weights) |> 
+  select(UID,QuartNo, UrbanOrRural, RegNo, Weights) |> 
   mutate(
     UrbanOrRural = factor(
       UrbanOrRural,
@@ -419,7 +419,7 @@ And we add our labor market variables to our `pp_factor_descriptors` dataset.
 pp_emstatus <- pp_emstatus |>
   select(-UID,-MemberNo) |> 
   left_join(pp_factor_descriptors, join_by(MemberId)) |> 
-  relocate(c(UID, MemberNo, MemberId), .before = 1)
+  relocate(c(UID, MemberNo, MemberId, QuartNo), .before = 1)
 ```
 
 # Multidimensional Tables
@@ -435,6 +435,7 @@ Now we can put together our tables.
 
 flab1 <- pp_emstatus |> 
   select(
+    QuartNo,
     Q7, 
     UrbanOrRural, 
     Quintile, 
@@ -456,6 +457,7 @@ flab1 <- pp_emstatus |>
 
 flab2 <- pp_emstatus |> 
   select(
+    QuartNo,
     Q13, 
     UrbanOrRural, 
     Quintile, 
@@ -477,6 +479,7 @@ flab2 <- pp_emstatus |>
 
 fsurp <- pp_emstatus |> 
   select(
+    QuartNo,
     Q7, 
     UrbanOrRural, 
     Quintile, 
@@ -532,6 +535,7 @@ factor_income <- flab |>
     values_from = c(Female, Male) ) |>
   mutate(across(5:10, ~replace_na(., 0)))
 ```
+
 
 ### Salaries and mixed income
 
@@ -727,6 +731,120 @@ factor_income_wages_emStatus_activity <- flab |>
   mutate(across(5:41, ~replace_na(., 0)))
 ```
 
+Number of people.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: flab-data
+
+noppl1 <- pp_emstatus |> 
+  select(
+    QuartNo,
+    Q7, 
+    UrbanOrRural, 
+    Quintile, 
+    SkillLevel,
+    Gender, 
+    flab_job1, 
+    SAM_job1, 
+    Weights) |>
+  filter(!is.na(flab_job1)) |>
+  rename(
+    EmStatus = Q7,
+    FLab = flab_job1,
+    SAM = SAM_job1
+  ) |> 
+  mutate(
+    FLab = coalesce(FLab, 0) * Weights,
+    FactorType = "f-lab"
+  )
+
+noppl2 <- pp_emstatus |> 
+  select(
+    QuartNo,
+    Q13, 
+    UrbanOrRural, 
+    Quintile, 
+    SkillLevel,
+    Gender, 
+    flab_job2, 
+    SAM_job2, 
+    Weights) |> 
+  filter(!is.na(flab_job2)) |>
+  rename(
+    EmStatus = Q13,
+    FLab = flab_job2,
+    SAM = SAM_job2
+  ) |> 
+  mutate(
+    FLab = coalesce(FLab, 0) * Weights,
+    FactorType = "f-lab"
+  )
+
+nopplsurp <- pp_emstatus |> 
+  select(
+    QuartNo,
+    Q7, 
+    UrbanOrRural, 
+    Quintile, 
+    SkillLevel,
+    Gender, 
+    fsurp, 
+    SAM_job1, 
+    Weights) |>
+  filter(!is.na(fsurp)) |>
+  rename(
+    EmStatus = Q7,
+    FLab = fsurp,
+    SAM = SAM_job1
+  ) |> 
+  mutate(
+    FLab = coalesce(FLab, 0) * Weights,
+    FactorType = "f-surp"
+  )
+
+noppl <- rbind(noppl1, noppl2, nopplsurp)
+is.na(noppl$FLab) <- 0
+``` 
+
+
+
+```{r}
+#| warning: false
+#| message: false
+#| label: no-people
+
+no_people <- noppl |>
+  filter(
+    # as.numeric(EmStatus) < 5,
+    QuartNo == 110
+    # FactorType == "f-lab"
+  ) |>
+  group_by(
+    FactorType,
+    EmStatus,
+    Gender,
+    SkillLevel,
+    SAM) |> 
+  summarize(No_People = sum(Weights, na.rm = T),
+            .groups = "keep") |> 
+  ungroup() |> 
+  pivot_wider(
+    #id_cols = c(Gender, SkillLevel),
+    names_from = c(SAM),
+    names_expand = T,
+    names_sort = T,
+    values_fill = 0,
+    values_from = No_People ) |> 
+  complete(
+    FactorType,
+    EmStatus,
+    Gender,
+    SkillLevel
+  ) |> 
+  mutate(across(5:41, ~replace_na(., 0)))
+```
 
 # Household Consumption
 
@@ -807,6 +925,8 @@ Here we have the issue that for Household Expenditures the documentation claims 
 We will create pivot tables out of that with the 2022 Household Survey.
 ## Descriptors
 
+Transfers out
+
 ```{r}
 #| warning: false
 #| message: false
@@ -857,6 +977,47 @@ hh_consumption_22 <- hh_expenditure_22 |>
   )
 ```
 
+Transfers In
+
+```{r}
+urb_rur_22 <- hh_basics_22 |> 
+  select(UID, UrbanOrRural, RegNo, Weights) |> 
+  mutate(
+    UrbanOrRural = factor(
+      UrbanOrRural,
+      levels = c(2,1),
+      labels = c("Rural", "Urban")
+    )
+  )
+
+quintiles_22 <- poverty_22 |> 
+  select(UID, quintilc) |> 
+  rename(Quintile = quintilc) |> 
+  mutate(
+    Quintile = factor(
+      Quintile,
+      levels = c(1:5),
+      labels = c("Q1", "Q2", "Q3", "Q4", "Q5")
+    )
+  )
+
+hh_incomes_22 <- hh_income_22 |> 
+  left_join(urb_rur_22, join_by(UID)) |> 
+  left_join(quintiles_22, join_by(UID)) |> 
+  rename(
+    "CI. From hired employment" = ShemDaq,
+    "CI. From self employment" = ShemTviTdasaqm,
+    "CI. From selling agricultural production" = Shem_Sof,
+    "CI. Property income (leasing, interest etc.)" = Qonebidan,
+    "CI. Pensions, scholarships, assistances" = PensStipDaxm,
+    "CI. Remittances from abroad" = Ucxoetidan,
+    "CI. Money received as a gift" = Axloblebisagan,
+    "CI. Property disposal" = QonebisGayidvit,
+    "CI. Income from borrowing and savings" = SesxAnDanazog,
+  )
+```
+
+
 ## Template
 
 First we pivot our expenditures longer.
@@ -869,9 +1030,14 @@ First we pivot our expenditures longer.
 hh_consumption_22 <- hh_consumption_22 |>
   select(
     -c(
-      `Total cash consumption expenditure`, `Non-consumption cash expenditure`, 
-      `Non-cash expenditure`, `Cash expenditure, total`, `Consumption expenditure, total`,
-      total_expenditure, total_expenditure_aeq06, total_expenditure_aeq08)) |> 
+      `Total cash consumption expenditure`, 
+      `Non-consumption cash expenditure`, 
+      `Non-cash expenditure`, 
+      `Cash expenditure, total`, 
+      `Consumption expenditure, total`,
+      total_expenditure,
+      total_expenditure_aeq06, 
+      total_expenditure_aeq08)) |> 
   pivot_longer(
     cols = c(
     "CE. Food, beverages, and tobacco",
@@ -934,6 +1100,81 @@ hh_consumption_pivot <- hh_consumption_22 |>
     values_from = Consumption )
 ```
 
+And now we pivot our incomes longer.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: hh-incomes-22-pivot-longer
+
+hh_incomes_22 <- hh_incomes_22 |>
+  select(
+    -c(
+      ShemosavaliDaTransf,
+      SxvaFuladiSaxsrebi,
+      ArafuladiMoxmareba,
+      Shemosavalisul,
+      Fuladisaxsrebi,
+      Saxsrebi_Sul)) |> 
+  pivot_longer(
+    cols = c(
+    "CI. From hired employment",
+    "CI. From self employment",
+    "CI. From selling agricultural production", 
+    "CI. Property income (leasing, interest etc.)",
+    "CI. Pensions, scholarships, assistances",
+    "CI. Remittances from abroad",
+    "CI. Money received as a gift",
+    "CI. Property disposal",
+    "CI. Income from borrowing and savings"
+    ),
+    names_to = "IncomeCategory", 
+    values_to = "Income"
+  ) |> 
+  mutate(
+    IncomeCategory = factor(
+      IncomeCategory,
+      levels = c(
+        "CI. From hired employment",
+    "CI. From self employment",
+    "CI. From selling agricultural production", 
+    "CI. Property income (leasing, interest etc.)",
+    "CI. Pensions, scholarships, assistances",
+    "CI. Remittances from abroad",
+    "CI. Money received as a gift",
+    "CI. Property disposal",
+    "CI. Income from borrowing and savings"
+      )
+    )
+  )
+```
+
+And we fill our template
+
+
+```{r}
+#| warning: false
+#| message: false
+#| label: hh-incomes-22
+
+hh_incomes_pivot <- hh_incomes_22 |>
+  group_by( 
+    IncomeCategory,
+    UrbanOrRural, 
+    Quintile) |> 
+  summarize(
+    Income = sum((coalesce(Income, 0) * Weights), na.rm = T)) |> 
+  ungroup() |> 
+  pivot_wider(
+    #id_cols = c(Capital),
+    names_from = c(UrbanOrRural, Quintile),
+    names_expand = T,
+    names_sort = T,
+    values_from = Income )
+```
+
+
+
 # Exports to Excel
 
 Here we export to the same Excel we are using as template, but we don't overwrite the original template, just so we can compare the result to the request.
@@ -995,7 +1236,6 @@ saveWorkbook(
 
 Addendum:
 
-
 ```{r}
 #| warning: false
 #| message: false
@@ -1010,6 +1250,20 @@ writeData(
   factor_income_wages_emStatus_activity , 
   startRow = 92, 
   startCol = 1, 
+  rowNames = FALSE)
+writeData(
+  wb,
+  "factor payments_split",
+  no_people,
+  startRow = 168,
+  startCol = 1,
+  rowNames = FALSE)
+writeData(
+  wb, 
+  "transfers", 
+  hh_incomes_pivot , 
+  startRow = 44, 
+  startCol = 9, 
   rowNames = FALSE)
 
 saveWorkbook(
