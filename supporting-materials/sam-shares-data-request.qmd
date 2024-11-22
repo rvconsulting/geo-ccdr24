@@ -7,6 +7,11 @@ author:
     email: renovargas@gmail.com
     affiliation: 
       - name: Consultant for The World Bank
+  - name: "Noe Nicolas Reidt"
+    id: nr
+    # email: 
+    affiliation: 
+      - name: The World Bank
 format: 
   html:
     toc: true
