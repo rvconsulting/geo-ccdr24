@@ -10,15 +10,15 @@ author:
 format: 
   html:
     toc: true
-  docx:
-    toc: true
-    number-sections: true
-    highlight-style: arrow
-  pdf:
-    # prefer-html: true
-    toc: true
-    number-sections: true
-    colorlinks: true
+  # docx:
+  #   toc: true
+  #   number-sections: true
+  #   highlight-style: arrow
+  # pdf:
+  #   # prefer-html: true
+  #   toc: true
+  #   number-sections: true
+  #   colorlinks: true
 editor_options: 
   chunk_output_type: console
 ---
@@ -501,6 +501,7 @@ fsurp <- pp_emstatus |>
 
 flab <- rbind(flab1, flab2, fsurp)
 is.na(flab$FLab) <- 0
+
 ``` 
 
 ## Filling out the templates 
@@ -736,7 +737,7 @@ Number of people.
 ```{r}
 #| warning: false
 #| message: false
-#| label: flab-data
+#| label: noppl-data
 
 noppl1 <- pp_emstatus |> 
   select(
@@ -749,7 +750,7 @@ noppl1 <- pp_emstatus |>
     flab_job1, 
     SAM_job1, 
     Weights) |>
-  filter(!is.na(flab_job1)) |>
+  filter(!is.na(flab_job1) & !is.na(Q7)) |>
   rename(
     EmStatus = Q7,
     FLab = flab_job1,
@@ -771,7 +772,7 @@ noppl2 <- pp_emstatus |>
     flab_job2, 
     SAM_job2, 
     Weights) |> 
-  filter(!is.na(flab_job2)) |>
+  filter(!is.na(flab_job2 & !is.na(Q13))) |>
   rename(
     EmStatus = Q13,
     FLab = flab_job2,
@@ -793,7 +794,7 @@ nopplsurp <- pp_emstatus |>
     fsurp, 
     SAM_job1, 
     Weights) |>
-  filter(!is.na(fsurp)) |>
+  filter(!is.na(fsurp) & !is.na(Q7)) |>
   rename(
     EmStatus = Q7,
     FLab = fsurp,
@@ -818,7 +819,8 @@ is.na(noppl$FLab) <- 0
 no_people <- noppl |>
   filter(
     # as.numeric(EmStatus) < 5,
-    QuartNo == 110
+    QuartNo == 110,
+    !is.na(EmStatus)
     # FactorType == "f-lab"
   ) |>
   group_by(
@@ -1239,7 +1241,7 @@ Addendum:
 ```{r}
 #| warning: false
 #| message: false
-#| label: save-to-excel
+#| label: save-addendum-to-excel
 
 wb <- loadWorkbook("data/sam/SAMshares_GEO_v03.xlsx")
 names(wb)

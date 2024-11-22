@@ -13,10 +13,10 @@ format:
     number-sections: true
     number-depth: 3
     highlight-style: github
-  docx:
-    toc: true
-    number-sections: true
-    highlight-style: arrow
+  # docx:
+  #   toc: true
+  #   number-sections: true
+  #   highlight-style: arrow
   # pdf:
   #   toc: true
   #   number-sections: true
