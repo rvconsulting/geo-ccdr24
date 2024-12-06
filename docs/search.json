@@ -228,5 +228,161 @@
       "Supporting materials",
       "Georgia CCDR Microsimulation"
     ]
+  },
+  {
+    "objectID": "supporting-materials/vulnerability.html",
+    "href": "supporting-materials/vulnerability.html",
+    "title": "Vulnerability Analysis",
+    "section": "",
+    "text": "In analysis, we estimate number of people under vulnerable circumstances.\n“The vulnerability of a household to an extreme weather event will depend on the characteristics of the household that determine the event’s initial impact and the ability of a household to cope with that event (…). This is reflected in the IPCC definition, vulnerability includes both ‘the sensitivity or susceptibility to harm’ and ‘the lack of capacity to cope and adapt’” (Doan et al. 2023).",
+    "crumbs": [
+      "Home",
+      "Supporting materials",
+      "Vulnerability Analysis"
+    ]
+  },
+  {
+    "objectID": "supporting-materials/vulnerability.html#datasets-and-correspondence-tables",
+    "href": "supporting-materials/vulnerability.html#datasets-and-correspondence-tables",
+    "title": "Vulnerability Analysis",
+    "section": "Datasets and correspondence tables",
+    "text": "Datasets and correspondence tables\nWe use data from the 2023 survey for the Labor Split and data from the 2022 survey for the household expenditure and capital shares in In mil. GEL per year per household type.\n\n #| lst-label: original-datasets\n\n# Household Unique ID, Weights, Location and other basic variables\nhh_basics &lt;- read_sav(\n  \"data/ilcs_2023/sysschedule.sav\") |&gt;\n  mutate(\n    UID = as.integer(UID))\n\n# Household size (includes no. of family members)\nhh_size &lt;- read_sav(\n  \"data/ilcs_2023/familysize.sav\")|&gt; \n  mutate(\n    UID = as.integer(UID))\n\n# Processed income at household level\nhh_income &lt;- read_sav(\n  \"data/ilcs_2023/tblincomes.sav\")|&gt; \n  mutate(\n    UID = as.integer(UID))\n\n# Consumption aggregate at household level \nhh_expenditure &lt;- read_sav(\n  \"data/ilcs_2023/tblexpenditures.sav\")|&gt; \n  rename(# rename total expenditure variables\n         total_expenditure = MTlianixarjebi_,\n         total_expenditure_aeq06 = MTlianimoxmareba_EqAdScale,\n         total_expenditure_aeq08 = Mtlianimoxmareba_EqAdScale_08) |&gt; \n  mutate(\n    UID = as.integer(UID))\n\n# Characteristics of the dwelling\nhh_chars &lt;- read_sav(\n  \"data/ilcs_2023/tblshinda01.sav\")|&gt;\n  mutate(\n    UID = as.integer(UID))\n\n# Persons (pp)\npp &lt;- read_sav(\n  \"data/ilcs_2023/tblshinda02.sav\") |&gt; \n  mutate(\n    UID = as.integer(UID),\n    MemberNo = as.integer(MemberNo))\n\n# Labor (pp)\npp_labor &lt;- read_sav(\n  \"data/ilcs_2023/tblshinda05_1.sav\") |&gt; \n  mutate(\n    UID = as.integer(UID),\n    MemberNo = as.integer(MemberNo),\n    Q5  = as.integer(Q5),\n    Q12 = as.integer(Q12)) \n\n# Poverty\npoverty &lt;- read_dta(\n  \"data/ilcs_2023/POVERTY_stata.dta\") |&gt; \n  mutate(\n    UID = as.integer(UID))\n\n# Ind. Poverty\nind_poverty &lt;- read_dta(\n  \"data/ilcs_2023/IND_POVERTY_stata.dta\") |&gt; \n  rename(MemberNo = memberno) |&gt; \n  mutate(\n    UID = as.integer(UID),\n    MemberNo = as.integer(MemberNo))\n\nWe also need look-up tables.\n\nsam_activities &lt;- read_excel(\n    \"data/sam/classifications.xlsx\",\n    sheet = \"SAM-REV2\",\n    col_names = T,\n    col_types = \"text\",\n  )\n\nsam_factors &lt;- read_excel(\n    \"data/sam/classifications.xlsx\",\n    sheet = \"SAM factors\",\n    col_names = T,\n    col_types = \"text\",\n  )\n\ncoicop &lt;- read_excel(\n    \"data/sam/classifications.xlsx\",\n    sheet = \"COICOP\",\n    col_names = T,\n    col_types = \"text\",\n  ) |&gt; \n  mutate(simple_code = as.integer(gsub(\"\\\\.\", \"\", Coicop)))\n\ncoicop_filtered &lt;- coicop |&gt; \n  filter( nchar(as.character(simple_code)) &gt;= 5)",
+    "crumbs": [
+      "Home",
+      "Supporting materials",
+      "Vulnerability Analysis"
+    ]
+  },
+  {
+    "objectID": "supporting-materials/vulnerability.html#income",
+    "href": "supporting-materials/vulnerability.html#income",
+    "title": "Vulnerability Analysis",
+    "section": "Income",
+    "text": "Income\nFollowing the methodology (Doan et al. 2023) this identifies the share of households that have income or consumption less than 1.5 times the poverty line. In the guidance paper, they use $2.15 (2017 PPP), but in our case, we use the official poverty line of Georgia for the year 2023 of 212.81 GEL per cápita (adult equivalent) per month. To be consistent with country assessments, we use consumption and not income, but to be consistent with the methodology paper, we continue to call this variable income.\n\n# Poverty line\npoverty_line &lt;- poverty$pline[1]\nincome_threshold &lt;- poverty_line * 1.5\n\nhh_vulnerable &lt;- poverty |&gt; \n  select(\n    QuartNo,\n    UID,\n    DiaryID,\n    RegNo,\n    type,\n    weights_quar, # Sampling weights of the HH\n    weights,      # HH weights\n    aecons,\n    aeinc,\n    pline) |&gt; \n  mutate(\n    vulnerability_income = if_else(\n      aecons &lt; income_threshold, 1, 0))",
+    "crumbs": [
+      "Home",
+      "Supporting materials",
+      "Vulnerability Analysis"
+    ]
+  },
+  {
+    "objectID": "supporting-materials/vulnerability.html#education",
+    "href": "supporting-materials/vulnerability.html#education",
+    "title": "Vulnerability Analysis",
+    "section": "Education",
+    "text": "Education\nEducation to switch livelihoods or to access information and resources is proxied by a variable reflecting whether the household has an adult that has completed primary education. The GMD is used because this allows us to have information on education and income for the same household which allows us to know whether an individual is deprived on one or both dimensions (Doan et al. 2023). The poverty dataset already has the education level of the head of household. However, this calls for any member having at least primary education, which makes sense, because literate family members often bridge the understanding gap for illiterate ones, regardless of head of family status.\n\nvulnerable_education &lt;- pp |&gt;\n  select(UID, Education) |&gt; \n  mutate(\n    educated_member = case_when(\n      Education &lt; 4 ~ 0, # \"4. Primary education\"\n      Education &gt;= 4 ~ 1,\n      TRUE ~ 0 )) |&gt; \n  group_by(UID) |&gt; \n  summarize(\n    educated_members = sum(educated_member, na.rm = T),\n    vulnerability_education = if_else(\n      educated_members == 0, 1, 0\n    )\n  ) |&gt; \n  select(-educated_members)\n\neduc_vulnerable_hh_unweighted &lt;- sum(\n  vulnerable_education$vulnerability_education)\n\nIn the entire dataset 15 households (unweighted) meet the education vulnerability criteria. Among the survey households, up to 9 members could be educated with the following distribution. This is a positive metric for Georgia.",
+    "crumbs": [
+      "Home",
+      "Supporting materials",
+      "Vulnerability Analysis"
+    ]
+  },
+  {
+    "objectID": "supporting-materials/vulnerability.html#access-to-water",
+    "href": "supporting-materials/vulnerability.html#access-to-water",
+    "title": "Vulnerability Analysis",
+    "section": "Access to water",
+    "text": "Access to water\n“When shocks hit, access to these services is an important determinant of the impact of the shock on welfare. For example, with access to improved drinking water, contaminated water from flooding and storms, or lack of water due to drought has less of an impact. Nevertheless, it is essential to acknowledge that the current indicator of access to improved drinking water, often represented by covered wells in low-income countries, may not sufficiently reflect susceptibility to contamination during extreme events such as floods or droughts. Therefore, there is a need for future work to refine this indicator by considering a potentially higher threshold. Metrics such as “improved piped water” can offer a more precise assessment of the infrastructure safeguarding against water-related risks in the event of shocks.” (Doan et al. 2023)\nWe take note of this caveat and choose the threshold water supply system installed in the dwelling and water system tap in the yard or vicinity as counting towards this dimension from the possible options below:\n\nThe water supply system installed in the dwelling\nThe water system tap in the yard or vicinity\nThe well in the yard or vicinity\nNatural spring in the yard or vicinity\nRiver, lake, spring, channel\nBought water\nOther\n\n\nvulnerable_water &lt;- poverty |&gt; \n  select(UID, WaterSource) |&gt; \n  mutate(\n    vulnerability_water = if_else(\n      WaterSource &lt; 3, 0, 1)) |&gt; \n  select(-WaterSource)\n\n# We check the distribution\n\nas.data.frame(table(vulnerable_water$vulnerability_water)) |&gt; \n  gt()\n\n\n\n\n\n\n\nVar1\nFreq\n\n\n\n\n0\n10709\n\n\n1\n2499",
+    "crumbs": [
+      "Home",
+      "Supporting materials",
+      "Vulnerability Analysis"
+    ]
+  },
+  {
+    "objectID": "supporting-materials/vulnerability.html#access-to-electricity",
+    "href": "supporting-materials/vulnerability.html#access-to-electricity",
+    "title": "Vulnerability Analysis",
+    "section": "Access to electricity",
+    "text": "Access to electricity\n“With access to electricity, households are more likely to have assets such as fans that can help with heatwaves. A fuller discussion is available in the World Bank’s Lifelines report (Hallegatte et al, 2019). Whilst not a final selection of assets and infrastructure that matter for determining the initial loss of the shock, these measures provide a good first estimate to stimulate discussion.” (Doan et al. 2023) Variable q11_3 from the poverty dataset is a dummy that determines whether the household has access to electricity.\n\nvulnerable_electricity &lt;- poverty |&gt; \n  select(UID, q11_3) |&gt; \n  mutate(\n    vulnerability_electricity = if_else(\n      q11_3 != 1, 1, 0)) |&gt; \n  select(-q11_3)\n\n# We check the distribution\n\nas.data.frame(table(vulnerable_electricity$vulnerability_electricity)) |&gt; \n  gt()\n\n\n\n\n\n\n\nVar1\nFreq\n\n\n\n\n0\n13208\n\n\n\n\n\n\n\nNow, this is not a source of variation in the case of Georgia, since 100% of households report having access to electricity, but the methodology also mentions that “Access to markets and services, access to early warning systems, sanitation, and building and infrastructure quality are also playing a key role in determining disasters’ impacts, and has been included in other estimates, but is left for future inclusion here.” (Doan et al. 2023). Both sanitation and building infrastructure quality, proxied by wall materials could be included in Georgia’s estimates. When it comes to sanitation, there is still a gap that the country needs to close.",
+    "crumbs": [
+      "Home",
+      "Supporting materials",
+      "Vulnerability Analysis"
+    ]
+  },
+  {
+    "objectID": "supporting-materials/vulnerability.html#access-to-sanitation",
+    "href": "supporting-materials/vulnerability.html#access-to-sanitation",
+    "title": "Vulnerability Analysis",
+    "section": "Access to sanitation",
+    "text": "Access to sanitation\nFor this variable (TypeOfToilet) we have the following categories, of which we choose “own flush toilet connected to the sewerage system” and “shared flush toilet connected to the sewerage system” as having access to sanitation.\n\nOwn flush toilet connected to the sewerage system\nShared flush toilet connected to the sewerage system\nFlush latrine not connected to the sewerage system (connected to the river, chan\nPit latrine periodically cleaned or finally filled up and buried\nOther\n\n\nvulnerable_sanitation &lt;- poverty |&gt; \n  select(UID, TypeOfToilet) |&gt; \n  mutate(\n    vulnerability_sanitation = if_else(\n      TypeOfToilet &lt; 3, 0, 1)) |&gt; \n  select(-TypeOfToilet)\n\n# We check the distribution\n\nas.data.frame(table(vulnerable_sanitation$vulnerability_sanitation)) |&gt; \n  gt()\n\n\n\n\n\n\n\nVar1\nFreq\n\n\n\n\n0\n5557\n\n\n1\n7651",
+    "crumbs": [
+      "Home",
+      "Supporting materials",
+      "Vulnerability Analysis"
+    ]
+  },
+  {
+    "objectID": "supporting-materials/vulnerability.html#building-materials",
+    "href": "supporting-materials/vulnerability.html#building-materials",
+    "title": "Vulnerability Analysis",
+    "section": "Building materials",
+    "text": "Building materials\nWhen it comes to building materials of walls and floor, data show that the most precarious categories (mud walls, and bare ground floors) are not present in the country. We will still count concrete walls as not vulnerable and wood as vulnerable, but only relative to each other, not making any assumptions about the quality of wood structures in Georgia.\n\nvulnerable_building &lt;- poverty |&gt; \n  select(UID, Walls) |&gt; \n  mutate(\n    vulnerability_building = if_else(\n      Walls %in% c(1,3), 0, 1)) |&gt; \n  select(-Walls)\n\n# We check the distribution\n\nas.data.frame(table(\n  vulnerable_building$vulnerability_building)) |&gt; \n  gt()\n\n\n\n\n\n\n\nVar1\nFreq\n\n\n\n\n0\n11746\n\n\n1\n1462",
+    "crumbs": [
+      "Home",
+      "Supporting materials",
+      "Vulnerability Analysis"
+    ]
+  },
+  {
+    "objectID": "supporting-materials/vulnerability.html#social-protection",
+    "href": "supporting-materials/vulnerability.html#social-protection",
+    "title": "Vulnerability Analysis",
+    "section": "Social protection",
+    "text": "Social protection\n“The third dimension of inability to cope is access to public support. There is considerable evidence that cash transfers help households to manage shocks (…) [T]here is some evidence in favor of using information on current coverage, as support is more likely to be available in response to a disaster in places where pre-disaster coverage rates are high.” (Doan et al. 2023) In the poverty dataset the variable S_Q2b shows those households that actually received social protection benefits.\n\nvulnerable_ssp &lt;- poverty |&gt; \n  select(UID, S_Q2b) |&gt; \n  mutate(\n    vulnerability_ssp = if_else(\n      coalesce(S_Q2b, 0) == 1, 0, 1)) |&gt; \n  select(-S_Q2b)\n\n# We check the distribution\n\nas.data.frame(table(\n  vulnerable_ssp$vulnerability_ssp)) |&gt; \n  gt()\n\n\n\n\n\n\n\nVar1\nFreq\n\n\n\n\n0\n2330\n\n\n1\n10878",
+    "crumbs": [
+      "Home",
+      "Supporting materials",
+      "Vulnerability Analysis"
+    ]
+  },
+  {
+    "objectID": "supporting-materials/vulnerability.html#financial-services",
+    "href": "supporting-materials/vulnerability.html#financial-services",
+    "title": "Vulnerability Analysis",
+    "section": "Financial services",
+    "text": "Financial services\n“The variable we use indicates whether a respondent has either a financial institution account or a mobile money account, given the strong relationship in the literature on access to mobile money and ability to use informal networks to manage the impact of large climate shocks.” (Doan et al. 2023) The poverty dataset has information on amount saved by the household, which we will use as proxy for access to some financial security. We cannot assert that the money is being saved in a proper financial institution. However, we assume that having monthly level of savings of any kind can mitigate the impacts of climate change.\n\nvulnerable_financial &lt;- poverty |&gt; \n  select(UID, DazogvaAnCasesxeba) |&gt; \n  mutate(\n    vulnerability_financial = if_else(\n      coalesce(DazogvaAnCasesxeba, 0) == 0, 1, 0)) |&gt; \n  select(-DazogvaAnCasesxeba)\n\n# We check the distribution\n\nas.data.frame(table(\n  vulnerable_financial$vulnerability_financial)) |&gt; \n  gt()\n\n\n\n\n\n\n\nVar1\nFreq\n\n\n\n\n0\n4777\n\n\n1\n8431",
+    "crumbs": [
+      "Home",
+      "Supporting materials",
+      "Vulnerability Analysis"
+    ]
+  },
+  {
+    "objectID": "supporting-materials/vulnerability.html#join-vulnerability-datasets",
+    "href": "supporting-materials/vulnerability.html#join-vulnerability-datasets",
+    "title": "Vulnerability Analysis",
+    "section": "Join vulnerability datasets",
+    "text": "Join vulnerability datasets\n\n# List of data frames to join\nvulnerable_data &lt;- list(\n  vulnerable_education,\n  vulnerable_water,\n  vulnerable_electricity,\n  vulnerable_sanitation,\n  vulnerable_building,\n  vulnerable_ssp,\n  vulnerable_financial\n)\n\n# Start with the initial data frame\nfor (df in vulnerable_data) {\n  hh_vulnerable &lt;- hh_vulnerable |&gt; left_join(df, join_by(UID))\n}",
+    "crumbs": [
+      "Home",
+      "Supporting materials",
+      "Vulnerability Analysis"
+    ]
+  },
+  {
+    "objectID": "supporting-materials/vulnerability.html#datasets",
+    "href": "supporting-materials/vulnerability.html#datasets",
+    "title": "Vulnerability Analysis",
+    "section": "Datasets",
+    "text": "Datasets\nWe use data from the 2023 survey for the Labor Split and data from the 2022 survey for the household expenditure and capital shares in In mil. GEL per year per household type.\n\n #| lst-label: original-datasets\n\n# Household Unique ID, Weights, Location and other basic variables\nhh_basics &lt;- read_sav(\n  \"data/ilcs_2023/sysschedule.sav\") |&gt;\n  mutate(\n    UID = as.integer(UID))\n\n# Household size (includes no. of family members)\nhh_size &lt;- read_sav(\n  \"data/ilcs_2023/familysize.sav\")|&gt; \n  mutate(\n    UID = as.integer(UID))\n\n# Processed income at household level\nhh_income &lt;- read_sav(\n  \"data/ilcs_2023/tblincomes.sav\")|&gt; \n  mutate(\n    UID = as.integer(UID))\n\n# Consumption aggregate at household level \nhh_expenditure &lt;- read_sav(\n  \"data/ilcs_2023/tblexpenditures.sav\")|&gt; \n  rename(# rename total expenditure variables\n         total_expenditure = MTlianixarjebi_,\n         total_expenditure_aeq06 = MTlianimoxmareba_EqAdScale,\n         total_expenditure_aeq08 = Mtlianimoxmareba_EqAdScale_08) |&gt; \n  mutate(\n    UID = as.integer(UID))\n\n# Characteristics of the dwelling\nhh_chars &lt;- read_sav(\n  \"data/ilcs_2023/tblshinda01.sav\")|&gt;\n  mutate(\n    UID = as.integer(UID))\n\n# Persons (pp)\npp &lt;- read_sav(\n  \"data/ilcs_2023/tblshinda02.sav\") |&gt; \n  mutate(\n    UID = as.integer(UID),\n    MemberNo = as.integer(MemberNo))\n\n# Labor (pp)\npp_labor &lt;- read_sav(\n  \"data/ilcs_2023/tblshinda05_1.sav\") |&gt; \n  mutate(\n    UID = as.integer(UID),\n    MemberNo = as.integer(MemberNo),\n    Q5  = as.integer(Q5),\n    Q12 = as.integer(Q12)) \n\n# Poverty\npoverty &lt;- read_dta(\n  \"data/ilcs_2023/POVERTY_stata.dta\") |&gt; \n  mutate(\n    UID = as.integer(UID))\n\n# Ind. Poverty\nind_poverty &lt;- read_dta(\n  \"data/ilcs_2023/IND_POVERTY_stata.dta\") |&gt; \n  rename(MemberNo = memberno) |&gt; \n  mutate(\n    UID = as.integer(UID),\n    MemberNo = as.integer(MemberNo))\n\n# Exposure\nfloods &lt;- read.csv(\n  \"data/exposure/floods/df_exposure_100.csv\"\n)\nregion_lookup &lt;- floods |&gt;\n  filter(\n    scenario == \"2020\"\n  ) |&gt; \n  select(\n    RegNo,\n    regions)",
+    "crumbs": [
+      "Home",
+      "Supporting materials",
+      "Vulnerability Analysis"
+    ]
+  },
+  {
+    "objectID": "supporting-materials/vulnerability.html#look-up-tables",
+    "href": "supporting-materials/vulnerability.html#look-up-tables",
+    "title": "Vulnerability Analysis",
+    "section": "Look-up tables",
+    "text": "Look-up tables\n\nsam_activities &lt;- read_excel(\n    \"data/sam/classifications.xlsx\",\n    sheet = \"SAM-REV2\",\n    col_names = T,\n    col_types = \"text\",\n  )\n\nsam_factors &lt;- read_excel(\n    \"data/sam/classifications.xlsx\",\n    sheet = \"SAM factors\",\n    col_names = T,\n    col_types = \"text\",\n  )\n\ncoicop &lt;- read_excel(\n    \"data/sam/classifications.xlsx\",\n    sheet = \"COICOP\",\n    col_names = T,\n    col_types = \"text\",\n  ) |&gt; \n  mutate(simple_code = as.integer(gsub(\"\\\\.\", \"\", Coicop)))\n\ncoicop_filtered &lt;- coicop |&gt; \n  filter( nchar(as.character(simple_code)) &gt;= 5)",
+    "crumbs": [
+      "Home",
+      "Supporting materials",
+      "Vulnerability Analysis"
+    ]
   }
 ]
