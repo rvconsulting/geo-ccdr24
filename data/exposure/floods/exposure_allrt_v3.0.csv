@@ -1,97 +1,97 @@
-,regions,rt_period,exposure
-1,Abkhazia Aut. Rep.,5,2185.967376
-2,Adjara Aut. Rep.,5,2787.316773
-3,Guria,5,1383.309772
-4,Imereti,5,9139.940181
-5,Kakheti,5,232.3155453
-6,Kvemo Kartli,5,2972.152078
-7,Mtskheta-Mtianeti,5,1142.504008
-8,Racha-Lechkhumi and Kvemo (lower) Svaneti,5,1014.39274
-9,Samergelo and Zemo (upper) Svaneti,5,7725.500433
-10,Samtskhe-Javakheti,5,3987.11158
-11,Shida Kartli,5,4123.401205
-12,Tbilisi,5,20548.92564
-13,Abkhazia Aut. Rep.,10,3922.220531
-14,Adjara Aut. Rep.,10,5133.093369
-15,Guria,10,3253.191388
-16,Imereti,10,16325.48339
-17,Kakheti,10,720.8796861
-18,Kvemo Kartli,10,5569.572841
-19,Mtskheta-Mtianeti,10,2098.507368
-20,Racha-Lechkhumi and Kvemo (lower) Svaneti,10,1600.751573
-21,Samergelo and Zemo (upper) Svaneti,10,12304.51947
-22,Samtskhe-Javakheti,10,6867.186848
-23,Shida Kartli,10,6643.380866
-24,Tbilisi,10,32246.3445
-25,Abkhazia Aut. Rep.,20,6183.650054
-26,Adjara Aut. Rep.,20,9460.624075
-27,Guria,20,5088.931373
-28,Imereti,20,25537.38947
-29,Kakheti,20,2072.853844
-30,Kvemo Kartli,20,9891.359812
-31,Mtskheta-Mtianeti,20,3544.005825
-32,Racha-Lechkhumi and Kvemo (lower) Svaneti,20,3104.552783
-33,Samergelo and Zemo (upper) Svaneti,20,16695.57228
-34,Samtskhe-Javakheti,20,10878.26684
-35,Shida Kartli,20,11649.41861
-36,Tbilisi,20,44905.83355
-37,Abkhazia Aut. Rep.,50,10021.40856
-38,Adjara Aut. Rep.,50,16652.84503
-39,Guria,50,9293.753936
-40,Imereti,50,40614.65052
-41,Kakheti,50,4358.569794
-42,Kvemo Kartli,50,17497.35821
-43,Mtskheta-Mtianeti,50,5776.998435
-44,Racha-Lechkhumi and Kvemo (lower) Svaneti,50,4516.066977
-45,Samergelo and Zemo (upper) Svaneti,50,24659.46388
-46,Samtskhe-Javakheti,50,15904.78577
-47,Shida Kartli,50,24868.09943
-48,Tbilisi,50,68932.58327
-49,Abkhazia Aut. Rep.,100,15845.83961
-50,Adjara Aut. Rep.,100,21382.6393
-51,Guria,100,12175.88958
-52,Imereti,100,53027.2968
-53,Kakheti,100,6161.958231
-54,Kvemo Kartli,100,23300.23965
-55,Mtskheta-Mtianeti,100,7521.585697
-56,Racha-Lechkhumi and Kvemo (lower) Svaneti,100,5846.179971
-57,Samergelo and Zemo (upper) Svaneti,100,48963.69496
-58,Samtskhe-Javakheti,100,19257.86947
-59,Shida Kartli,100,36314.60127
-60,Tbilisi,100,88864.53568
-61,Abkhazia Aut. Rep.,200,20287.79374
-62,Adjara Aut. Rep.,200,26215.41742
-63,Guria,200,14510.94841
-64,Imereti,200,67355.82924
-65,Kakheti,200,7440.725148
-66,Kvemo Kartli,200,28142.65361
-67,Mtskheta-Mtianeti,200,8939.733387
-68,Racha-Lechkhumi and Kvemo (lower) Svaneti,200,6731.583134
-69,Samergelo and Zemo (upper) Svaneti,200,64854.25421
-70,Samtskhe-Javakheti,200,21089.9863
-71,Shida Kartli,200,44627.97276
-72,Tbilisi,200,111743.7889
-73,Abkhazia Aut. Rep.,500,28576.08228
-74,Adjara Aut. Rep.,500,47823.45865
-75,Guria,500,18060.0887
-76,Imereti,500,97221.86067
-77,Kakheti,500,9651.898895
-78,Kvemo Kartli,500,39278.78428
-79,Mtskheta-Mtianeti,500,11156.9274
-80,Racha-Lechkhumi and Kvemo (lower) Svaneti,500,7885.840771
-81,Samergelo and Zemo (upper) Svaneti,500,81008.44889
-82,Samtskhe-Javakheti,500,24623.69318
-83,Shida Kartli,500,56740.18883
-84,Tbilisi,500,146189.9051
-85,Abkhazia Aut. Rep.,1000,63776.51539
-86,Adjara Aut. Rep.,1000,95144.06464
-87,Guria,1000,23586.15111
-88,Imereti,1000,116587.9601
-89,Kakheti,1000,12683.06239
-90,Kvemo Kartli,1000,50384.95826
-91,Mtskheta-Mtianeti,1000,13001.20241
-92,Racha-Lechkhumi and Kvemo (lower) Svaneti,1000,8933.159337
-93,Samergelo and Zemo (upper) Svaneti,1000,98205.09948
-94,Samtskhe-Javakheti,1000,27526.09434
-95,Shida Kartli,1000,66275.6882
-96,Tbilisi,1000,172217.7236
+regions,rt_period,exposure,RegNo
+Kakheti,5,232.3155453,0
+Tbilisi,5,20548.92564,1
+Shida Kartli,5,4123.401205,2
+Kvemo Kartli,5,2972.152078,3
+Samtskhe-Javakheti,5,3987.11158,5
+Adjara Aut. Rep.,5,2787.316773,7
+Guria,5,1383.309772,8
+Samergelo and Zemo (upper) Svaneti,5,7725.500433,9
+Imereti,5,9139.940181,10
+Mtskheta-Mtianeti,5,1142.504008,11
+Abkhazia Aut. Rep.,5,2185.967376,12
+Racha-Lechkhumi and Kvemo (lower) Svaneti,5,1014.39274,13
+Kakheti,10,720.8796861,0
+Tbilisi,10,32246.3445,1
+Shida Kartli,10,6643.380866,2
+Kvemo Kartli,10,5569.572841,3
+Samtskhe-Javakheti,10,6867.186848,5
+Adjara Aut. Rep.,10,5133.093369,7
+Guria,10,3253.191388,8
+Samergelo and Zemo (upper) Svaneti,10,12304.51947,9
+Imereti,10,16325.48339,10
+Mtskheta-Mtianeti,10,2098.507368,11
+Abkhazia Aut. Rep.,10,3922.220531,12
+Racha-Lechkhumi and Kvemo (lower) Svaneti,10,1600.751573,13
+Kakheti,20,2072.853844,0
+Tbilisi,20,44905.83355,1
+Shida Kartli,20,11649.41861,2
+Kvemo Kartli,20,9891.359812,3
+Samtskhe-Javakheti,20,10878.26684,5
+Adjara Aut. Rep.,20,9460.624075,7
+Guria,20,5088.931373,8
+Samergelo and Zemo (upper) Svaneti,20,16695.57228,9
+Imereti,20,25537.38947,10
+Mtskheta-Mtianeti,20,3544.005825,11
+Abkhazia Aut. Rep.,20,6183.650054,12
+Racha-Lechkhumi and Kvemo (lower) Svaneti,20,3104.552783,13
+Kakheti,50,4358.569794,0
+Tbilisi,50,68932.58327,1
+Shida Kartli,50,24868.09943,2
+Kvemo Kartli,50,17497.35821,3
+Samtskhe-Javakheti,50,15904.78577,5
+Adjara Aut. Rep.,50,16652.84503,7
+Guria,50,9293.753936,8
+Samergelo and Zemo (upper) Svaneti,50,24659.46388,9
+Imereti,50,40614.65052,10
+Mtskheta-Mtianeti,50,5776.998435,11
+Abkhazia Aut. Rep.,50,10021.40856,12
+Racha-Lechkhumi and Kvemo (lower) Svaneti,50,4516.066977,13
+Kakheti,100,6161.958231,0
+Tbilisi,100,88864.53568,1
+Shida Kartli,100,36314.60127,2
+Kvemo Kartli,100,23300.23965,3
+Samtskhe-Javakheti,100,19257.86947,5
+Adjara Aut. Rep.,100,21382.6393,7
+Guria,100,12175.88958,8
+Samergelo and Zemo (upper) Svaneti,100,48963.69496,9
+Imereti,100,53027.2968,10
+Mtskheta-Mtianeti,100,7521.585697,11
+Abkhazia Aut. Rep.,100,15845.83961,12
+Racha-Lechkhumi and Kvemo (lower) Svaneti,100,5846.179971,13
+Kakheti,200,7440.725148,0
+Tbilisi,200,111743.7889,1
+Shida Kartli,200,44627.97276,2
+Kvemo Kartli,200,28142.65361,3
+Samtskhe-Javakheti,200,21089.9863,5
+Adjara Aut. Rep.,200,26215.41742,7
+Guria,200,14510.94841,8
+Samergelo and Zemo (upper) Svaneti,200,64854.25421,9
+Imereti,200,67355.82924,10
+Mtskheta-Mtianeti,200,8939.733387,11
+Abkhazia Aut. Rep.,200,20287.79374,12
+Racha-Lechkhumi and Kvemo (lower) Svaneti,200,6731.583134,13
+Kakheti,500,9651.898895,0
+Tbilisi,500,146189.9051,1
+Shida Kartli,500,56740.18883,2
+Kvemo Kartli,500,39278.78428,3
+Samtskhe-Javakheti,500,24623.69318,5
+Adjara Aut. Rep.,500,47823.45865,7
+Guria,500,18060.0887,8
+Samergelo and Zemo (upper) Svaneti,500,81008.44889,9
+Imereti,500,97221.86067,10
+Mtskheta-Mtianeti,500,11156.9274,11
+Abkhazia Aut. Rep.,500,28576.08228,12
+Racha-Lechkhumi and Kvemo (lower) Svaneti,500,7885.840771,13
+Kakheti,1000,12683.06239,0
+Tbilisi,1000,172217.7236,1
+Shida Kartli,1000,66275.6882,2
+Kvemo Kartli,1000,50384.95826,3
+Samtskhe-Javakheti,1000,27526.09434,5
+Adjara Aut. Rep.,1000,95144.06464,7
+Guria,1000,23586.15111,8
+Samergelo and Zemo (upper) Svaneti,1000,98205.09948,9
+Imereti,1000,116587.9601,10
+Mtskheta-Mtianeti,1000,13001.20241,11
+Abkhazia Aut. Rep.,1000,63776.51539,12
+Racha-Lechkhumi and Kvemo (lower) Svaneti,1000,8933.159337,13
