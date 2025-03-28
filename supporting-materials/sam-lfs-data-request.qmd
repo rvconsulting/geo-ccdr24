@@ -1,0 +1,115 @@
+---
+title: "SAM Labor Force Survey Data Request"
+subtitle: "Georgia Country Climate and Development Report"
+author:
+  - name: "Renato Vargas"
+    id: rv
+    # email: renovargas@gmail.com
+    affiliation: 
+      - name: Consultant for The World Bank
+  - name: "Noe Nicolas Reidt"
+    id: nr
+    # email: 
+    affiliation: 
+      - name: The World Bank
+format: 
+  html:
+    toc: true
+  # docx:
+  #   toc: true
+  #   number-sections: true
+  #   highlight-style: arrow
+  # pdf:
+  #   # prefer-html: true
+  #   toc: true
+  #   number-sections: true
+  #   colorlinks: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Introduction
+
+For this data request, we summarize labor factor payments, by sex, occupation, employment status, and economic activity, according to a structure needed for the macroeconomic modeling.
+
+## Objectives
+
+1. Aggregate labor cost data according to the following dimensions:
+    a.  Employment status.
+    b.  Sex.
+    c.  Occupation (according to ISCO-08).
+    d.  Economic activity.
+2. Additional data nodes:
+    a. Number of workers.
+    b. Labor cost.
+    c. Number of hours (labor volume).
+3. Output to Excel.
+
+## Preliminaries
+
+```{r}
+#| warning: false
+#| message: false
+#| label: preliminaries
+
+# Clean workspace
+rm(list = ls())
+
+# Georgia country ISO code
+iso <- "GEO"
+
+# Survey year
+survey_year <- 2023
+
+# Exchange rate USD per GEL
+er <- 0.37
+
+# Quarter of interest
+quarter <- 107
+
+# Years of interest for our macroeconomic scenario analysis
+# analysis_years <- c(2030, 2050)
+```
+
+We will use the following libraries for this exercise.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: libs
+
+library(tidyverse)
+library(haven)
+library(readxl)
+library(openxlsx)
+library(gt)
+```
+
+## Datasets and correspondence tables
+
+We use data from the 2023 Labor Force Survey and focus on quarter 1 (107).
+
+```{r}
+#| warning: false
+#| message: false
+#| label: datasets
+#| lst-label: original-datasets
+
+# Labor
+pp_labor <- read_sav("data/lfs_2023/LFS_ECSTAT_ENG_2023.sav")
+
+# Equivalence table
+```
+
+# Data transformation
+
+Variables need to be ordered in a specific way. We do this with the use of factors. Fortunately, some of the heavy lifting has been done for us regarding occupations, but we still need to match economic activities to the SAM structure.
+
+## Employment status
+
+```{r}
+# Job 1
+pp_labor |> 
+  rename(status1 = Status)
+```
+
