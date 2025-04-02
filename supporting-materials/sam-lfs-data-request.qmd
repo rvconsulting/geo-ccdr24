@@ -65,7 +65,7 @@ survey_year <- 2023
 er <- 0.37
 
 # Quarter of interest
-quarter <- 107
+quarter <- 106
 
 # Years of interest for our macroeconomic scenario analysis
 # analysis_years <- c(2030, 2050)
@@ -87,7 +87,7 @@ library(gt)
 
 ## Datasets and correspondence tables
 
-We use data from the 2023 Labor Force Survey and focus on quarter 1 (107).
+We use data from the 2022 Labor Force Survey and focus on quarter 4 (106).
 
 ```{r}
 #| warning: false
@@ -96,20 +96,144 @@ We use data from the 2023 Labor Force Survey and focus on quarter 1 (107).
 #| lst-label: original-datasets
 
 # Labor
-pp_labor <- read_sav("data/lfs_2023/LFS_ECSTAT_ENG_2023.sav")
+pp_labor <- read_sav("data/lfs_2022/LFS_ECSTAT_ENG_2022.sav")
+pp_labor_demographic <- read_sav("data/lfs_2022/LFS_Demographic_ENG_2022.sav")
 
 # Equivalence table
+sam_activities <- read_excel(
+    "data/sam/classifications.xlsx",
+    sheet = "SAM-REV2",
+    col_names = T,
+    col_types = "text",
+  )
+
+sam_factors <- read_excel(
+    "data/sam/classifications.xlsx",
+    sheet = "SAM factors",
+    col_names = T,
+    col_types = "text",
+  )
 ```
 
 # Data transformation
 
 Variables need to be ordered in a specific way. We do this with the use of factors. Fortunately, some of the heavy lifting has been done for us regarding occupations, but we still need to match economic activities to the SAM structure.
 
-## Employment status
+## Demographics
 
 ```{r}
-# Job 1
-pp_labor |> 
-  rename(status1 = Status)
+#| warning: false
+#| label: demographics
+
+demographics <- pp_labor_demographic |> 
+  mutate(
+    MemberId = 
+      paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |>
+  mutate(Sex = factor(
+    Sex,
+    levels = c(1, 2),
+    labels = c("Female", "Male")
+  )) |> 
+    select(MemberId, Sex, Age)
+```
+
+
+## Match NACE codes to SAM economic activities
+
+We work with labor status . Since, upon import NACE 2 codes are converted to numbers, we need to convert them back to text, so that we can keep zeros to the left for proper order. We then extract the first two digits and match with 2-digit NACE Rev. 2 and find the correspondence to SAM using the look-up table `sam_activities`. For proper ordering, we convert the SAM activities columns for job 1 and job 2 to factor, using the order from the dataset `sam_factors`.
+
+```{r}
+#| warning: false
+#| label: nace-codes
+
+pp_labor <- pp_labor |>
+  mutate(
+    # Member ID
+    MemberId = 
+      paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo)),
+    # Job 1 NACE Rev 2 code. 
+    Brunch  = if_else(
+      !is.na(Brunch),
+      sprintf("%04d", Brunch), 
+      NA_character_),
+    # Job 2 NACE Rev 2 code.
+    Second_Brunch = if_else(
+      !is.na(Second_Brunch),
+      sprintf("%04d", Second_Brunch), NA_character_)) |>
+  mutate(
+    Brunch2d = if_else(!is.na(Brunch),substr(Brunch, 1, 2), NA_character_),
+    Second_Brunch2d = if_else(!is.na(Second_Brunch),substr(Second_Brunch, 1, 2), NA_character_),
+    # Is employer or self employed?
+    employer = if_else(
+      !is.na(Status) & B10_Business_with_regular_salaried_workers == 1,
+      1,NA)) |>
+  # We match to Rev 2 and SAM classifications (for job 1 and job 2)
+  left_join(
+    sam_activities[,c(1,3)], 
+    join_by(Brunch2d == rev2_2d)) |> 
+  left_join(
+    sam_activities[,c(1,3)],
+    join_by(Second_Brunch2d == rev2_2d),
+    suffix = 
+      c("_job1", "_job2")) |> 
+  # And convert to factors for proper order
+  mutate(
+    SAM_job1 = factor(
+      SAM_job1, 
+      levels = sam_factors$SAM,
+      # labels = sam_factors$SAM_description
+      ),
+    SAM_job2 = factor(
+      SAM_job2, 
+      levels = sam_factors$SAM,
+      # labels = sam_factors$SAM_description
+      )
+  )
+```
+
+## Rename variables for convenience
+
+```{r}
+pp_labor <- pp_labor |> 
+  rename(
+    # Job 1
+    job1_status     = Status,
+    job1_occupation = Occupation_converted,
+    job1_activity   = SAM_job1,
+    
+    # Job 2
+    job2_status     = Second_Status,
+    job2_occupation = Second_Ocupation_converted,
+    job2_activity   = SAM_job2
+    ) |> 
+  mutate(
+    job1_Q_hours    = 13 * M_Actually_worked, # A quarter has 13 weeks
+    job2_Q_hours    = 13 * S_Actually_worked
+  )
+```
+
+# Final Pivot Tables
+
+First, we make a dataset out of each job and single out the ownership factor.
+
+
+```{r}
+#| warning: false
+#| label: job-datasets
+
+flab1 <- pp_labor |> 
+  select(c(starts_with("job2"), P_Weights, employer)) |> 
+  filter(!is.na(job2_status) & employer != 1)
+```
+
+
+
+```{r}
+#| warning: false
+#| label: end
+
+test <- pp_labor |> 
+  select(job1_status, B10_Business_with_regular_salaried_workers, B11_Number_of_employees_in_the_establishment) |> 
+  filter(B10_Business_with_regular_salaried_workers == 1)
 ```
 
