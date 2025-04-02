@@ -204,11 +204,15 @@ pp_labor <- pp_labor |>
     # Job 2
     job2_status     = Second_Status,
     job2_occupation = Second_Ocupation_converted,
-    job2_activity   = SAM_job2
+    job2_activity   = SAM_job2,
+    
+    # Other
+    sex = Sex,
+    age = Age
     ) |> 
   mutate(
-    job1_Q_hours    = 13 * M_Actually_worked, # A quarter has 13 weeks
-    job2_Q_hours    = 13 * S_Actually_worked
+    job1_q_hours    = 13 * M_Actually_worked, # A quarter has 13 weeks
+    job2_q_hours    = 13 * S_Actually_worked
   )
 ```
 
@@ -222,18 +226,155 @@ First, we make a dataset out of each job and single out the ownership factor.
 #| label: job-datasets
 
 flab1 <- pp_labor |> 
-  select(c(starts_with("job2"), P_Weights, employer)) |> 
-  filter(!is.na(job2_status) & employer != 1)
+  filter(!is.na(job1_status)) |> 
+  select(c(QuarterNo, Self_employed, sex, starts_with("job1"), P_Weights)) |> 
+  mutate(
+    factor_type = "job1"
+  ) |> 
+  rename(
+    status     = job1_status,
+    occupation = job1_occupation,
+    activity   = job1_activity,
+    q_hours    = job1_q_hours,
+    self_employed = Self_employed
+  )
+flab2 <- pp_labor |> 
+  filter(!is.na(job2_status)) |>
+  select(c(QuarterNo, Self_employed, sex, starts_with("job2"), P_Weights)) |> 
+  mutate(
+    factor_type = "job2"
+  ) |> 
+  rename(
+    status     = job2_status,
+    occupation = job2_occupation,
+    activity   = job2_activity,
+    q_hours    = job2_q_hours,
+    self_employed = Self_employed
+  )
+  
+
+flab <- rbind(flab1,flab2)
+
+```
+
+# Cross tables
+
+We build the cross tables according to what we need.
+
+## Number of workers
+
+```{r}
+#| warning: false
+#| label: no-of-workers
+
+number_of_workers <- flab |> 
+  filter(!is.na(activity)) |> 
+  group_by(
+    #as_factor(self_employed), 
+    as_factor(status), 
+    as_factor(sex), 
+    as_factor(occupation), 
+    activity) |> 
+  summarize(
+    Value = sum(P_Weights / 4, na.rm = T)
+  ) |> 
+  rename(
+    # `Self Employed` = `as_factor(self_employed)`,
+    Status = `as_factor(status)`,
+    Gender = `as_factor(sex)`,
+    Occupation = `as_factor(occupation)`,
+    Activity = activity
+  ) |> 
+  pivot_wider(
+    id_cols = c(
+      # `Self Employed`,
+      Status,
+      Gender,
+      Occupation
+    ),
+    names_from = Activity,
+    values_from = Value,
+    id_expand = T,
+    names_expand = T,
+    names_sort = T,
+  )
+```
+
+## Volume of hours
+
+```{r}
+#| warning: false
+#| label: no-of-hours
+
+hours <- flab |> 
+  filter(!is.na(activity)) |> 
+  group_by(
+    #as_factor(self_employed), 
+    as_factor(status), 
+    as_factor(sex), 
+    as_factor(occupation), 
+    activity) |> 
+  summarize(
+    Value = sum(q_hours * P_Weights, na.rm = T)
+  ) |> 
+  rename(
+    # `Self Employed` = `as_factor(self_employed)`,
+    Status = `as_factor(status)`,
+    Gender = `as_factor(sex)`,
+    Occupation = `as_factor(occupation)`,
+    Activity = activity
+  ) |> 
+  pivot_wider(
+    id_cols = c(
+      # `Self Employed`,
+      Status,
+      Gender,
+      Occupation
+    ),
+    names_from = Activity,
+    values_from = Value,
+    id_expand = T,
+    names_expand = T,
+    names_sort = T,
+  )
 ```
 
 
+```{r}
+#| warning: false
+#| message: false
+#| label: save-to-excel
+
+wb <- loadWorkbook("data/sam/SAMshares_GEO_occupations.xlsx")
+names(wb)
+writeData(
+  wb, 
+  "factor payments_split", 
+  number_of_workers , 
+  startRow = 292, 
+  startCol = 3, 
+  rowNames = F,
+  na.string = "")
+writeData(
+  wb, 
+  "factor payments_split", 
+  hours , 
+  startRow = 416, 
+  startCol = 3, 
+  rowNames = F,
+  na.string = "")
+saveWorkbook(
+  wb,
+  "data/sam/SAMshares_GEO_occupations.xlsx",
+  overwrite = T)
+```
 
 ```{r}
 #| warning: false
 #| label: end
 
-test <- pp_labor |> 
-  select(job1_status, B10_Business_with_regular_salaried_workers, B11_Number_of_employees_in_the_establishment) |> 
-  filter(B10_Business_with_regular_salaried_workers == 1)
+# test <- pp_labor |> 
+#   select(job1_status, B10_Business_with_regular_salaried_workers, B11_Number_of_employees_in_the_establishment) |> 
+#   filter(B10_Business_with_regular_salaried_workers == 1)
 ```
 
