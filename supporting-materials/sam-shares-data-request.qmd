@@ -236,7 +236,7 @@ pop_by_quarter |>
 
 ## Skill level
 
-For skill level, we will use information on schooling from `pp$Education` (`TblShinda02)`, which has the following levels:
+For skill level, we will use information on schooling from `pp$Education` (`TblShinda02`), which has the following levels:
 
 1.  Illiterate
 2.  Do not have primary education but can read and write
@@ -323,7 +323,7 @@ pp_factor_descriptors <- pp_factor_descriptors |>
 
 ## Labor status and Economic Activities
 
-We work with labor status from `Shinda05_1`. Since, upon import NACE 1 codes are converted to numbers, we need to convert them back to text, so that we can keep zeros to the left for proper order. We then extract the first two digits and match with 2-digit NACE Rev. 1 and find the correspondence to Rev. 2 from the SAM using the look-up table `sam_activities`. For proper order, we convert the SAM activities columns for job 1 and job 2 to factor, using the order from the dataset `sam_factors`.
+We work with labor status from `Shinda05_1`. Since, upon import NACE 2 codes are converted to numbers, we need to convert them back to text, so that we can keep zeros to the left for proper order. We then extract the first two digits and find the correspondence to Rev. 2 from the SAM using the look-up table `sam_activities`. For proper order, we convert the SAM activities columns for job 1 and job 2 to factor, using the order from the dataset `sam_factors`.
 
 ```{r}
 #| warning: false
@@ -335,9 +335,9 @@ pp_emstatus <- pp_labor |>
     MemberId = 
       paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |>
   mutate(
-    # Job 1 NACE Rev 1 code. 
+    # Job 1 NACE Rev 2 code. 
     Q5  = if_else(!is.na(Q5),paste0(sprintf("%04d", Q5)), NA),
-    # Job 2 NACE Rev 1 code.
+    # Job 2 NACE Rev 2 code.
     Q12 = if_else(!is.na(Q12),paste0(sprintf("%04d", Q12)), NA)) |> 
   mutate(
     job1 = if_else(!is.na(Q5),substr(Q5, 1, 2), NA),
