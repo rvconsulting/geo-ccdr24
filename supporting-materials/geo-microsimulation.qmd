@@ -319,19 +319,6 @@ adm1 <- read_sf("data/gis/geo-adm1.shp") |>
 
 ```
 
-And we plot it for reference (see @fig-map-adm1-2). 
-
-```{r}
-#| label: fig-map-adm1-2
-#| fig-cap: "Map of Georgia at administrative level 1 (ADM1)"
-#| lst-label: lst-map-example
-
-tmap::tm_shape(adm1)+
-  tmap::tm_fill("region", legend.show = FALSE, palette = "Set1") +
-  tmap::tm_text("region", size = 0.65, auto.placement = T, col = "black")+
-  tmap::tm_layout(frame = F)
-```
-
 # Data preparation, demographic characteristics, income outliers and missings
 
 We start with various renames for standardization. Naming conventions in the guidance code use traditional abbreviations like `nli` for non-lablor income. We are opting for more descriptive variable names like `non_labor_income`, `labor_income`, etc. to have more easily readable code. We make an exception for total consumption (`tc`), because it's a variable that we use in every scenario and it supersedes lenght limits when adding scenario identifiers.
@@ -454,9 +441,18 @@ is_employed <- ind_poverty |>
       MemberId, employed
     )
 
-pp_factor_descriptors <- pp_factor_descriptors |> 
+pp_lmarket0 <- pp_labor |> 
+  mutate(
+    MemberId = 
+      paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |> 
+  select(-c(UID,MemberNo))
+
+pp_lmarket1 <- pp_factor_descriptors |> 
   left_join(urb_rur, join_by(UID)) |> 
-  left_join(quintiles, join_by(UID))
+  left_join(quintiles, join_by(UID)) |> 
+  left_join(pp_lmarket0, join_by(MemberId)) |> 
+  relocate(c(UID, MemberNo, MemberId, QuartNo), .before = 1)
+    
 ```
 
 ## Labor status and Economic Activities
@@ -468,7 +464,7 @@ We work with labor status from `Shinda05_1`. Since, upon import NACE 2 codes are
 #| message: false
 #| label: nace-codes
 
-pp_microsim1 <- pp_labor |> 
+pp_microsim1 <- pp_lmarket1 |> 
   mutate(
     MemberId = 
       paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |>
@@ -508,11 +504,6 @@ pp_microsim1 <- pp_labor |>
       labels = c("Agriculture", "Manufactures", "Services")
       )
   ) 
-
-head(
-  pp_microsim1[c(18, 34, 40, 41, 67),
-  c("UID", "MemberNo", "SAM3_job1", "SAM3_job2")]) |> 
-  gt()
 ```
 
 ## Types of income
@@ -524,7 +515,7 @@ Before making our multi-dimensional tables, we need to identify different types 
 #| message: false
 #| label: identify-incomes
 
-pp_microsim2 <- pp_microsim1 |> 
+pp_microsim3 <- pp_microsim1 |> 
   mutate(
     # We add accross three months for each source (and coalesce the NAs to 0)
     labor_income_job1 = 
@@ -556,18 +547,6 @@ pp_microsim2 <- pp_microsim1 |>
     )
 ```
 
-And we add our labor market variables to our `pp_factor_descriptors` dataset.
-
-```{r}
-#| warning: false
-#| message: false
-#| label: join-factor-descriptors-EmStatus
-
-pp_microsim3 <- pp_microsim2 |>
-  select(-UID,-MemberNo) |> 
-  left_join(pp_factor_descriptors, join_by(MemberId)) |> 
-  relocate(c(UID, MemberNo, MemberId, QuartNo), .before = 1)
-```
 
 ## Missing and outliers
 
@@ -632,20 +611,21 @@ pp_microsim6 <- pp_microsim5 |>
   # Use 'fill' to propagate 'other_sector' values within the household
   fill(other_sector_job1, .direction = "downup") |>
   mutate(
+    other_sector_job1 = if_else(
+      is.na(Q7),
+      NA_character_,
+      other_sector_job1)) |> 
+  mutate(
     # Impute missing 'sector' values based on the 'other_sector'
-    SAM3_job1 = 
-      if_else(
-        !is.na(Q7) & is.na(SAM3_job1), 
-        other_sector_job1, 
-        NA),
-    SAM3_job2 = 
-      if_else(
-        !is.na(Q13) & is.na(SAM3_job2), 
-        other_sector_job1, 
-        NA)
-      ) |>
-  # Drop the temporary 'other_sector' variable
-  select(-other_sector_job1) |>
+    SAM3_job1 = if_else(
+      !is.na(Q7), 
+      coalesce(SAM3_job1, other_sector_job1), 
+      SAM3_job1),
+    SAM3_job2 = if_else(
+      !is.na(Q13),
+      coalesce(SAM3_job2, other_sector_job1), 
+      SAM3_job2)
+      ) |> 
   ungroup()
 ```
 
@@ -712,14 +692,13 @@ pp_microsim7 <- pp_microsim6 |>
   # Labor Market Status 
   mutate(
     lmarket = case_when(
-      (!is.na(Q7) | !is.na(Q13))   ~ as.numeric(SAM3_job1),
-      (!is.na(Q7) | !is.na(Q13))   ~ as.numeric(SAM3_job1),
-      (!is.na(Q7) | !is.na(Q13))   ~ as.numeric(SAM3_job1),
-      (is.na(Q7) & is.na(Q13)) & age > 14 ~ 4, # Unemployed
-      (is.na(Q7) & is.na(Q13)) & age < 15 ~ 5,  # OLF
-      .default = 10
-    )
+      !is.na(Q7) ~ as.numeric(SAM3_job1),
+      is.na(Q7) & age >= 15 ~ 4, # Unemployed
+      is.na(Q7) & age < 15 ~ 5,  # OLF
+      .default = NA_integer_
   )
+)
+
 ```
 
 Filter the data for regression conditions.
