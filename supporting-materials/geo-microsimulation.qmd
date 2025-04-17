@@ -443,7 +443,13 @@ is_employed <- ind_poverty |>
   mutate(
     MemberId = 
       paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |> 
-    rename(employed = empl) |> 
+    mutate(
+      employed = case_when(
+        empl == 1 ~ T,
+        empl == 0 ~ F,
+        .default = NA
+      )
+    ) |> 
     select(
       MemberId, employed
     )
@@ -462,7 +468,7 @@ We work with labor status from `Shinda05_1`. Since, upon import NACE 2 codes are
 #| message: false
 #| label: nace-codes
 
-pp_emstatus <- pp_labor |> 
+pp_microsim1 <- pp_labor |> 
   mutate(
     MemberId = 
       paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |>
@@ -488,24 +494,23 @@ pp_emstatus <- pp_labor |>
     sam_activities[,c(1,5)],
     join_by(job2 == rev2_2d),
     suffix = 
-      c("_job1", "_job2")) 
-      # |> 
+      c("_job1", "_job2")) |> 
   # And convert to factors for proper order
-  # mutate(
-  #   SAM3_job1 = factor(
-  #     SAM3_job1, 
-  #     levels = c(1:3),
-  #     labels = c("Agriculture", "Manufactures", "Services")
-  #     ),
-  #   SAM3_job2 = factor(
-  #     SAM3_job2, 
-  #     levels = c(1:3),
-  #     labels = c("Agriculture", "Manufactures", "Services")
-  #     )
-  # )
+  mutate(
+    SAM3_job1 = factor(
+      SAM3_job1, 
+      levels = c(1:3),
+      labels = c("Agriculture", "Manufactures", "Services")
+      ),
+    SAM3_job2 = factor(
+      SAM3_job2, 
+      levels = c(1:3),
+      labels = c("Agriculture", "Manufactures", "Services")
+      )
+  ) 
 
 head(
-  pp_emstatus[c(18, 34, 40, 41, 67),
+  pp_microsim1[c(18, 34, 40, 41, 67),
   c("UID", "MemberNo", "SAM3_job1", "SAM3_job2")]) |> 
   gt()
 ```
@@ -519,22 +524,22 @@ Before making our multi-dimensional tables, we need to identify different types 
 #| message: false
 #| label: identify-incomes
 
-pp_emstatus <- pp_emstatus |> 
+pp_microsim2 <- pp_microsim1 |> 
   mutate(
     # We add accross three months for each source (and coalesce the NAs to 0)
-    flab_job1 = 
+    labor_income_job1 = 
       rowSums(
         across(starts_with("Q8_faqti_"), \(x) coalesce(x, 0))),
-    flab_job2 = 
+    labor_income_job2 = 
       rowSums(
         across(starts_with("Q14_faqti_"), \(x) coalesce(x, 0))),
-    fsurp = 
+    surplus_income = 
       rowSums(
         across(starts_with("Q10_faqti_"), \(x) coalesce(x, 0)))
   ) |> 
   # We also add factor labels to Employment Status
   mutate(
-    Q7 = factor(
+    lstatus1 = factor(
       Q7,
       levels = c(1:6),
       labels = c(
@@ -542,7 +547,7 @@ pp_emstatus <- pp_emstatus |>
         "Own Account (Ag.)", "Unpaid Worker", "Other"))
     ) |> 
   mutate(
-    Q13 = factor(
+    lstatus2 = factor(
       Q13,
       levels = c(1:6),
       labels = c(
@@ -558,7 +563,7 @@ And we add our labor market variables to our `pp_factor_descriptors` dataset.
 #| message: false
 #| label: join-factor-descriptors-EmStatus
 
-pp_emstatus <- pp_emstatus |>
+pp_microsim3 <- pp_microsim2 |>
   select(-UID,-MemberNo) |> 
   left_join(pp_factor_descriptors, join_by(MemberId)) |> 
   relocate(c(UID, MemberNo, MemberId, QuartNo), .before = 1)
@@ -566,73 +571,85 @@ pp_emstatus <- pp_emstatus |>
 
 ## Missing and outliers
 
-First we find out who has a job but no economic sector.
+In this section we will assign a labor income for job1 holders with `!lstatus1 %in% c(2,5) & labor_income_job1 == 0` based on predicted income from everyone else who doesn't meet the condition. We will estimate annual_labor_total after predictions.
+
+Looking at the data we see that only those that report being an employee or "other" report having labor income 1 or 2; Employer and Own Account non-ag report having surplus; and own account ag and (of course) unpaid worker
+
+We first identify who needs predictions for job1, job2, and surplus. We default to `NA` because we want to preserve the logic of those who don't have an income, because they aren't supposed to have one. However, this introduces an uncertainty element when predicting further down the line, because subsetting does not allow NA's. Even if we want to match just `TRUEs`. So it's a double-edged sword. The fix was using `which()` to find row numbers of those with `TRUE`. 
 
 ```{r}
-pp_emstatus <- pp_emstatus |> 
+pp_microsim4 <- pp_microsim3 |> 
   mutate(
-    # Annual income
-    annual_labor_income_primary = flab_job1 * 4,
-    annual_labor_income_secondary = flab_job2 * 4,
-    annual_income_surplus = fsurp * 4
-  ) |>
-  mutate(
-    # Annual labor income in thousand GEL
-    annual_labor_total =
-      (coalesce(
-        annual_labor_income_primary, 0) +
-       coalesce(
-        annual_labor_income_secondary,0)
-      )/1000)
+    fix_job1 = case_when(
+      (!is.na(Q7) & Q7 %in% c(2,3,4,5)) ~ F,
+      (!is.na(Q7) & Q7 %in% c(1,6) & labor_income_job1 >  0) ~ F,
+      (!is.na(Q7) & Q7 %in% c(1,6) & labor_income_job1 == 0) ~ T,
+      .default = NA
+    ),
+    fix_job2 = case_when(
+      (!is.na(Q13) & Q13 %in% c(2,3,4,5)) ~ F,
+      (!is.na(Q13) & Q13 %in% c(1,6) & labor_income_job2 >  0) ~ F,
+      (!is.na(Q13) & Q13 %in% c(1,6) & labor_income_job2 == 0) ~ T,
+      .default = NA
+    ),
+    fix_surplus = case_when(
+      (!is.na(Q7) & Q7 %in% c(1,4,5,6)) ~ F,
+      (!is.na(Q7) & Q7 %in% c(2,3) & surplus_income >  0) ~ F,
+      (!is.na(Q7) & Q7 %in% c(2,3) & surplus_income == 0) ~ T,
+      .default = NA
+    ))
 ```
 
-Outliers
+Outliers and need to predict.
 
 ```{r}
-pp_emstatus <- pp_emstatus |> 
+pp_microsim5 <- pp_microsim4 |> 
   mutate(
-    annual_labor_total = if_else(
-      annual_labor_income_primary == 0
-      & annual_labor_income_secondary == 0,
-      NA,
-      annual_labor_total
-    )) |> 
-  mutate(
-    sd = sd(annual_labor_total, na.rm = T),
-    d = annual_labor_total / sd,
-    # Combined outlier condition
-    outlier = (d>5) | (employed == 1 & annual_labor_total == 0),
-    # Potential missings
-    missings = if_else(employed == 1 & is.na(annual_labor_total), 1, NA)
+    sd_job1    = sd(labor_income_job1, na.rm = T),
+    sd_job2    = sd(labor_income_job2, na.rm = T),
+    sd_surplus = sd(surplus_income   , na.rm = T),
+    d_job1 = labor_income_job1 / sd_job1,
+    d_job2 = labor_income_job2 / sd_job2,
+    d_job1 = surplus_income / sd_surplus,
   )
-
 ```
 
 Assign sector to missings.
 
 ```{r}
-pp_emstatus <- pp_emstatus |>
+pp_microsim6 <- pp_microsim5 |>
   group_by(UID) |>
   mutate(
     # Create a temporary variable 'other_sector'
     # which captures the sector of any employed 
     # individual in the household
-    other_sector = 
-      if_else(employed == 1 & !is.na(SAM3_job1), SAM3_job1, NA_real_)
-  ) |>
+    other_sector_job1 = 
+      if_else(
+        !is.na(Q7) & !is.na(SAM3_job1), 
+        SAM3_job1, 
+        NA_character_)
+        ) |>
   # Use 'fill' to propagate 'other_sector' values within the household
-  fill(other_sector, .direction = "downup") |>
+  fill(other_sector_job1, .direction = "downup") |>
   mutate(
     # Impute missing 'sector' values based on the 'other_sector'
     SAM3_job1 = 
-      if_else(is.na(SAM3_job1) & employed == 1, other_sector, SAM3_job1)
-  ) |>
+      if_else(
+        !is.na(Q7) & is.na(SAM3_job1), 
+        other_sector_job1, 
+        NA),
+    SAM3_job2 = 
+      if_else(
+        !is.na(Q13) & is.na(SAM3_job2), 
+        other_sector_job1, 
+        NA)
+      ) |>
   # Drop the temporary 'other_sector' variable
-  select(-other_sector) |>
+  select(-other_sector_job1) |>
   ungroup()
 ```
 
-## The regression
+## The income simulation regression
 
 Since labor income was a key variable, which we needed to match with the future wage bill by economic activity, we first checked for missing values among employed individuals. We found that almost a third of respondents (28.6%) did not report income for either their primary or secondary job. To overcome this limitation, we used the available information from the remaining respondents to estimate an extended Mincer equation, as shown in @eq-labor-income-regression, and implemented in @lst-regression-model. For the respondents with available information, we also identified outliers as those outside of five standard deviations from the mean labor income.
 
@@ -640,7 +657,7 @@ $$
 \begin{equation}
 \begin{split}
 \ln(lab_i) = \\ \beta_0 + \beta_1 \text{age}_i + \\
-\beta_2 \text{gender}_i + \beta_3 \text{educy}_i + \\ 
+\beta_2 \text{gender}_i + \beta_3 \text{education}_i + \\ 
 \beta_4 \text{age}^2_i + \beta_5 \text{marz}_i + \\
 \beta_6 \text{sector}_i + \epsilon_i
 \end{split}
@@ -654,7 +671,7 @@ Where:
 -   $\beta_1, \beta_2, \beta_3, \beta_4, \beta_5, \beta_6$ are the coefficients for the respective independent variables.
 -   $\text{age}_i$ is the age of individual $i$.
 -   $\text{gender}_i$ is a binary variable indicating the gender of individual $i$ (1 for female, 2 for male).
--   $\text{educy}_i$ represents the level of education for individual $i$ (ordered: 1) None to General, 2) Secondary to Vocational, 3) Higher education).
+-   $\text{education}_i$ represents the level of education for individual $i$ (ordered: 1) None to General, 2) Secondary to Vocational, 3) Higher education).
 -   $\text{age}^2_i$ is the square of the age of individual $i$, included to capture non-linear effects of age on labor income.
 -   $\text{marz}_i$ represents the region where individual $i$ resides.
 -   $\text{sector}_i$ represents the sector of employment for individual $i$ (i.e., agriculture, manufacturing or services).
@@ -663,94 +680,187 @@ Where:
 We first prepare our variables for the regression.
 
 ```{r}
-#| eval: false
-pp_microsim <- pp_microsim |>
+pp_microsim7 <- pp_microsim6 |>
+  rename(
+    education = Education,
+    age = Age,
+    gender = Gender,
+    region = RegNo) |> 
   mutate(
-    educy2 = educy^2,
+    education2 = education^2,
     age2 = age^2,
     male = case_when(
       gender == 1 ~ 1,
       gender == 2 ~ 0
     ),
-    lnlab = log(annual_labor_total),
-    simuli = NA_real_ # Initialize simuli
+    ln_lab1 = if_else(
+      !is.na(labor_income_job1) & labor_income_job1 != 0,
+      log(labor_income_job1),
+      NA),
+    ln_lab2 = if_else(
+      !is.na(labor_income_job2) & labor_income_job2 != 0,
+      log(labor_income_job2),
+      NA),
+    ln_surplus = if_else(
+      !is.na(surplus_income) & surplus_income != 0,
+      log(surplus_income),
+      NA),
+    sim_job1 = NA_real_,
+    sim_job2 = NA_real_,
+    sim_surplus = NA_real_
+  )|>
+  # Labor Market Status 
+  mutate(
+    lmarket = case_when(
+      (!is.na(Q7) | !is.na(Q13))   ~ as.numeric(SAM3_job1),
+      (!is.na(Q7) | !is.na(Q13))   ~ as.numeric(SAM3_job1),
+      (!is.na(Q7) | !is.na(Q13))   ~ as.numeric(SAM3_job1),
+      (is.na(Q7) & is.na(Q13)) & age > 14 ~ 4, # Unemployed
+      (is.na(Q7) & is.na(Q13)) & age < 15 ~ 5,  # OLF
+      .default = 10
+    )
   )
 ```
 
 Filter the data for regression conditions.
 
 ```{r}
-#| eval: false
-regression_data <- pp_microsim |>
-  filter(employed == TRUE & outlier == FALSE & missings == FALSE)
+#| eval: true
+regression_data_job1 <- pp_microsim7 |>
+  filter(Q7 %in% c(1,6) & fix_job1 == F)
+
+regression_data_job2 <- pp_microsim7 |> 
+  filter(Q13 %in% c(1,6) & fix_job2 == F)
+
+regression_data_surplus <- pp_microsim7 |> 
+  filter(Q7 %in% c(2,3) & fix_surplus == F)
 ```
 
 Regression model.
 
 ```{r}
-#| eval: false
+#| eval: true
 #| lst-label: lst-regression-model
 #| lst-cap: "Income regression model"
 
-model <- lm(lnlab ~ age + gender + educy + age2 + marz + sector, 
-            data = regression_data)
+model_job1 <- lm(
+  ln_lab1 ~ 
+    age + gender + education + 
+    age2 + region + SAM3_job1,
+    data = regression_data_job1)
+
+model_job2 <- lm(
+  ln_lab2 ~ 
+    age + gender + education + 
+    age2 + region + SAM3_job2,
+    data = regression_data_job2)
+
+model_surplus <- lm(
+  ln_surplus ~ 
+    age + gender + education + 
+    age2 + region + SAM3_job1,
+    data = regression_data_surplus)
 ```
 
-Predict for specific conditions
-
-```{r}
-#| eval: false
-pp_microsim <- pp_microsim |>
-  mutate(
-    condition = (lstatus == 1 & (outlier == TRUE | missings == TRUE))
-  )
-```
-
-Applying predictions.
+Applying predictions to those who need it.
 
 Note: The 'predict' function in R does not directly support conditions within the function call, so we handle this by filtering or subsetting the data as needed.
 
-temp2 equivalent - Note: 'type = "response"' might be needed depending on model type.
+Note: 'type = "response"' might be needed depending on model type.
 
 ```{r}
-#| eval: false
-pp_microsim$simuli[pp_microsim$condition==TRUE] <- exp(
-  predict(model, pp_microsim[pp_microsim$condition==TRUE, ], type = "response"))
+# rows to predict (this removes uncertainty NAs for predictions)
+target_rows_job1    <- which(pp_microsim7$fix_job1    == TRUE)
+target_rows_job2    <- which(pp_microsim7$fix_job2    == TRUE)
+target_rows_surplus <- which(pp_microsim7$fix_surplus == TRUE)
+
+# predictions
+pp_microsim7$sim_job1[target_rows_job1] <- exp(
+  predict(
+    model_job1, 
+    pp_microsim7[target_rows_job1, ], 
+    type = "response")
+)
+
+pp_microsim7$sim_job2[target_rows_job2] <- exp(
+  predict(
+    model_job1, 
+    pp_microsim7[target_rows_job2, ], 
+    type = "response")
+)
+
+pp_microsim7$sim_surplus[target_rows_surplus] <- exp(
+  predict(
+    model_job1, 
+    pp_microsim7[target_rows_surplus, ], 
+    type = "response")
+)
 ```
 
-Handling negative values in 'simuli'.
+At this point, if there were negative predictions, we would have to make them zero. There are none such cases in this exercise.
+
+And now, we replace simulated income for those who lack one.
 
 ```{r}
-#| eval: false
-pp_microsim <- pp_microsim |>
+pp_microsim8 <- pp_microsim7 |> 
   mutate(
-    simuli = if_else(simuli < 0, 0, simuli)
+    labor_income_job1 = if_else(
+      fix_job1 == T,
+      sim_job1,
+      labor_income_job1
+    ),
+    labor_income_job2 = if_else(
+      fix_job2 == T,
+      sim_job2,
+      labor_income_job2
+    ),
+    surplus_income = if_else(
+      fix_surplus == T,
+      sim_surplus,
+      surplus_income
+    )
   )
 ```
 
-There were 8 observations that met the criteria:
-
-We will replace `annual_labor_total` with this value for those observations.
+Finally, we estimate total labor income.
 
 ```{r}
-#| eval: false
-pp_microsim <- pp_microsim |>
-  mutate(annual_labor_total = if_else(
-    employed == TRUE & (outlier == TRUE | missings == TRUE),
-    simuli, annual_labor_total))
-
-# And get monthly incomes for everyone
-pp_microsim <- pp_microsim |> 
-  mutate(monthly_labor_income = annual_labor_total / 12)
-
-```
-
-Merging datasets.
-
-```{r}
-#| eval: false
-pp_microsim <- pp_microsim |>
-  left_join(poverty_designations, by = "UID")
+pp_microsim9 <- pp_microsim8 |> 
+  mutate(
+    # Annual income
+    annual_labor_income_job1 = labor_income_job1 * 4,
+    annual_labor_income_job2 = labor_income_job2 * 4,
+    annual_surplus_income = surplus_income * 4,
+    # Monthly income
+    monthly_labor_income_job1 = labor_income_job1 / 3,
+    monthly_labor_income_job2 = labor_income_job2 / 3,
+    monthly_surplus_income = surplus_income / 3
+  ) |>
+  mutate(
+    # Annual labor income in GEL
+    annual_labor_total = if_else(
+      Q7 %in% c(1,2,3,6) | Q13 %in% c(1,2,3,6),
+      (coalesce(
+        annual_labor_income_job1, 0) +
+       coalesce(
+        annual_labor_income_job2, 0) +
+        coalesce(
+        annual_surplus_income, 0)
+      ),
+      NA_real_
+    ),
+    # Monthly labor income in GEL
+    monthly_labor_total = if_else(
+      Q7 %in% c(1,2,3,6) | Q13 %in% c(1,2,3,6),
+      (coalesce(
+        monthly_labor_income_job1, 0) +
+       coalesce(
+        monthly_labor_income_job2, 0) +
+        coalesce(
+        monthly_surplus_income, 0)
+      ),
+      NA_real_
+    ))
 ```
 
 ### Total income and shares
@@ -758,59 +868,13 @@ pp_microsim <- pp_microsim |>
 Total labor income at HH level.
 
 ```{r}
-#| eval: false
-pp_microsim <- pp_microsim |>
+pp_microsim10 <- pp_microsim9 |>
   group_by(UID) |>
-  mutate(lab_hh = sum(annual_labor_total, na.rm = TRUE)) |>
+  mutate(
+    hh_annual_labor_total  = sum(annual_labor_total,  na.rm = T),
+    hh_monthly_labor_total = sum(monthly_labor_total, na.rm = T)
+    ) |>
   ungroup()
-```
-
-Monthly incomes come from the `ic` data set.
-
-```{r}
-#| eval: false
-incomes <- ic |> 
-  select(UID, inc1, inc2, inc3, inc4, inc5, inc6, inc7, inc8)
-```
-
-Total income at HH level (the commented out portion was a less efficient way of accomplishing the same result of coalescing NAs to 0 so that the sum can be performed). Note that here we need to use the magittr pipe `|>` instead of the newer Native Pipe `|>` , because we need to reference the correct scope with the dot `.`.
-
-```{r}
-#| eval: false
-pp_microsim <- pp_microsim |>
-  left_join(incomes, by = c("UID" = "UID")) |>
-  mutate(across(inc5:inc8, ~replace_na(., 0))) |>
-  mutate(nli_hh = 12 * rowSums(select(., inc5:inc8), na.rm = TRUE)) |>
-  mutate(income_hh = lab_hh + nli_hh)
-
-# pp_microsim <- pp_microsim |>
-#   left_join(incomes, join_by(UID == UID)) |> 
-#   mutate(nli_hh = (  coalesce(inc5) + 
-#                      coalesce(inc6) +
-#                      coalesce(inc7) +
-#                      coalesce(inc8)) * 12) |> 
-#   mutate(income_hh = lab_hh + nli_hh)
-```
-
-
-Final subset of data.
-
-```{r}
-#| eval: false
-pp_microsim <- pp_microsim |>
-  select(UID, person_id, industry, salaried,
-         rural_dummy, hhsize,hhsize_R, marz_no, aepc, weight, 
-         Foodpovln2022, Lpovln2022, Upovln2022, Avpovln2022, 
-         poor_Foodpovln2022, poor_Lpovln2022, poor_Upovln2022, 
-         poor_Avpovln2022, decile, settlement, urban_rural,
-         gender, age, head, rel, educy, calif, sector, sector_name,
-         annual_labor_total,annual_labor_income_primary,
-         annual_labor_income_secondary,monthly_labor_income,
-         lstatus, sector_w, marz.x ) |>
-  rename(marz = marz.x)
-
-# Exporting to Stata (might be necessary for reweigthing with wentropy)
-# write_dta(pp_microsim, path = "outputs/pp_microsim.dta", version = 10)
 ```
 
 ## UN Population Projections
@@ -820,7 +884,6 @@ Now we are ready to move to our demographic projections and macroeconomic model 
 First, filtering based on country (our `iso` variable).
 
 ```{r}
-#| eval: false
 population_projections <- population_projections  |>  
   filter(country == iso)
 ```
