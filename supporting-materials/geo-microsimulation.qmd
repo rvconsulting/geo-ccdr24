@@ -259,7 +259,6 @@ population_projections <- read_dta("data/population/UN2022_population.dta") |>
 The macro scenario dataset is an input provided by the Macroeconomic CGE simulation team, with yearly information on GDP, working age population, employment by economic activity (for an aggregation of three sectors: agriculture, manufacturing, and services), wages by economic activity, value added by economic activity, remittances, consumer price index, food price index and energy price index (for a bundle of gas, oil, coal, electricity) by decile (10 representative households in the macro model), and carbon tax revenue transfers to household deciles.
 
 ```{r}
-#| eval: false
 #| warning: false
 #| message: false
 #| output: false
@@ -464,7 +463,7 @@ We work with labor status from `Shinda05_1`. Since, upon import NACE 2 codes are
 #| message: false
 #| label: nace-codes
 
-pp_microsim1 <- pp_lmarket1 |> 
+pp_microsim01 <- pp_lmarket1 |> 
   mutate(
     MemberId = 
       paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |>
@@ -515,7 +514,7 @@ Before making our multi-dimensional tables, we need to identify different types 
 #| message: false
 #| label: identify-incomes
 
-pp_microsim3 <- pp_microsim1 |> 
+pp_microsim02 <- pp_microsim01 |> 
   mutate(
     # We add accross three months for each source (and coalesce the NAs to 0)
     labor_income_job1 = 
@@ -557,7 +556,7 @@ Looking at the data we see that only those that report being an employee or "oth
 We first identify who needs predictions for job1, job2, and surplus. We default to `NA` because we want to preserve the logic of those who don't have an income, because they aren't supposed to have one. However, this introduces an uncertainty element when predicting further down the line, because subsetting does not allow NA's. Even if we want to match just `TRUEs`. So it's a double-edged sword. The fix was using `which()` to find row numbers of those with `TRUE`. 
 
 ```{r}
-pp_microsim4 <- pp_microsim3 |> 
+pp_microsim03 <- pp_microsim02 |> 
   mutate(
     fix_job1 = case_when(
       (!is.na(Q7) & Q7 %in% c(2,3,4,5)) ~ F,
@@ -582,7 +581,7 @@ pp_microsim4 <- pp_microsim3 |>
 Outliers and need to predict.
 
 ```{r}
-pp_microsim5 <- pp_microsim4 |> 
+pp_microsim04 <- pp_microsim03 |> 
   mutate(
     sd_job1    = sd(labor_income_job1, na.rm = T),
     sd_job2    = sd(labor_income_job2, na.rm = T),
@@ -596,36 +595,35 @@ pp_microsim5 <- pp_microsim4 |>
 Assign sector to missings.
 
 ```{r}
-pp_microsim6 <- pp_microsim5 |>
+pp_microsim05 <- pp_microsim04 |>
   group_by(UID) |>
   mutate(
-    # Create a temporary variable 'other_sector'
-    # which captures the sector of any employed 
-    # individual in the household
-    other_sector_job1 = 
-      if_else(
-        !is.na(Q7) & !is.na(SAM3_job1), 
-        SAM3_job1, 
-        NA_character_)
-        ) |>
-  # Use 'fill' to propagate 'other_sector' values within the household
+    # Create a temporary variable 'other_sector' as a factor
+    other_sector_job1 = case_when(
+      !is.na(Q7) & !is.na(SAM3_job1) & SAM3_job1 %in% levels(SAM3_job1) ~ SAM3_job1,
+      TRUE ~ NA_character_ # Keep as character NA for now
+    )
+  ) |>
   fill(other_sector_job1, .direction = "downup") |>
   mutate(
-    other_sector_job1 = if_else(
-      is.na(Q7),
-      NA_character_,
-      other_sector_job1)) |> 
+    other_sector_job1 = if_else(is.na(Q7), NA_character_, other_sector_job1)
+  ) |>
   mutate(
-    # Impute missing 'sector' values based on the 'other_sector'
-    SAM3_job1 = if_else(
-      !is.na(Q7), 
-      coalesce(SAM3_job1, other_sector_job1), 
-      SAM3_job1),
-    SAM3_job2 = if_else(
+    # Impute missing 'sector' values based on 'other_sector'
+    SAM3_job1 = as.factor(if_else(
+      !is.na(Q7),
+      as.character(coalesce(as.character(SAM3_job1), other_sector_job1)),
+      as.character(SAM3_job1)
+    )),
+    SAM3_job2 = as.factor(if_else(
       !is.na(Q13),
-      coalesce(SAM3_job2, other_sector_job1), 
-      SAM3_job2)
-      ) |> 
+      as.character(coalesce(as.character(SAM3_job2), other_sector_job1)),
+      as.character(SAM3_job2)
+    )),
+    # Re-establish levels and labels
+    SAM3_job1 = factor(SAM3_job1, levels = c("Agriculture", "Manufactures", "Services")),
+    SAM3_job2 = factor(SAM3_job2, levels = c("Agriculture", "Manufactures", "Services"))
+  ) |>
   ungroup()
 ```
 
@@ -660,7 +658,7 @@ Where:
 We first prepare our variables for the regression.
 
 ```{r}
-pp_microsim7 <- pp_microsim6 |>
+pp_microsim06 <- pp_microsim05 |>
   rename(
     education = Education,
     age = Age,
@@ -705,13 +703,13 @@ Filter the data for regression conditions.
 
 ```{r}
 #| eval: true
-regression_data_job1 <- pp_microsim7 |>
+regression_data_job1 <- pp_microsim06 |>
   filter(Q7 %in% c(1,6) & fix_job1 == F)
 
-regression_data_job2 <- pp_microsim7 |> 
+regression_data_job2 <- pp_microsim06 |> 
   filter(Q13 %in% c(1,6) & fix_job2 == F)
 
-regression_data_surplus <- pp_microsim7 |> 
+regression_data_surplus <- pp_microsim06 |> 
   filter(Q7 %in% c(2,3) & fix_surplus == F)
 ```
 
@@ -749,29 +747,29 @@ Note: 'type = "response"' might be needed depending on model type.
 
 ```{r}
 # rows to predict (this removes uncertainty NAs for predictions)
-target_rows_job1    <- which(pp_microsim7$fix_job1    == TRUE)
-target_rows_job2    <- which(pp_microsim7$fix_job2    == TRUE)
-target_rows_surplus <- which(pp_microsim7$fix_surplus == TRUE)
+target_rows_job1    <- which(pp_microsim06$fix_job1    == TRUE)
+target_rows_job2    <- which(pp_microsim06$fix_job2    == TRUE)
+target_rows_surplus <- which(pp_microsim06$fix_surplus == TRUE)
 
 # predictions
-pp_microsim7$sim_job1[target_rows_job1] <- exp(
+pp_microsim06$sim_job1[target_rows_job1] <- exp(
   predict(
     model_job1, 
-    pp_microsim7[target_rows_job1, ], 
+    pp_microsim06[target_rows_job1, ], 
     type = "response")
 )
 
-pp_microsim7$sim_job2[target_rows_job2] <- exp(
+pp_microsim06$sim_job2[target_rows_job2] <- exp(
   predict(
     model_job1, 
-    pp_microsim7[target_rows_job2, ], 
+    pp_microsim06[target_rows_job2, ], 
     type = "response")
 )
 
-pp_microsim7$sim_surplus[target_rows_surplus] <- exp(
+pp_microsim06$sim_surplus[target_rows_surplus] <- exp(
   predict(
     model_job1, 
-    pp_microsim7[target_rows_surplus, ], 
+    pp_microsim06[target_rows_surplus, ], 
     type = "response")
 )
 ```
@@ -781,7 +779,7 @@ At this point, if there were negative predictions, we would have to make them ze
 And now, we replace simulated income for those who lack one.
 
 ```{r}
-pp_microsim8 <- pp_microsim7 |> 
+pp_microsim07 <- pp_microsim06 |> 
   mutate(
     labor_income_job1 = if_else(
       fix_job1 == T,
@@ -804,7 +802,7 @@ pp_microsim8 <- pp_microsim7 |>
 Finally, we estimate total labor income.
 
 ```{r}
-pp_microsim9 <- pp_microsim8 |> 
+pp_microsim08 <- pp_microsim07 |> 
   mutate(
     # Annual income
     annual_labor_income_job1 = labor_income_job1 * 4,
@@ -847,7 +845,7 @@ pp_microsim9 <- pp_microsim8 |>
 Total labor income at HH level.
 
 ```{r}
-pp_microsim10 <- pp_microsim9 |>
+pp_microsim09 <- pp_microsim08 |>
   group_by(UID) |>
   mutate(
     hh_annual_labor_total  = sum(annual_labor_total,  na.rm = T),
@@ -856,7 +854,7 @@ pp_microsim10 <- pp_microsim9 |>
   ungroup()
 ```
 
-## UN Population Projections
+# UN Population Projections
 
 Now we are ready to move to our demographic projections and macroeconomic model information.
 
@@ -870,7 +868,6 @@ population_projections <- population_projections  |>
 Collapsing data by summing up variables starting with "yf" and "ym" and reshaping data to long format.
 
 ```{r}
-#| eval: false
 #| warning: false
 #| message: false
 
@@ -888,7 +885,7 @@ population_projections <- pivot_longer(population_projections,
 Creating new variable `total_population` as the sum of `yf` and `ym`. Dropping `country` variables.
 
 ```{r}
-#| eval: false
+
 population_projections <- population_projections |>
   mutate(total_population = yf + ym) |>
   select( -country) |> 
@@ -898,7 +895,7 @@ population_projections <- population_projections |>
 Summarizing the year to find the range.
 
 ```{r}
-#| eval: false
+
 minyear <- survey_year # Make sure `survey_year` is correctly defined
 maxyear <- max(as.numeric(population_projections$year))
 ```
@@ -906,7 +903,6 @@ maxyear <- max(as.numeric(population_projections$year))
 We have that the "Min Year" is `minyear` and the "Max Year" is `maxyear`. Now we create a population growth rate by demographic variant dataset. We initialize an empty list to store our data by variant and we loop over variants to create this list.
 
 ```{r}
-#| eval: false
 # With minyear and maxyear defined above
 # Initialize a list to store growth data
 pop_growth <- list()
@@ -940,7 +936,6 @@ for (variant in variants) {
 With the list ready, we convert back to dataframe by stitching the list elements one on top of the other.
 
 ```{r}
-#| eval: false
 # Convert list to dataframe
 pop_growth <- do.call(rbind, lapply(names(pop_growth), function(x) {
   # Extract year and variant from the name
@@ -962,3 +957,239 @@ pop_growth <- arrange(pop_growth, variant, year)
 pop_growth[c(1:09),]
 ```
 
+# Macro Scenarios
+
+Here we use the Excel tab names to create the names of the scenarios going forward, with a previous cleaning in which we convert names to lower case, replace spaces and special characters with underscores, we remove the word scenario from the name, and remove leading or trailing spaces or underscores.
+
+```{r}
+#| output: false
+#| warning: false
+#| message: false
+
+# Macro Scenario File imported in "Datasets" section (scenario_file) 
+sheets <- excel_sheets(scenario_file)
+scenario_sheets <- sheets[c(1)]
+
+# Define the names of the scenarios and the variants
+# modify list with the tab numbers in the Excel file
+scenarios <- scenario_sheets %>%
+  # Convert all text to lowercase
+  str_to_lower() %>%  
+  # Replace all spaces and hyphens with underscores
+  str_replace_all("[ -]", "_") %>%
+  # Remove the word 'scenario' or 'scenarios'
+  str_remove_all("scenario?s?") %>%
+  # Remove leading and trailing underscores
+  str_replace_all("^_+|_+$", "")  
+
+```
+
+Our scenarios are: `{r} glue::glue_collapse(scenarios, sep = ', ', last = ', and ')`. We now import data from Excel sheets corresponding to each scenario and combine them into one data frame.
+
+```{r}
+#| output: false
+#| warning: false
+#| message: false
+
+# Create an empty list to store data frames for each scenario
+scen_data_list <- list()
+
+# Import data for each scenario and store it in the list.
+# Note the trick where we use the index `i` from `scenarios`
+# but access the scenario_sheets name to fetch the Excel
+# tab.
+for (i in seq_along(scenarios)) {
+  sheet_data <- read_excel(scenario_file, 
+                           sheet = scenario_sheets[i], 
+                           range = "A3:AX30",
+                           col_names = FALSE)
+  sheet_data$scenario_id <- scenarios[i]
+  colnames(sheet_data) <- scenario_varlist$var_short_name
+  scen_data_list[[i]] <- sheet_data
+}
+
+# Combine all data frames into one
+macro_data <- bind_rows(scen_data_list)
+# Remove unnecessary list
+rm(scen_data_list)
+```
+
+We then rename columns, create a 'scenid' to identify scenarios, and merge with population projections. Calculate real wages
+
+```{r}
+# Rename population_m from the data set because we will use 
+# UN pop projections from the other data set.
+macro_data <- macro_data %>% 
+  rename(population_m_macrodata = population_m)
+
+```
+
+We prepare our population data to combine it with the macro data.
+
+```{r}
+pop_data <- population_projections %>% 
+  group_by(Variant, year) %>% 
+  summarize(female = sum(yf),
+            male = sum(ym),
+            total_population = sum(total_population) ) %>% 
+  ungroup()
+
+# Filter population data to macro model years
+pop_data <- pop_data %>% 
+  filter(year <= max(macro_data$year),
+         Variant == variants[7])
+# Merge the combined data with population projections
+macro_data <- macro_data %>%
+  left_join(pop_data, by = c("year"))
+```
+
+There are some calculated variables that we need to estimate.
+
+```{r}
+# Calculate real wages
+macro_data <- macro_data %>%
+  # These result in billion GEL because employment in millions
+  # and wages in thousand GEL p/person p/year.
+  # like multiplying by 1000 then by 1,000,000, and then
+  # dividing by a billion (1,000,000,000) = 1
+  mutate(rwage_agr_b_lcu = 
+           (wage_agri_lcu1000s * emp_agri_million) / cpi, 
+         rwage_man_b_lcu = 
+           (wage_manu_lcu1000s * emp_manu_million) / cpi,
+         rwage_ser_b_lcu = 
+           (wage_serv_lcu1000s * emp_serv_million) / cpi,
+         # We also rescale jobs and tot pop to million
+         # Old code (employment already in million)
+         total_population = total_population / 1000,
+         lmarket_1 = emp_agri_million, 
+         lmarket_2 = emp_manu_million,  
+         lmarket_3 = emp_serv_million)
+```
+
+We calculate columns for the totals by labor market group so we can derive our shares.
+
+```{r}
+macro_data <- macro_data %>%
+  mutate(
+    lmarket_4 = 
+      working_age_pop_m - (lmarket_1 + lmarket_2 + lmarket_3),
+    lmarket_5 = 
+      (total_population) - working_age_pop_m
+  )
+
+# And we label these variables
+attr(macro_data$total_population, 
+     "label") <- "Total population (million)"
+attr(macro_data$lmarket_1, 
+     "label") <- "Employed in agriculture (million)"
+attr(macro_data$lmarket_2, 
+     "label") <- "Employed in manufacturing (million)"
+attr(macro_data$lmarket_3, 
+     "label") <- "Employed in services (million)"
+attr(macro_data$lmarket_4, 
+     "label") <- "Unemployed and inactive (million)"
+attr(macro_data$lmarket_5, 
+     "label") <- "Outside the labor force (million)"
+```
+
+
+
+With our demographic data added to our macroeconomic data, we need to estimate relative growth of some of the variables. For this we create a function to estimate growth per column to a named list of column.
+
+```{r}
+# Function to add growth rate columns directly in the dataframe
+calculate_growth <- function(data, value_column) {
+  growth_col_name <- paste0(value_column, "_growth") # dynamic name for growth column
+  data %>%
+    arrange(year) %>%
+    group_by(Variant, scenario_id) %>%
+    mutate(
+      base_value = first(!!sym(value_column)),
+      !!sym(growth_col_name) := !!sym(value_column) / base_value
+    ) %>%
+    select(-base_value) %>% # optionally remove base_value column if not needed
+    ungroup()
+}
+
+# Columns to calculate growth for
+value_columns <- c(
+  "rwage_agr_b_lcu",     # Real wage agriculture
+  "rwage_man_b_lcu",     # Real wage manufacturing
+  "rwage_ser_b_lcu",     # Real wage services
+  "lmarket_1",
+  "lmarket_2",
+  "lmarket_3",
+  "lmarket_4",
+  "lmarket_5"
+  )
+
+```
+
+We create the list and pass it to the function.
+
+```{r}
+# Using purrr to apply the function column-wise, without a for loop.
+macro_data <- reduce(value_columns, calculate_growth, .init = macro_data)
+
+# We relocate some variables for clarity.
+macro_data <- macro_data %>% 
+  relocate(scenario_id, Variant, .before = year) %>% 
+  arrange(scenario_id, Variant, year)
+
+```
+
+Now that `macro_data` has growth rate columns for each of the variables. We can check, for example, the employment and wage growth rates for our three scenarios in the year 2030 (see ).
+
+
+```{r}
+#| label: tbl-lmarket-growth
+#| tbl-cap: "Labor market growth by category in the year 2030"
+
+macro_data[macro_data$year %in% c(2030, 2050),c(
+  c("scenario_id",
+    "lmarket_1_growth",
+    "lmarket_2_growth",
+    "lmarket_3_growth",
+    "lmarket_4_growth", 
+    "lmarket_5_growth")
+)] %>% 
+  gt(rowname_col = "scenario_id") %>%
+  cols_label(
+    lmarket_1_growth = md("Agriculture"),
+    lmarket_2_growth = md("Manufacturing"),
+    lmarket_3_growth = md("Services"),
+    lmarket_4_growth = md("Unemployed"),
+    lmarket_5_growth = md("OLF")
+  ) %>%
+  fmt_number(columns = everything(),
+             decimals = 2)
+```
+
+
+```{r}
+#| label: tbl-wage-growth
+#| tbl-cap: "Wage bill growth by sector in the year 2030"
+
+macro_data[macro_data$year %in% c(2030, 2050),c(
+  c("scenario_id",
+    "rwage_agr_b_lcu_growth", 
+    "rwage_man_b_lcu_growth",
+    "rwage_ser_b_lcu_growth")
+)] %>% 
+  gt(rowname_col = "scenario_id") %>%
+  cols_label(
+    rwage_agr_b_lcu_growth = md("Agriculture"),
+    rwage_man_b_lcu_growth = md("Manufacturing"),
+    rwage_ser_b_lcu_growth = md("Services")
+  ) %>%
+  fmt_number(columns = everything(),
+             decimals = 2)
+```
+
+
+# End
+
+
+```{r}
+
+```
