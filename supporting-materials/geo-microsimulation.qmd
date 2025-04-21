@@ -1520,6 +1520,26 @@ rm(rakedata)
 
 ```
 
+Weights for the household database
+
+```{r}
+# We calculate new weights for households in the hh database
+weights_scenarios <- rakedata %>% 
+  group_by(household_id) %>%
+  summarize(
+    hh_weight_2030_baseline = 
+      sum(hh_weight_2030_baseline, na.rm = TRUE),
+    hh_weight_2030_dry_hot = 
+      sum(hh_weight_2030_dry_hot, na.rm = TRUE),
+    hh_weight_2030_nzs = 
+      sum(hh_weight_2030_nzs, na.rm = TRUE)
+    )
+
+# We return rakedata to data frame pp_microsim and get rid of rakedata
+pp_microsim <- tibble(rakedata)
+rm(rakedata)
+
+```
 
 
 # End
