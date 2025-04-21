@@ -407,7 +407,7 @@ urb_rur <- hh_basics |>
   )
 
 quintiles <- poverty |> 
-  select(UID, quintilc, decilc) |> 
+  select(UID, quintilc, decilc, hhsize) |> 
   rename(
     Quintile = quintilc,
     Decile = decilc) |> 
@@ -852,6 +852,8 @@ pp_microsim09 <- pp_microsim08 |>
     hh_monthly_labor_total = sum(monthly_labor_total, na.rm = T)
     ) |>
   ungroup()
+
+
 ```
 
 # UN Population Projections
@@ -1185,6 +1187,339 @@ macro_data[macro_data$year %in% c(2030, 2050),c(
   fmt_number(columns = everything(),
              decimals = 2)
 ```
+
+# Reweighting of the dataset
+
+## Aggregation of population data
+
+This is based on a custom command to reweight the survey according to macroeconomic data for every possible combination of variant, year, and country. In the macro data we know they only used the "medium" variant and we only need to reweight for two specific years for Georgia (GEO), so we will conduct the reweighting directly with these parameters.
+
+We join several cohorts from 0 to 29 years old and from 60 onwards, because the reweighting procedure works best if each category is at least 5% of the population. The solution here works best for Georgia
+
+```{r}
+population_projections <- population_projections %>%
+  # filter(Variant == "Medium") %>%
+  # Recoding cohorts into ordered factors
+    mutate(
+      cohort_short = factor(
+        case_when(
+          cohort %in% 
+            c("P0004", "P0509","P1014",
+              "P1519","P2024", "P2529") ~ "P0029",
+          cohort %in% 
+            c("P3034", "P3539") ~ "P3039",
+          cohort %in% 
+            c("P4044", "P4549") ~ "P4049",
+          cohort %in% 
+            c("P5054", "P5559") ~ "P5059",
+          cohort %in% 
+            c("P6064", "P6569","P7074", "P7579",
+              "P8084", "P8589", "P9094", "P9599",
+              "P100up") ~ "P60up"), 
+        levels = 
+          c("P0029", "P3039", "P4049",
+            "P5059", "P60up"))) %>%
+  # Get also factor 'cohort' to numeric codes
+  mutate(cohort_code = as.integer(cohort_short))
+
+```
+
+Let's now create cohorts in our `pp_microsim` data to match our population projection data.
+
+```{r}
+# Convert 'age' into 'cohort' factor with levels ordered as specified
+pp_microsim10 <- pp_microsim09 %>%
+    mutate(cohort = factor(case_when(
+    age >= 0  & age <= 29 ~ "P0029",
+    age >= 30 & age <= 39 ~ "P3039",
+    age >= 40 & age <= 49 ~ "P4049",
+    age >= 50 & age <= 59 ~ "P5059",
+    age >= 60  ~ "P60up"
+  ), levels = c("P0029", "P3039", "P4049", "P5059", "P60up")))
+
+# Convert the 'cohort' and 'gender' factor to numeric codes
+pp_microsim <- pp_microsim10  |> 
+  mutate(cohort_code = as.integer(cohort))  |>  
+  mutate(gender_code = as.integer(gender)) |> 
+  mutate(weight = Weights / 4)
+
+rm(list = ls(pattern = "^pp_microsim[0-9]+$"))
+
+```
+
+We also need demographic targets for 2030 and 2050
+
+```{r}
+#| warning: false
+#| message: false
+
+# Ensure pop_targets_2030 is correctly prepared
+# We use the "Medium" variant = variants[7]
+pop_targets_2030 <- population_projections  %>% 
+  filter(year == 2030, Variant == variants[7])  %>% 
+  group_by(cohort_code, cohort_short) %>% 
+    summarize(female = sum(yf),
+              male   = sum(ym), 
+              total = sum(total_population),
+              ) %>%
+  ungroup()
+
+pop_targets_2050 <- population_projections  %>% 
+  filter(year == 2050, Variant == variants[7])  %>% 
+  group_by(cohort_code, cohort_short) %>% 
+    summarize(female = sum(yf),
+              male   = sum(ym), 
+              total = sum(total_population),
+              ) %>%
+  ungroup()
+
+pop_total_2030 <- sum(pop_targets_2030$total)
+pop_total_2050 <- sum(pop_targets_2050$total)
+
+pop_targets_2030 <- pop_targets_2030 %>% 
+  mutate(pct_total = total / pop_total_2030)
+pop_targets_2050 <- pop_targets_2050 %>% 
+  mutate(pct_total = total / pop_total_2050)
+
+#writeClipboard(pop_targets_2030)
+# write.table(pop_targets_2030, "clipboard", sep="\t", row.names=FALSE)
+  
+```
+
+And economic targets from our macroeconomic scenario data. We deal with this later. Should come back to fix this so we can automate.
+
+```{r}
+economic_targets <- macro_data  |> 
+  filter(
+    year %in% c(2023,analysis_years), 
+    Variant %in% variants[7], 
+    scenario_id %in% scenarios)  |> 
+  mutate(
+    target_lmarket_1 = 
+      lmarket_1 / population_m_macrodata,
+    target_lmarket_2 =
+      lmarket_2 / population_m_macrodata,
+    target_lmarket_3 =
+      lmarket_3 / population_m_macrodata,
+    target_lmarket_4 =
+      lmarket_4 / population_m_macrodata,
+    target_lmarket_5 =
+      lmarket_5 / population_m_macrodata
+  ) |> 
+  select(
+    scenario_id,
+    year,
+    starts_with("target")
+  ) 
+```
+
+
+```{r}
+# summary_table <- pp_microsim |>
+#   group_by(lmarket) |>
+#   summarize(
+#     total = sum(weight, na.rm = TRUE)
+#   ) |>
+#   ungroup() |>
+#   mutate(
+#     pct = total / sum(total)
+#   )
+# summary_table
+# sum(summary_table$total)
+```
+
+
+Note that the differences between the totals of the survey and the macro file for the base year are very much different. We'll adjust the survey only with relative growth instead of total numbers so that labor income doesn't change completely.
+
+# Reweigting
+
+We use anesrake to calculate targets from known future proportions of sex, age, economic sector. We first create a target list.
+
+```{r}
+# Target for each variable
+
+# 2030 (gender is flipped in this case 1 is Female and 2 is Male) so
+gender_code_2030 <- c(
+  sum(pop_targets_2030$female) / 
+    (sum(pop_targets_2030$male)+ sum(pop_targets_2030$female)),
+  sum(pop_targets_2030$male)   / 
+    (sum(pop_targets_2030$male)+ sum(pop_targets_2030$female)) 
+  )
+
+cohort_code_2030 <- pop_targets_2030$pct_total
+
+# 2050 (gender is flipped in this case 1 is Female and 2 is Male) so
+gender_code_2050 <- c(
+  sum(pop_targets_2050$female) / 
+    (sum(pop_targets_2050$male)+ sum(pop_targets_2050$female)),
+  sum(pop_targets_2050$male)   / 
+    (sum(pop_targets_2050$male)+ sum(pop_targets_2050$female)) 
+  )
+
+cohort_code_2050 <- pop_targets_2050$pct_total
+
+# Four digits are better than two in this case, raking is quite accurate.
+# Macro shares are vastly different from survey shares, so we
+# Take the changes in labor market categories from the macro_data object
+# lmarket_growth and we apply that to the total numbers from the survey
+# by category, we then compute the new shares based on that in the 
+# Excel file "data/sam/LaborMarketChanges.xlsx". Should do it in the code
+# but we'll fix it when we have more time.
+lmarket_baseline_2030 <- c(0.1360, 0.0319, 0.2849, 0.3586, 0.1886)
+lmarket_baseline_2050 <- c(0.1367, 0.0342, 0.3089, 0.3177, 0.2025)
+
+# lmarket_dry_hot  <- c(0.1348, 0.0490, 0.2582, 0.2459, 0.3120)
+# lmarket_nzs      <- c(0.1237, 0.0510, 0.2594, 0.2488, 0.3171)
+# Note how similar the scenarios are
+
+# Target list baseline
+targets_baseline_2030 <- list(gender_code_2030
+                , cohort_code_2030
+                , lmarket_baseline_2030
+                )
+# Target list baseline
+targets_baseline_2050 <- list(gender_code_2050
+                , cohort_code_2050
+                , lmarket_baseline_2050
+                )
+
+names(targets_baseline_2030) <- c("gender_code", 
+                    "cohort_code", 
+                    "lmarket"
+                    )
+
+names(targets_baseline_2050) <- c("gender_code", 
+                    "cohort_code", 
+                    "lmarket"
+                    )
+
+# Target list Dry/Hot
+# targets_dry_hot <- list(gender_code
+#                 , cohort_code
+#                 , lmarket_dry_hot
+#                 )
+# 
+# names(targets_dry_hot) <- c("gender_code", 
+#                     "cohort_code", 
+#                     "lmarket"
+#                     )
+
+# Target list NZS
+# targets_nzs <- list(gender_code
+#                 , cohort_code
+#                 , lmarket_nzs
+#                 )
+# 
+# names(targets_nzs) <- c("gender_code", 
+#                     "cohort_code", 
+#                     "lmarket"
+#                     )
+
+```
+
+And now we perform the reweighting, using the original weights. Initially we had used the default option type = "pctlim" combined with pctlim=0.05, because the method recommends that if reweighting changes for one variable according to its target are not of at least 5%, then it's not worth burdening the procedure with it. It then ignored sex as a reweighting variable, leaving a small percentage difference between the target and the final population. However, we then tried removing this limitation and the procedure reached convergence in 40 and 49 iterations very efficiently for 2030 and 2050, respectively.
+
+```{r}
+# Since this uses base R, we need to turn the data frame into base R object
+rakedata <- as.data.frame(pp_microsim)
+
+outsave_2030 <- anesrake::anesrake(targets_baseline_2030, 
+                    rakedata, 
+                    caseid = rakedata$MemberId, 
+                    #verbose = FALSE,
+                    choosemethod = "total",
+                    #type = "pctlim",
+                    type = "nolim",
+                    #cap = 100,
+                    #pctlim = 0.05,
+                    nlim = 3,
+                    iterate = TRUE,
+                    force1 = TRUE,
+                    verbose = TRUE,
+                    weightvec = rakedata$weight)
+
+outsave_2050 <- anesrake::anesrake(targets_baseline_2050, 
+                    rakedata, 
+                    caseid = rakedata$MemberId, 
+                    #verbose = FALSE,
+                    choosemethod = "total",
+                    #type = "pctlim",
+                    type = "nolim",
+                    #cap = 100,
+                    #pctlim = 0.05,
+                    nlim = 3,
+                    iterate = TRUE,
+                    force1 = TRUE,
+                    verbose = TRUE,
+                    weightvec = rakedata$weight)
+
+# add weights to the dataset
+
+rakedata$weight_2030_baseline  <- unlist(outsave_2030[1])
+rakedata$weight_2050_baseline  <- unlist(outsave_2050[1])
+n  <- length(rakedata$MemberId)
+
+# Calculate the sum of original weights
+original_weight_sum <- sum(rakedata$weight)
+
+# # Target scaling for original weights
+
+original_weight_scaling_factor_2030 <-
+  pop_data$total_population[pop_data$year == 2030] /
+  pop_data$total_population[pop_data$year == 2023]
+
+original_weight_scaling_factor_2050 <-
+  pop_data$total_population[pop_data$year == 2050] /
+  pop_data$total_population[pop_data$year == 2023]
+
+# Scaled original weights
+original_weight_sum_2030 <- (original_weight_sum 
+                        * original_weight_scaling_factor_2030)
+original_weight_sum_2050 <- (original_weight_sum 
+                        * original_weight_scaling_factor_2050)
+
+# Calculate the sum of the new weights
+new_weight_sum_2030 <- sum(rakedata$weight_2030_baseline)
+new_weight_sum_2050 <- sum(rakedata$weight_2050_baseline)
+
+# Scale the new weights to match the sum of the original weights
+scaling_factor_2030 <- original_weight_sum / new_weight_sum_2030
+scaling_factor_2050 <- original_weight_sum / new_weight_sum_2050
+
+rakedata$weight_2030_baseline <- rakedata$weight_2030_baseline * scaling_factor_2030
+rakedata$weight_2050_baseline <- rakedata$weight_2050_baseline * scaling_factor_2050
+
+# Scale back to match population projections
+rakedata$weight_2030_baseline <- rakedata$weight_2030_baseline * original_weight_scaling_factor_2030
+rakedata$weight_2050_baseline <- rakedata$weight_2050_baseline * original_weight_scaling_factor_2050
+
+# Verify the adjustment
+head(rakedata[, c("weight", "weight_2030_baseline", "weight_2050_baseline")])
+summary(rakedata$weight_2030_baseline)
+summary(rakedata$weight_2050_baseline)
+summary(rakedata$weight)
+
+hh_size <- rakedata %>% 
+  select(UID, hhsize) %>% 
+  mutate(ones = 1,
+         hhsize_old = hhsize) %>% 
+  group_by(UID) %>% 
+  summarize(hhsize = sum(ones, na.rm = TRUE)) %>% 
+  ungroup()
+
+rakedata <- rakedata %>%
+  rename(hhsize_old = hhsize) %>% 
+  left_join(hh_size, join_by(UID)) %>% 
+  relocate(weight, .before = weight_2030_baseline) %>% 
+  mutate(
+    hh_weight_2030_baseline = weight_2030_baseline / hhsize,
+    hh_weight_2050_baseline = weight_2050_baseline / hhsize)
+
+pp_microsim <- tibble(rakedata)
+rm(rakedata)
+
+```
+
 
 
 # End
