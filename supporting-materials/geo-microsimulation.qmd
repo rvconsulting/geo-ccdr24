@@ -1238,12 +1238,12 @@ pp_microsim10 <- pp_microsim09 %>%
   ), levels = c("P0029", "P3039", "P4049", "P5059", "P60up")))
 
 # Convert the 'cohort' and 'gender' factor to numeric codes
-pp_microsim <- pp_microsim10  |> 
+pp_microsim11 <- pp_microsim10  |> 
   mutate(cohort_code = as.integer(cohort))  |>  
   mutate(gender_code = as.integer(gender)) |> 
   mutate(weight = Weights / 4)
 
-rm(list = ls(pattern = "^pp_microsim[0-9]+$"))
+# rm(list = ls(pattern = "^pp_microsim[0-9]+$"))
 
 ```
 
@@ -1331,7 +1331,7 @@ economic_targets <- macro_data  |>
 
 Note that the differences between the totals of the survey and the macro file for the base year are very much different. We'll adjust the survey only with relative growth instead of total numbers so that labor income doesn't change completely.
 
-# Reweigting
+## Reweigting
 
 We use anesrake to calculate targets from known future proportions of sex, age, economic sector. We first create a target list.
 
@@ -1421,7 +1421,7 @@ And now we perform the reweighting, using the original weights. Initially we had
 
 ```{r}
 # Since this uses base R, we need to turn the data frame into base R object
-rakedata <- as.data.frame(pp_microsim)
+rakedata <- as.data.frame(pp_microsim11)
 
 outsave_2030 <- anesrake::anesrake(targets_baseline_2030, 
                     rakedata, 
@@ -1482,16 +1482,13 @@ original_weight_sum_2050 <- (original_weight_sum
 new_weight_sum_2030 <- sum(rakedata$weight_2030_baseline)
 new_weight_sum_2050 <- sum(rakedata$weight_2050_baseline)
 
-# Scale the new weights to match the sum of the original weights
-scaling_factor_2030 <- original_weight_sum / new_weight_sum_2030
-scaling_factor_2050 <- original_weight_sum / new_weight_sum_2050
+# Find out by how much new weights need to be scaled
+scaling_factor_2030 <- original_weight_sum_2030 / new_weight_sum_2030
+scaling_factor_2050 <- original_weight_sum_2050 / new_weight_sum_2050
 
+# Scale the new weights to match the sum of the original weights
 rakedata$weight_2030_baseline <- rakedata$weight_2030_baseline * scaling_factor_2030
 rakedata$weight_2050_baseline <- rakedata$weight_2050_baseline * scaling_factor_2050
-
-# Scale back to match population projections
-rakedata$weight_2030_baseline <- rakedata$weight_2030_baseline * original_weight_scaling_factor_2030
-rakedata$weight_2050_baseline <- rakedata$weight_2050_baseline * original_weight_scaling_factor_2050
 
 # Verify the adjustment
 head(rakedata[, c("weight", "weight_2030_baseline", "weight_2050_baseline")])
@@ -1499,6 +1496,7 @@ summary(rakedata$weight_2030_baseline)
 summary(rakedata$weight_2050_baseline)
 summary(rakedata$weight)
 
+# We get household size
 hh_size <- rakedata %>% 
   select(UID, hhsize) %>% 
   mutate(ones = 1,
@@ -1512,11 +1510,9 @@ rakedata <- rakedata %>%
   left_join(hh_size, join_by(UID)) %>% 
   relocate(weight, .before = weight_2030_baseline) %>% 
   mutate(
+    hh_weight_2023 = weight / hhsize,
     hh_weight_2030_baseline = weight_2030_baseline / hhsize,
     hh_weight_2050_baseline = weight_2050_baseline / hhsize)
-
-pp_microsim <- tibble(rakedata)
-rm(rakedata)
 
 ```
 
@@ -1525,20 +1521,367 @@ Weights for the household database
 ```{r}
 # We calculate new weights for households in the hh database
 weights_scenarios <- rakedata %>% 
-  group_by(household_id) %>%
+  group_by(UID) %>%
   summarize(
+    hh_weight_2023 = 
+      sum(hh_weight_2023),
     hh_weight_2030_baseline = 
       sum(hh_weight_2030_baseline, na.rm = TRUE),
-    hh_weight_2030_dry_hot = 
-      sum(hh_weight_2030_dry_hot, na.rm = TRUE),
-    hh_weight_2030_nzs = 
-      sum(hh_weight_2030_nzs, na.rm = TRUE)
+    hh_weight_2050_baseline = 
+      sum(hh_weight_2050_baseline, na.rm = TRUE)
     )
 
 # We return rakedata to data frame pp_microsim and get rid of rakedata
-pp_microsim <- tibble(rakedata)
-rm(rakedata)
+pp_microsim12 <- tibble(rakedata)
+#rm(rakedata)
 
+```
+
+# Rescaling labor income according to changes to the wage bill
+
+As a last step, we rescale labor income according to changes to the wage bill in the macro scenario.
+
+```{r}
+# Wage rescale factor by sector from macro (Agriculture, Manufacturing, Services)
+wrf_2030_baseline <- as.numeric(macro_data[
+  macro_data$year == 2030 &
+    macro_data$scenario_id == "baseline", 
+  c(
+    "rwage_agr_b_lcu_growth", 
+    "rwage_man_b_lcu_growth", 
+    "rwage_ser_b_lcu_growth")])
+
+wrf_2050_baseline  <- as.numeric(macro_data[
+  macro_data$year == 2050 &
+    macro_data$scenario_id == "baseline", 
+  c(
+    "rwage_agr_b_lcu_growth", 
+    "rwage_man_b_lcu_growth", 
+    "rwage_ser_b_lcu_growth")])
+
+# wrf_2030_dry_hot   <- c(1.24850624, 1.27740284, 1.30020020)
+# wrf_2030_nzs       <- c(1.05423642, 1.30685398, 1.27521304)
+
+# We check the wage bill by sector
+wages_by_sector <- pp_microsim12 %>%
+  filter(!is.na(SAM3_job1)) %>% 
+  group_by(SAM3_job1, .drop = TRUE) %>% 
+  summarize(
+    wages_2023 = sum(annual_labor_total * weight, na.rm = TRUE),
+    wages_2030_baseline = 
+      sum(annual_labor_total * weight_2030_baseline, na.rm = TRUE),
+    wages_2050_baseline = 
+      sum(annual_labor_total * weight_2050_baseline, na.rm = TRUE),
+    # wages2030_dry_hot   = 
+    #   sum(annual_labor_total * weight_2030_dry_hot, na.rm = TRUE),
+    # wages2030_nzs   = 
+    #   sum(annual_labor_total * weight_2030_nzs, na.rm = TRUE)
+  )
+
+
+# Compare how much it changed with reweighting with how it should have changed
+# Derive coefficients (wtc_2030) from that
+wages_by_sector <- wages_by_sector %>% 
+  mutate(
+    wages_target_2030_baseline = case_when(
+      as.numeric(SAM3_job1) == 1 ~ wages_2023 * wrf_2030_baseline[1],
+      as.numeric(SAM3_job1) == 2 ~ wages_2023 * wrf_2030_baseline[2],
+      as.numeric(SAM3_job1) == 3 ~ wages_2023 * wrf_2030_baseline[3],
+      .default = NA
+    ),
+    wages_target_2050_baseline = case_when(
+      as.numeric(SAM3_job1) == 1 ~ wages_2023 * wrf_2050_baseline[1],
+      as.numeric(SAM3_job1) == 2 ~ wages_2023 * wrf_2050_baseline[2],
+      as.numeric(SAM3_job1) == 3 ~ wages_2023 * wrf_2050_baseline[3],
+      .default = NA
+    ),
+    # add remaining scenarios and years
+    # Wage target coefficient
+    wtc_2030_baseline = wages_target_2030_baseline / wages_2030_baseline,
+    wtc_2050_baseline = wages_target_2050_baseline / wages_2050_baseline,
+    # add remaining scenarios and years
+    ) 
+```
+
+We then add the coefficient to rescale each wage by sector
+
+```{r}
+# Assign rescale the annual and monthly wage depending on the sector
+# Quick way, but needs to be put in a sapply statement or loop
+pp_microsim13 <- pp_microsim12 %>% 
+  rename(monthly_labor_income_2023 = monthly_labor_total,
+         annual_labor_total_2023 = annual_labor_total)  |>  
+  mutate(
+    monthly_labor_income_2030_baseline = case_when(
+      as.numeric(SAM3_job1) == 1 ~ monthly_labor_income_2023 * wages_by_sector$wtc_2030_baseline[1],
+      as.numeric(SAM3_job1) == 2 ~ monthly_labor_income_2023 * wages_by_sector$wtc_2030_baseline[2],
+      as.numeric(SAM3_job1) == 3 ~ monthly_labor_income_2023 * wages_by_sector$wtc_2030_baseline[3],
+      TRUE ~ NA
+    ),
+    annual_labor_total_2030_baseline = case_when(
+      as.numeric(SAM3_job1) == 1 ~ annual_labor_total_2023 * wages_by_sector$wtc_2030_baseline[1],
+      as.numeric(SAM3_job1) == 2 ~ annual_labor_total_2023 * wages_by_sector$wtc_2030_baseline[2],
+      as.numeric(SAM3_job1) == 3 ~ annual_labor_total_2023 * wages_by_sector$wtc_2030_baseline[3],
+      TRUE ~ NA
+    ),
+    monthly_labor_income_2050_baseline = case_when(
+      as.numeric(SAM3_job1) == 1 ~ monthly_labor_income_2023 * wages_by_sector$wtc_2050_baseline[1],
+      as.numeric(SAM3_job1) == 2 ~ monthly_labor_income_2023 * wages_by_sector$wtc_2050_baseline[2],
+      as.numeric(SAM3_job1) == 3 ~ monthly_labor_income_2023 * wages_by_sector$wtc_2050_baseline[3],
+      TRUE ~ NA
+    ),
+    annual_labor_total_2050_baseline = case_when(
+      as.numeric(SAM3_job1) == 1 ~ annual_labor_total_2023 * wages_by_sector$wtc_2050_baseline[1],
+      as.numeric(SAM3_job1) == 2 ~ annual_labor_total_2023 * wages_by_sector$wtc_2050_baseline[2],
+      as.numeric(SAM3_job1) == 3 ~ annual_labor_total_2023 * wages_by_sector$wtc_2050_baseline[3],
+      TRUE ~ NA
+    ),
+    # add remaining scenarios and years
+    )
+
+# This takes care of different household members coming from different sectors
+hh_li <- pp_microsim13 %>% 
+  group_by(UID) %>% 
+  summarize(mli_2023 = sum(monthly_labor_income_2023, na.rm = TRUE),
+            mli_2030_baseline = sum(monthly_labor_income_2030_baseline, na.rm = TRUE),
+            mli_2050_baseline = sum(monthly_labor_income_2050_baseline, na.rm = TRUE),
+            # add remaining scenarios and years
+            mli_coef_2030_baseline = if_else(mli_2023 == 0, 1, mli_2030_baseline / mli_2023),
+            mli_coef_2050_baseline = if_else(mli_2023 == 0, 1, mli_2050_baseline / mli_2023)
+            # add remaining scenarios and years
+            )%>% 
+  select(UID,
+         mli_2023,
+         mli_2030_baseline,
+         mli_2050_baseline,
+         mli_coef_2030_baseline,
+         mli_coef_2050_baseline) |> 
+  ungroup()
+  
+ic_microsim01 <- hh_income |> 
+  left_join(hh_li, join_by(UID == UID)) |>
+  left_join(weights_scenarios, join_by(UID == UID)) |> 
+  rename(labor_income_2023 = ShemDaq,
+         self_employment_income_2023 = ShemTviTdasaqm,
+         agr_income_2023 = Shem_Sof,
+         totalinc_2023 = Shemosavalisul) |> 
+  mutate(
+    mli_coef_2030_baseline = 
+      if_else(
+        is.na(mli_coef_2030_baseline), 1,mli_coef_2030_baseline),
+    mli_coef_2050_baseline = 
+      if_else(
+        is.na(mli_coef_2050_baseline), 1,mli_coef_2050_baseline),
+    ) |> 
+  mutate(
+    # 2030 Baseline
+    labor_income_2030_baseline = 
+      labor_income_2023 * mli_coef_2030_baseline,
+    self_employment_income_2030_baseline = 
+      self_employment_income_2023 * mli_coef_2030_baseline,
+    # 2050 Baseline
+    labor_income_2050_baseline = 
+      labor_income_2023 * mli_coef_2050_baseline,
+    self_employment_income_2050_baseline = 
+      self_employment_income_2023 * mli_coef_2050_baseline,
+    ) |> 
+  mutate(
+    # 2030 Baseline
+    totalinc_2030_baseline = 
+      totalinc_2023 - 
+      coalesce(labor_income_2023,0) - 
+      coalesce(self_employment_income_2023,0) + 
+      coalesce(labor_income_2030_baseline,0) + 
+      coalesce(self_employment_income_2030_baseline,0),
+    # 2050 Baseline
+    totalinc_2050_baseline = 
+      totalinc_2023 - 
+      coalesce(labor_income_2023,0) - 
+      coalesce(self_employment_income_2023,0) + 
+      coalesce(labor_income_2050_baseline,0) + 
+      coalesce(self_employment_income_2050_baseline,0),
+    ) 
+```
+
+At this point we re-calculate decile groups for the NZS scenario, to be able to "give back" energy tax revenues to the lower deciles. This scenario is not ready yet, so we need to come back to this. Review Armenia's microsimulation file for this.
+
+We now take stock of the changes.
+
+```{r}
+ic_microsim02 <- ic_microsim01  |>  
+  mutate(
+    totinc_coef_2030_baseline = 
+      if_else(
+        totalinc_2023 == 0, 
+        1, 
+        totalinc_2030_baseline / totalinc_2023),
+    totinc_coef_2050_baseline = 
+      if_else(
+        totalinc_2023 == 0, 
+        1, 
+        totalinc_2050_baseline / totalinc_2023),
+    ) |>  
+  mutate(
+    # Making sure totinc coefficients are not NA
+    totinc_coef_2030_baseline = 
+      if_else(
+        is.na(totinc_coef_2030_baseline), 
+        1, 
+        totinc_coef_2030_baseline),
+    totinc_coef_2050_baseline = 
+      if_else(
+        is.na(totinc_coef_2050_baseline), 
+        1, 
+        totinc_coef_2050_baseline),
+    )
+
+
+ic_coef_scenarios <- ic_microsim02 %>%
+  select(
+    UID, 
+    totinc_coef_2030_baseline,
+    totinc_coef_2050_baseline
+    )
+```
+
+This is leftover in case we need to check.
+
+```{r}
+# table <- pp_microsim13 |>
+#   group_by(cohort) |>
+# #  group_by(lmarket) |>
+# #  group_by(gender) |>
+#   summarize(no_weight = sum(n(), na.rm = TRUE),
+#             total_pp = sum(weight, na.rm = TRUE)) |>
+#   ungroup()
+# 
+# table |>
+#   gt() |>
+#   fmt_number(columns = total_pp, decimals = 0)
+```
+
+# Microsimulations
+
+We now implement different shocks according to various scenarios.
+
+## Macro scenarios without additional impacts
+
+For the baseline we only adjust labor income according to the reweighting procedure and rescaling of the wage bill.
+
+```{r}
+ca_microsim01 <- poverty |> 
+  left_join(weights_scenarios, join_by(UID == UID)) |> 
+  left_join(ic_coef_scenarios, join_by(UID == UID)) |> 
+  # We adjust total consumption by the income coefficient
+  rename(
+    tc_2023 = totcons
+    )|>
+  mutate(
+    poor_2023 = if_else(
+      cpsc == 100, 1, 0
+    ),
+    tc_2030_baseline   = tc_2023 * totinc_coef_2030_baseline,
+    tc_2050_baseline   = tc_2023 * totinc_coef_2050_baseline,
+    # add remaining scenarios and years
+    )
+```
+
+Note that we need the variable `Eq_Skale_0_6` (Number of equivalent adults with scale effect 0.6) to divide `totinc` (total income) and contrast against the 212.8149 poverty line.
+
+And recalculate poverty.
+
+```{r}
+ca_microsim02 <- ca_microsim01 |> 
+  rename(
+    aecons_2023 = aecons,
+    weight_2023 = weights,
+    weight_2030_baseline = hh_weight_2030_baseline,
+    weight_2050_baseline = hh_weight_2050_baseline
+    # add remaining scenarios and years
+    ) |> 
+  mutate(
+    adult_equivalent = tc_2023 / aecons_2023
+  ) |> 
+  mutate(
+    aecons_2030_baseline = 
+      tc_2030_baseline / adult_equivalent,
+    aecons_2050_baseline = 
+      tc_2050_baseline / adult_equivalent,
+    ) |> 
+  # Official poverty line
+  mutate(
+    poor_2030_baseline = 
+      if_else(aecons_2030_baseline < pline, 1, 0),
+    poor_2050_baseline = 
+      if_else(aecons_2050_baseline < pline, 1, 0),
+    )
+```
+
+Test
+
+```{r}
+poor_2023 <- ca_microsim02 %>%
+  group_by(poor_2023) %>% 
+  summarize(
+    no_hh_2023 = sum(weight_2023, na.rm = TRUE),
+    no_pp_2023 = sum(weight_2023 * hhsize, na.rm = TRUE)
+    ) %>% 
+  ungroup()
+
+poor_2030_baseline <- ca_microsim02 %>%
+  group_by(poor_2030_baseline) %>% 
+  summarize(
+    no_hh_2030_baseline = sum(weight_2030_baseline, na.rm = TRUE),
+    no_pp_2030_baseline = sum(weight_2030_baseline * hhsize, na.rm = TRUE),
+    ) %>% 
+  ungroup()
+
+poor_2050_baseline <- ca_microsim02 %>%
+  group_by(poor_2050_baseline) %>% 
+  summarize(
+    no_hh_2050_baseline = sum(weight_2050_baseline, na.rm = TRUE),
+    no_pp_2050_baseline = sum(weight_2050_baseline * hhsize, na.rm = TRUE),
+    ) %>% 
+  ungroup()
+
+# write.table(test_baseline, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+```{r}
+#| warning: false
+#| message: false
+#| label: save-to-excel
+
+wb <- loadWorkbook("data/outputs/microsimulation_results.xlsx")
+names(wb)
+writeData(
+  wb, 
+  "Poverty", 
+  poor_2023 , 
+  startRow = 3, 
+  startCol = 1, 
+  rowNames = F,
+  na.string = "")
+writeData(
+  wb, 
+  "Poverty", 
+  poor_2030_baseline , 
+  startRow = 3 + (dim(poor_2023)[1] + 3) * 1, 
+  startCol = 1, 
+  rowNames = F,
+  na.string = "")
+writeData(
+  wb, 
+  "Poverty", 
+  poor_2050_baseline , 
+  startRow = 3 + (dim(poor_2023)[1] + 3) * 2, 
+  startCol = 1, 
+  rowNames = F,
+  na.string = "")
+saveWorkbook(
+  wb,
+  "data/outputs/microsimulation_results.xlsx",
+  overwrite = T)
 ```
 
 
@@ -1546,5 +1889,10 @@ rm(rakedata)
 
 
 ```{r}
-
+# test <- poverty |> 
+#   group_by(cpsc) |> 
+#   summarize(
+#     hh_total = sum(weights, na.rm = T),
+#     pp_total = sum(weights * hhsize, na.rm =T)
+#   )
 ```
