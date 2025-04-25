@@ -1855,7 +1855,7 @@ labor_productivity01 <- labor_productivity |>
 cs <- sort(unique(labor_productivity01$scenario))
 
 # Moving average for year of interest
-# We are interested in cs[2] = "Hot/Dry"
+# We are interested in cs[1] = "Hot/Dry"
 labor_pdcvty_loss <- labor_productivity01 |>
   left_join(
     regions[,c(1:2)],
@@ -2354,6 +2354,14 @@ tmap_save(
   width = 8,
   height = 5,
   units = "in"
+)
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poverty_by_region.png",
+  width = 8,
+  height = 5,
+  units = "in",
+  dpi = 300
 )
 map_object
 
