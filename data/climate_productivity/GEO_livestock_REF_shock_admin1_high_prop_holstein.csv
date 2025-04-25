@@ -1,0 +1,1117 @@
+product,year,scenario,region,pct_change
+aggregated,2020,Hot/Dry,Abkhazia,
+aggregated,2020,Median,Abkhazia,
+aggregated,2020,Warm/Wet,Abkhazia,
+aggregated,2020,Hot/Dry,Ajaria,-1.6628018829050575
+aggregated,2020,Median,Ajaria,-1.4649562412771786
+aggregated,2020,Warm/Wet,Ajaria,-1.3523697516093165
+aggregated,2020,Hot/Dry,Guria,-5.949492984042635
+aggregated,2020,Median,Guria,-5.3272596052996875
+aggregated,2020,Warm/Wet,Guria,-5.471595550952912
+aggregated,2020,Hot/Dry,Imereti,-3.0188663985122446
+aggregated,2020,Median,Imereti,-2.992298654133151
+aggregated,2020,Warm/Wet,Imereti,-3.23216551666917
+aggregated,2020,Hot/Dry,Kakheti,-1.2785620027677709
+aggregated,2020,Median,Kakheti,-1.4858975159928178
+aggregated,2020,Warm/Wet,Kakheti,-1.4201074401050846
+aggregated,2020,Hot/Dry,Kvemo Kartli,-0.9366930913082854
+aggregated,2020,Median,Kvemo Kartli,-1.031657054084846
+aggregated,2020,Warm/Wet,Kvemo Kartli,-1.1927649820501927
+aggregated,2020,Hot/Dry,Mtskheta-Mtianeti,-0.3629084940257883
+aggregated,2020,Median,Mtskheta-Mtianeti,-0.33884968573170227
+aggregated,2020,Warm/Wet,Mtskheta-Mtianeti,-0.3479450722124682
+aggregated,2020,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-0.32591058113079896
+aggregated,2020,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.29916619419704205
+aggregated,2020,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.3758483664918515
+aggregated,2020,Hot/Dry,Samegrelo-Zemo Svaneti,-1.3373722411988211
+aggregated,2020,Median,Samegrelo-Zemo Svaneti,-0.9828276301761321
+aggregated,2020,Warm/Wet,Samegrelo-Zemo Svaneti,-1.1504468449226266
+aggregated,2020,Hot/Dry,Samtskhe-Javakheti,-0.4144482585801086
+aggregated,2020,Median,Samtskhe-Javakheti,-0.4596895958361813
+aggregated,2020,Warm/Wet,Samtskhe-Javakheti,-0.5079166786377982
+aggregated,2020,Hot/Dry,Shida Kartli,-0.413836177623395
+aggregated,2020,Median,Shida Kartli,-0.42061873072633205
+aggregated,2020,Warm/Wet,Shida Kartli,-0.48581189798831304
+aggregated,2020,Hot/Dry,Tbilisi,-1.1276141581398065
+aggregated,2020,Median,Tbilisi,-1.2655478219669618
+aggregated,2020,Warm/Wet,Tbilisi,-1.3106722504280697
+aggregated,2021,Hot/Dry,Abkhazia,
+aggregated,2021,Median,Abkhazia,
+aggregated,2021,Warm/Wet,Abkhazia,
+aggregated,2021,Hot/Dry,Ajaria,-1.695827916690419
+aggregated,2021,Median,Ajaria,-0.9633143739549155
+aggregated,2021,Warm/Wet,Ajaria,-1.4295386043287408
+aggregated,2021,Hot/Dry,Guria,-7.060951597292288
+aggregated,2021,Median,Guria,-2.7070678986643344
+aggregated,2021,Warm/Wet,Guria,-5.00160077506446
+aggregated,2021,Hot/Dry,Imereti,-3.4079941806746206
+aggregated,2021,Median,Imereti,-1.8846224329007981
+aggregated,2021,Warm/Wet,Imereti,-3.025281237550942
+aggregated,2021,Hot/Dry,Kakheti,-1.5102696898604648
+aggregated,2021,Median,Kakheti,-1.0218972867979659
+aggregated,2021,Warm/Wet,Kakheti,-2.6374299647528687
+aggregated,2021,Hot/Dry,Kvemo Kartli,-0.9145545735902658
+aggregated,2021,Median,Kvemo Kartli,-0.6959645421510174
+aggregated,2021,Warm/Wet,Kvemo Kartli,-1.631012489388766
+aggregated,2021,Hot/Dry,Mtskheta-Mtianeti,-0.3662265961661433
+aggregated,2021,Median,Mtskheta-Mtianeti,-0.3208077208632858
+aggregated,2021,Warm/Wet,Mtskheta-Mtianeti,-0.3661661618905896
+aggregated,2021,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-0.4071862942549842
+aggregated,2021,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.311088875054665
+aggregated,2021,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.31731179521680986
+aggregated,2021,Hot/Dry,Samegrelo-Zemo Svaneti,-1.3742904111757497
+aggregated,2021,Median,Samegrelo-Zemo Svaneti,-0.6540047299662888
+aggregated,2021,Warm/Wet,Samegrelo-Zemo Svaneti,-1.0484981544249479
+aggregated,2021,Hot/Dry,Samtskhe-Javakheti,-0.4274319757823264
+aggregated,2021,Median,Samtskhe-Javakheti,-0.37499800769620606
+aggregated,2021,Warm/Wet,Samtskhe-Javakheti,-0.45155343271069626
+aggregated,2021,Hot/Dry,Shida Kartli,-0.4540129504858612
+aggregated,2021,Median,Shida Kartli,-0.35663854958301044
+aggregated,2021,Warm/Wet,Shida Kartli,-0.5433689284865437
+aggregated,2021,Hot/Dry,Tbilisi,-1.2350680651894663
+aggregated,2021,Median,Tbilisi,-0.6890740564106181
+aggregated,2021,Warm/Wet,Tbilisi,-1.7281867170214156
+aggregated,2022,Hot/Dry,Abkhazia,
+aggregated,2022,Median,Abkhazia,
+aggregated,2022,Warm/Wet,Abkhazia,
+aggregated,2022,Hot/Dry,Ajaria,-1.3089839380202193
+aggregated,2022,Median,Ajaria,-1.0934805548361766
+aggregated,2022,Warm/Wet,Ajaria,-1.2967760778473973
+aggregated,2022,Hot/Dry,Guria,-5.254565029957206
+aggregated,2022,Median,Guria,-4.112626674546291
+aggregated,2022,Warm/Wet,Guria,-5.095477426466047
+aggregated,2022,Hot/Dry,Imereti,-2.906867149650793
+aggregated,2022,Median,Imereti,-2.3748020609081664
+aggregated,2022,Warm/Wet,Imereti,-3.0194302056326165
+aggregated,2022,Hot/Dry,Kakheti,-1.5117077498741907
+aggregated,2022,Median,Kakheti,-1.7316979005084647
+aggregated,2022,Warm/Wet,Kakheti,-1.6254719780628903
+aggregated,2022,Hot/Dry,Kvemo Kartli,-1.0440193311101496
+aggregated,2022,Median,Kvemo Kartli,-1.354136519338212
+aggregated,2022,Warm/Wet,Kvemo Kartli,-1.0243954511422686
+aggregated,2022,Hot/Dry,Mtskheta-Mtianeti,-0.3546653166721967
+aggregated,2022,Median,Mtskheta-Mtianeti,-0.37793729239896834
+aggregated,2022,Warm/Wet,Mtskheta-Mtianeti,-0.34488774524749033
+aggregated,2022,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-0.3425214406825461
+aggregated,2022,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.3394500739240556
+aggregated,2022,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.3313800350840381
+aggregated,2022,Hot/Dry,Samegrelo-Zemo Svaneti,-0.9640980515235356
+aggregated,2022,Median,Samegrelo-Zemo Svaneti,-0.8635185850207847
+aggregated,2022,Warm/Wet,Samegrelo-Zemo Svaneti,-0.920106038320057
+aggregated,2022,Hot/Dry,Samtskhe-Javakheti,-0.4463661527741749
+aggregated,2022,Median,Samtskhe-Javakheti,-0.4139867210858057
+aggregated,2022,Warm/Wet,Samtskhe-Javakheti,-0.42334810342588014
+aggregated,2022,Hot/Dry,Shida Kartli,-0.4618111447189506
+aggregated,2022,Median,Shida Kartli,-0.47640236803367486
+aggregated,2022,Warm/Wet,Shida Kartli,-0.42870802497790805
+aggregated,2022,Hot/Dry,Tbilisi,-0.9274148398080087
+aggregated,2022,Median,Tbilisi,-1.2145684823911154
+aggregated,2022,Warm/Wet,Tbilisi,-1.3141109287384296
+aggregated,2023,Hot/Dry,Abkhazia,
+aggregated,2023,Median,Abkhazia,
+aggregated,2023,Warm/Wet,Abkhazia,
+aggregated,2023,Hot/Dry,Ajaria,-1.440730334122179
+aggregated,2023,Median,Ajaria,-1.3596896859525884
+aggregated,2023,Warm/Wet,Ajaria,-0.9023403675867314
+aggregated,2023,Hot/Dry,Guria,-5.502489402630687
+aggregated,2023,Median,Guria,-5.574651019856233
+aggregated,2023,Warm/Wet,Guria,-3.9974017548812384
+aggregated,2023,Hot/Dry,Imereti,-3.1675536952497936
+aggregated,2023,Median,Imereti,-3.1426819790242746
+aggregated,2023,Warm/Wet,Imereti,-2.1996951894161754
+aggregated,2023,Hot/Dry,Kakheti,-1.191098366478883
+aggregated,2023,Median,Kakheti,-1.447314970888712
+aggregated,2023,Warm/Wet,Kakheti,-1.0269393841407037
+aggregated,2023,Hot/Dry,Kvemo Kartli,-1.1154051183044658
+aggregated,2023,Median,Kvemo Kartli,-1.6214508745929663
+aggregated,2023,Warm/Wet,Kvemo Kartli,-0.7201274964915427
+aggregated,2023,Hot/Dry,Mtskheta-Mtianeti,-0.3361725009089014
+aggregated,2023,Median,Mtskheta-Mtianeti,-0.34365094007520725
+aggregated,2023,Warm/Wet,Mtskheta-Mtianeti,-0.32960218967630794
+aggregated,2023,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-0.3255993136145605
+aggregated,2023,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.3727529778349492
+aggregated,2023,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.31538140298343365
+aggregated,2023,Hot/Dry,Samegrelo-Zemo Svaneti,-1.0241171697875444
+aggregated,2023,Median,Samegrelo-Zemo Svaneti,-1.0336633761229592
+aggregated,2023,Warm/Wet,Samegrelo-Zemo Svaneti,-0.8390439625449773
+aggregated,2023,Hot/Dry,Samtskhe-Javakheti,-0.44340312558877315
+aggregated,2023,Median,Samtskhe-Javakheti,-0.4911788127435841
+aggregated,2023,Warm/Wet,Samtskhe-Javakheti,-0.4170721491758371
+aggregated,2023,Hot/Dry,Shida Kartli,-0.4612317088519262
+aggregated,2023,Median,Shida Kartli,-0.5156246673171836
+aggregated,2023,Warm/Wet,Shida Kartli,-0.34762272355747825
+aggregated,2023,Hot/Dry,Tbilisi,-1.134752938849573
+aggregated,2023,Median,Tbilisi,-0.9050186882776359
+aggregated,2023,Warm/Wet,Tbilisi,-0.6162607960078077
+aggregated,2024,Hot/Dry,Abkhazia,
+aggregated,2024,Median,Abkhazia,
+aggregated,2024,Warm/Wet,Abkhazia,
+aggregated,2024,Hot/Dry,Ajaria,-3.0254117750731666
+aggregated,2024,Median,Ajaria,-0.7691768925318598
+aggregated,2024,Warm/Wet,Ajaria,-1.8005064510529252
+aggregated,2024,Hot/Dry,Guria,-10.463673491631027
+aggregated,2024,Median,Guria,-2.857864992552649
+aggregated,2024,Warm/Wet,Guria,-6.641112789414791
+aggregated,2024,Hot/Dry,Imereti,-6.162766009491492
+aggregated,2024,Median,Imereti,-1.830805582442494
+aggregated,2024,Warm/Wet,Imereti,-3.5367803220958507
+aggregated,2024,Hot/Dry,Kakheti,-2.6443973316645497
+aggregated,2024,Median,Kakheti,-1.155604517560505
+aggregated,2024,Warm/Wet,Kakheti,-1.6431900312585555
+aggregated,2024,Hot/Dry,Kvemo Kartli,-2.266009446663759
+aggregated,2024,Median,Kvemo Kartli,-0.6507748553068069
+aggregated,2024,Warm/Wet,Kvemo Kartli,-1.1219106134769703
+aggregated,2024,Hot/Dry,Mtskheta-Mtianeti,-0.4503377653708185
+aggregated,2024,Median,Mtskheta-Mtianeti,-0.32054006474399444
+aggregated,2024,Warm/Wet,Mtskheta-Mtianeti,-0.34860752248818017
+aggregated,2024,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-0.6369703772531068
+aggregated,2024,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.3021738029605956
+aggregated,2024,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.35576233384624345
+aggregated,2024,Hot/Dry,Samegrelo-Zemo Svaneti,-2.2961360415468306
+aggregated,2024,Median,Samegrelo-Zemo Svaneti,-0.6703669389360982
+aggregated,2024,Warm/Wet,Samegrelo-Zemo Svaneti,-1.2056434578404662
+aggregated,2024,Hot/Dry,Samtskhe-Javakheti,-0.781448748180722
+aggregated,2024,Median,Samtskhe-Javakheti,-0.3622852576755946
+aggregated,2024,Warm/Wet,Samtskhe-Javakheti,-0.4501852803283555
+aggregated,2024,Hot/Dry,Shida Kartli,-0.9975749444539019
+aggregated,2024,Median,Shida Kartli,-0.3713446824007889
+aggregated,2024,Warm/Wet,Shida Kartli,-0.43106727543714385
+aggregated,2024,Hot/Dry,Tbilisi,-3.0660914267948414
+aggregated,2024,Median,Tbilisi,-0.6729447408884113
+aggregated,2024,Warm/Wet,Tbilisi,-1.0882267214877714
+aggregated,2025,Hot/Dry,Abkhazia,
+aggregated,2025,Median,Abkhazia,
+aggregated,2025,Warm/Wet,Abkhazia,
+aggregated,2025,Hot/Dry,Ajaria,-3.230293590972977
+aggregated,2025,Median,Ajaria,-1.2005235665200331
+aggregated,2025,Warm/Wet,Ajaria,-1.7862087136136182
+aggregated,2025,Hot/Dry,Guria,-11.100178047963269
+aggregated,2025,Median,Guria,-5.545690982410662
+aggregated,2025,Warm/Wet,Guria,-6.456118909329518
+aggregated,2025,Hot/Dry,Imereti,-5.927013245303613
+aggregated,2025,Median,Imereti,-3.1962597945737343
+aggregated,2025,Warm/Wet,Imereti,-2.955136558479893
+aggregated,2025,Hot/Dry,Kakheti,-1.8888579853697536
+aggregated,2025,Median,Kakheti,-1.2900586375475598
+aggregated,2025,Warm/Wet,Kakheti,-1.246748417681772
+aggregated,2025,Hot/Dry,Kvemo Kartli,-1.8482600649377048
+aggregated,2025,Median,Kvemo Kartli,-1.3607119632726778
+aggregated,2025,Warm/Wet,Kvemo Kartli,-1.019678473921303
+aggregated,2025,Hot/Dry,Mtskheta-Mtianeti,-0.5251753216598161
+aggregated,2025,Median,Mtskheta-Mtianeti,-0.3380293515744768
+aggregated,2025,Warm/Wet,Mtskheta-Mtianeti,-0.34967647599879115
+aggregated,2025,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-0.691458300449824
+aggregated,2025,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.3563568193665674
+aggregated,2025,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.3899758465997394
+aggregated,2025,Hot/Dry,Samegrelo-Zemo Svaneti,-2.750199906602461
+aggregated,2025,Median,Samegrelo-Zemo Svaneti,-1.1482167924191913
+aggregated,2025,Warm/Wet,Samegrelo-Zemo Svaneti,-1.1920108174254125
+aggregated,2025,Hot/Dry,Samtskhe-Javakheti,-0.748963360888041
+aggregated,2025,Median,Samtskhe-Javakheti,-0.5258615661810353
+aggregated,2025,Warm/Wet,Samtskhe-Javakheti,-0.4648536583157892
+aggregated,2025,Hot/Dry,Shida Kartli,-0.8000081724201777
+aggregated,2025,Median,Shida Kartli,-0.5022149550688084
+aggregated,2025,Warm/Wet,Shida Kartli,-0.45253867757544697
+aggregated,2025,Hot/Dry,Tbilisi,-1.6863615215460754
+aggregated,2025,Median,Tbilisi,-1.3838218596078207
+aggregated,2025,Warm/Wet,Tbilisi,-1.1865531637323983
+aggregated,2026,Hot/Dry,Abkhazia,
+aggregated,2026,Median,Abkhazia,
+aggregated,2026,Warm/Wet,Abkhazia,
+aggregated,2026,Hot/Dry,Ajaria,-4.234251004309087
+aggregated,2026,Median,Ajaria,-1.1668069198380806
+aggregated,2026,Warm/Wet,Ajaria,-1.6748841078804446
+aggregated,2026,Hot/Dry,Guria,-13.057938480928357
+aggregated,2026,Median,Guria,-4.413716066911633
+aggregated,2026,Warm/Wet,Guria,-6.5044499935861495
+aggregated,2026,Hot/Dry,Imereti,-7.3473210567913725
+aggregated,2026,Median,Imereti,-3.273569244843742
+aggregated,2026,Warm/Wet,Imereti,-3.4768715095471094
+aggregated,2026,Hot/Dry,Kakheti,-3.06565171723544
+aggregated,2026,Median,Kakheti,-2.0665812283497615
+aggregated,2026,Warm/Wet,Kakheti,-1.2005130582143266
+aggregated,2026,Hot/Dry,Kvemo Kartli,-2.4993283905575794
+aggregated,2026,Median,Kvemo Kartli,-1.5585775650576323
+aggregated,2026,Warm/Wet,Kvemo Kartli,-0.9925413260890679
+aggregated,2026,Hot/Dry,Mtskheta-Mtianeti,-0.5375971212987167
+aggregated,2026,Median,Mtskheta-Mtianeti,-0.4179507287524018
+aggregated,2026,Warm/Wet,Mtskheta-Mtianeti,-0.3486688941428895
+aggregated,2026,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-0.9773606279431704
+aggregated,2026,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.3067063576201434
+aggregated,2026,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.3951258723198663
+aggregated,2026,Hot/Dry,Samegrelo-Zemo Svaneti,-3.571894698662689
+aggregated,2026,Median,Samegrelo-Zemo Svaneti,-0.8770113233925656
+aggregated,2026,Warm/Wet,Samegrelo-Zemo Svaneti,-1.488564688561567
+aggregated,2026,Hot/Dry,Samtskhe-Javakheti,-1.1229504909325527
+aggregated,2026,Median,Samtskhe-Javakheti,-0.5126576786640555
+aggregated,2026,Warm/Wet,Samtskhe-Javakheti,-0.4574756095576191
+aggregated,2026,Hot/Dry,Shida Kartli,-1.1232190362391776
+aggregated,2026,Median,Shida Kartli,-0.5177590692979379
+aggregated,2026,Warm/Wet,Shida Kartli,-0.4834305664210632
+aggregated,2026,Hot/Dry,Tbilisi,-2.790428955785572
+aggregated,2026,Median,Tbilisi,-1.9511904937775597
+aggregated,2026,Warm/Wet,Tbilisi,-1.0855236682007359
+aggregated,2027,Hot/Dry,Abkhazia,
+aggregated,2027,Median,Abkhazia,
+aggregated,2027,Warm/Wet,Abkhazia,
+aggregated,2027,Hot/Dry,Ajaria,-3.0461015533585964
+aggregated,2027,Median,Ajaria,-1.3947883711309856
+aggregated,2027,Warm/Wet,Ajaria,-1.6411888851304326
+aggregated,2027,Hot/Dry,Guria,-8.162111961393421
+aggregated,2027,Median,Guria,-4.897650807340497
+aggregated,2027,Warm/Wet,Guria,-6.759597592805221
+aggregated,2027,Hot/Dry,Imereti,-4.934574264085967
+aggregated,2027,Median,Imereti,-2.6339533594413496
+aggregated,2027,Warm/Wet,Imereti,-3.2844219281457043
+aggregated,2027,Hot/Dry,Kakheti,-2.0146483840125455
+aggregated,2027,Median,Kakheti,-1.4894062889581363
+aggregated,2027,Warm/Wet,Kakheti,-0.8936466675291257
+aggregated,2027,Hot/Dry,Kvemo Kartli,-1.8687927260672978
+aggregated,2027,Median,Kvemo Kartli,-1.0440958180288646
+aggregated,2027,Warm/Wet,Kvemo Kartli,-1.0497446941231061
+aggregated,2027,Hot/Dry,Mtskheta-Mtianeti,-0.5103392188752309
+aggregated,2027,Median,Mtskheta-Mtianeti,-0.3490817970566411
+aggregated,2027,Warm/Wet,Mtskheta-Mtianeti,-0.3523428085141518
+aggregated,2027,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-0.5919292316204547
+aggregated,2027,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.30021865289779726
+aggregated,2027,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.3175346887159378
+aggregated,2027,Hot/Dry,Samegrelo-Zemo Svaneti,-2.0987555573451573
+aggregated,2027,Median,Samegrelo-Zemo Svaneti,-1.1454500051318064
+aggregated,2027,Warm/Wet,Samegrelo-Zemo Svaneti,-1.375699988804385
+aggregated,2027,Hot/Dry,Samtskhe-Javakheti,-0.7687865078396925
+aggregated,2027,Median,Samtskhe-Javakheti,-0.4223504714242381
+aggregated,2027,Warm/Wet,Samtskhe-Javakheti,-0.4289107815283302
+aggregated,2027,Hot/Dry,Shida Kartli,-0.8996148511496926
+aggregated,2027,Median,Shida Kartli,-0.4313774179046419
+aggregated,2027,Warm/Wet,Shida Kartli,-0.439565375858308
+aggregated,2027,Hot/Dry,Tbilisi,-2.238753679518709
+aggregated,2027,Median,Tbilisi,-0.955133491921714
+aggregated,2027,Warm/Wet,Tbilisi,-0.7721982964586402
+aggregated,2028,Hot/Dry,Abkhazia,
+aggregated,2028,Median,Abkhazia,
+aggregated,2028,Warm/Wet,Abkhazia,
+aggregated,2028,Hot/Dry,Ajaria,-2.726565413610473
+aggregated,2028,Median,Ajaria,-1.0011955617798378
+aggregated,2028,Warm/Wet,Ajaria,-1.4073153684803117
+aggregated,2028,Hot/Dry,Guria,-8.578455210510597
+aggregated,2028,Median,Guria,-3.9511706124579433
+aggregated,2028,Warm/Wet,Guria,-5.505148088604045
+aggregated,2028,Hot/Dry,Imereti,-4.161442009566386
+aggregated,2028,Median,Imereti,-2.2162966448488532
+aggregated,2028,Warm/Wet,Imereti,-2.9219935801899055
+aggregated,2028,Hot/Dry,Kakheti,-1.7016988578974122
+aggregated,2028,Median,Kakheti,-1.14741917343801
+aggregated,2028,Warm/Wet,Kakheti,-1.4798363139081516
+aggregated,2028,Hot/Dry,Kvemo Kartli,-1.522798504902525
+aggregated,2028,Median,Kvemo Kartli,-0.872794399913758
+aggregated,2028,Warm/Wet,Kvemo Kartli,-0.8104649385749667
+aggregated,2028,Hot/Dry,Mtskheta-Mtianeti,-0.4402563602752423
+aggregated,2028,Median,Mtskheta-Mtianeti,-0.34051723191342376
+aggregated,2028,Warm/Wet,Mtskheta-Mtianeti,-0.3532214145328396
+aggregated,2028,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-0.4652093154897301
+aggregated,2028,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.29025216772633655
+aggregated,2028,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.3680017762941503
+aggregated,2028,Hot/Dry,Samegrelo-Zemo Svaneti,-1.8117398074705306
+aggregated,2028,Median,Samegrelo-Zemo Svaneti,-1.000501017694944
+aggregated,2028,Warm/Wet,Samegrelo-Zemo Svaneti,-1.1676742356135321
+aggregated,2028,Hot/Dry,Samtskhe-Javakheti,-0.5531881066680739
+aggregated,2028,Median,Samtskhe-Javakheti,-0.3845161702028719
+aggregated,2028,Warm/Wet,Samtskhe-Javakheti,-0.41421903374258306
+aggregated,2028,Hot/Dry,Shida Kartli,-0.5233672760019203
+aggregated,2028,Median,Shida Kartli,-0.3874858861746162
+aggregated,2028,Warm/Wet,Shida Kartli,-0.49101178248936606
+aggregated,2028,Hot/Dry,Tbilisi,-1.418376626837059
+aggregated,2028,Median,Tbilisi,-0.8069113890975359
+aggregated,2028,Warm/Wet,Tbilisi,-0.9503121069509461
+aggregated,2029,Hot/Dry,Abkhazia,
+aggregated,2029,Median,Abkhazia,
+aggregated,2029,Warm/Wet,Abkhazia,
+aggregated,2029,Hot/Dry,Ajaria,-5.207666636238216
+aggregated,2029,Median,Ajaria,-1.0899716185692796
+aggregated,2029,Warm/Wet,Ajaria,-2.0829424873409863
+aggregated,2029,Hot/Dry,Guria,-15.517542562941472
+aggregated,2029,Median,Guria,-4.859998438715422
+aggregated,2029,Warm/Wet,Guria,-8.72537645928243
+aggregated,2029,Hot/Dry,Imereti,-10.142465483087676
+aggregated,2029,Median,Imereti,-3.58211187553961
+aggregated,2029,Warm/Wet,Imereti,-4.062103054865233
+aggregated,2029,Hot/Dry,Kakheti,-5.1675458676947414
+aggregated,2029,Median,Kakheti,-3.228184458834505
+aggregated,2029,Warm/Wet,Kakheti,-1.7978418104352727
+aggregated,2029,Hot/Dry,Kvemo Kartli,-4.288777843564745
+aggregated,2029,Median,Kvemo Kartli,-2.575862171515368
+aggregated,2029,Warm/Wet,Kvemo Kartli,-1.2523381795868431
+aggregated,2029,Hot/Dry,Mtskheta-Mtianeti,-0.9766402225849617
+aggregated,2029,Median,Mtskheta-Mtianeti,-0.5383739735129041
+aggregated,2029,Warm/Wet,Mtskheta-Mtianeti,-0.35955114816630385
+aggregated,2029,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-1.5361168193432775
+aggregated,2029,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.5376248180113095
+aggregated,2029,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.3567004648951695
+aggregated,2029,Hot/Dry,Samegrelo-Zemo Svaneti,-4.827018437405414
+aggregated,2029,Median,Samegrelo-Zemo Svaneti,-1.2524535852860055
+aggregated,2029,Warm/Wet,Samegrelo-Zemo Svaneti,-1.5944672036055039
+aggregated,2029,Hot/Dry,Samtskhe-Javakheti,-1.4098970862259819
+aggregated,2029,Median,Samtskhe-Javakheti,-0.6007822165638714
+aggregated,2029,Warm/Wet,Samtskhe-Javakheti,-0.5021191480795437
+aggregated,2029,Hot/Dry,Shida Kartli,-2.0336765566062383
+aggregated,2029,Median,Shida Kartli,-0.9345178580168891
+aggregated,2029,Warm/Wet,Shida Kartli,-0.508538714596483
+aggregated,2029,Hot/Dry,Tbilisi,-5.772052219993228
+aggregated,2029,Median,Tbilisi,-3.179765966212514
+aggregated,2029,Warm/Wet,Tbilisi,-1.0261570296743088
+aggregated,2030,Hot/Dry,Abkhazia,
+aggregated,2030,Median,Abkhazia,
+aggregated,2030,Warm/Wet,Abkhazia,
+aggregated,2030,Hot/Dry,Ajaria,-2.3791096953583803
+aggregated,2030,Median,Ajaria,-1.8440016133055508
+aggregated,2030,Warm/Wet,Ajaria,-2.3637230895263173
+aggregated,2030,Hot/Dry,Guria,-9.610240851200729
+aggregated,2030,Median,Guria,-7.5419750990060095
+aggregated,2030,Warm/Wet,Guria,-7.824381622481056
+aggregated,2030,Hot/Dry,Imereti,-4.824993167888579
+aggregated,2030,Median,Imereti,-5.508053570780135
+aggregated,2030,Warm/Wet,Imereti,-5.0640365395022116
+aggregated,2030,Hot/Dry,Kakheti,-2.194537461239605
+aggregated,2030,Median,Kakheti,-4.908538964726503
+aggregated,2030,Warm/Wet,Kakheti,-3.2777143452423587
+aggregated,2030,Hot/Dry,Kvemo Kartli,-1.1375469966825307
+aggregated,2030,Median,Kvemo Kartli,-3.4661820515925257
+aggregated,2030,Warm/Wet,Kvemo Kartli,-2.4473211813698157
+aggregated,2030,Hot/Dry,Mtskheta-Mtianeti,-0.3505679400069823
+aggregated,2030,Median,Mtskheta-Mtianeti,-0.8145981364525312
+aggregated,2030,Warm/Wet,Mtskheta-Mtianeti,-0.5083795106678508
+aggregated,2030,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-0.5784868474278966
+aggregated,2030,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.7216370364025266
+aggregated,2030,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.7419156113655276
+aggregated,2030,Hot/Dry,Samegrelo-Zemo Svaneti,-2.4645600717472576
+aggregated,2030,Median,Samegrelo-Zemo Svaneti,-1.9912389941008968
+aggregated,2030,Warm/Wet,Samegrelo-Zemo Svaneti,-1.9652148789470942
+aggregated,2030,Hot/Dry,Samtskhe-Javakheti,-0.5446491223827081
+aggregated,2030,Median,Samtskhe-Javakheti,-0.7803029836953357
+aggregated,2030,Warm/Wet,Samtskhe-Javakheti,-0.8682083487291976
+aggregated,2030,Hot/Dry,Shida Kartli,-0.7375704969985009
+aggregated,2030,Median,Shida Kartli,-1.1550514355866142
+aggregated,2030,Warm/Wet,Shida Kartli,-1.0808796875632396
+aggregated,2030,Hot/Dry,Tbilisi,-1.3753668369751608
+aggregated,2030,Median,Tbilisi,-4.513704853611046
+aggregated,2030,Warm/Wet,Tbilisi,-2.740392738946994
+aggregated,2031,Hot/Dry,Abkhazia,
+aggregated,2031,Median,Abkhazia,
+aggregated,2031,Warm/Wet,Abkhazia,
+aggregated,2031,Hot/Dry,Ajaria,-3.7887653248647837
+aggregated,2031,Median,Ajaria,-2.4443935481924797
+aggregated,2031,Warm/Wet,Ajaria,-1.6974913357454682
+aggregated,2031,Hot/Dry,Guria,-12.595885622260269
+aggregated,2031,Median,Guria,-8.337022466186284
+aggregated,2031,Warm/Wet,Guria,-8.357113352017222
+aggregated,2031,Hot/Dry,Imereti,-8.61259891785653
+aggregated,2031,Median,Imereti,-4.512345174015579
+aggregated,2031,Warm/Wet,Imereti,-3.951302623835545
+aggregated,2031,Hot/Dry,Kakheti,-5.863290849356758
+aggregated,2031,Median,Kakheti,-3.0657871847942033
+aggregated,2031,Warm/Wet,Kakheti,-2.308739003419376
+aggregated,2031,Hot/Dry,Kvemo Kartli,-4.653575962947386
+aggregated,2031,Median,Kvemo Kartli,-2.07662177751736
+aggregated,2031,Warm/Wet,Kvemo Kartli,-1.2850371568572
+aggregated,2031,Hot/Dry,Mtskheta-Mtianeti,-1.0408908157353665
+aggregated,2031,Median,Mtskheta-Mtianeti,-0.4808040445346933
+aggregated,2031,Warm/Wet,Mtskheta-Mtianeti,-0.3731377460019871
+aggregated,2031,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-1.1535070159153804
+aggregated,2031,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.5484914269399042
+aggregated,2031,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.37958085330052427
+aggregated,2031,Hot/Dry,Samegrelo-Zemo Svaneti,-3.74941754077976
+aggregated,2031,Median,Samegrelo-Zemo Svaneti,-2.139982487387371
+aggregated,2031,Warm/Wet,Samegrelo-Zemo Svaneti,-1.7637391476403792
+aggregated,2031,Hot/Dry,Samtskhe-Javakheti,-1.4379694098021503
+aggregated,2031,Median,Samtskhe-Javakheti,-0.6023681433469932
+aggregated,2031,Warm/Wet,Samtskhe-Javakheti,-0.5558589489523484
+aggregated,2031,Hot/Dry,Shida Kartli,-1.6929355705848366
+aggregated,2031,Median,Shida Kartli,-0.8525944067306028
+aggregated,2031,Warm/Wet,Shida Kartli,-0.4199621416795054
+aggregated,2031,Hot/Dry,Tbilisi,-5.990775774865028
+aggregated,2031,Median,Tbilisi,-2.3576365048792667
+aggregated,2031,Warm/Wet,Tbilisi,-1.3169591531056994
+aggregated,2032,Hot/Dry,Abkhazia,
+aggregated,2032,Median,Abkhazia,
+aggregated,2032,Warm/Wet,Abkhazia,
+aggregated,2032,Hot/Dry,Ajaria,-5.826281167735104
+aggregated,2032,Median,Ajaria,-1.2912096709409013
+aggregated,2032,Warm/Wet,Ajaria,-1.4499202658370507
+aggregated,2032,Hot/Dry,Guria,-15.822468297415924
+aggregated,2032,Median,Guria,-4.516746338380045
+aggregated,2032,Warm/Wet,Guria,-6.641706252661365
+aggregated,2032,Hot/Dry,Imereti,-10.8596390945454
+aggregated,2032,Median,Imereti,-3.2668403195048086
+aggregated,2032,Warm/Wet,Imereti,-3.436061466297815
+aggregated,2032,Hot/Dry,Kakheti,-6.6654296098635655
+aggregated,2032,Median,Kakheti,-3.0412958152833482
+aggregated,2032,Warm/Wet,Kakheti,-1.5760596851887385
+aggregated,2032,Hot/Dry,Kvemo Kartli,-5.789434531406826
+aggregated,2032,Median,Kvemo Kartli,-2.149166349709702
+aggregated,2032,Warm/Wet,Kvemo Kartli,-1.0220703190539524
+aggregated,2032,Hot/Dry,Mtskheta-Mtianeti,-1.4015637376143957
+aggregated,2032,Median,Mtskheta-Mtianeti,-0.41453159545972085
+aggregated,2032,Warm/Wet,Mtskheta-Mtianeti,-0.348826239182074
+aggregated,2032,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-1.8025202387854904
+aggregated,2032,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.41590181512938784
+aggregated,2032,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.3118433220505068
+aggregated,2032,Hot/Dry,Samegrelo-Zemo Svaneti,-5.287458430716981
+aggregated,2032,Median,Samegrelo-Zemo Svaneti,-1.1311512567364161
+aggregated,2032,Warm/Wet,Samegrelo-Zemo Svaneti,-1.2911459716951157
+aggregated,2032,Hot/Dry,Samtskhe-Javakheti,-2.1867955482539543
+aggregated,2032,Median,Samtskhe-Javakheti,-0.46157004875246344
+aggregated,2032,Warm/Wet,Samtskhe-Javakheti,-0.45657205230364184
+aggregated,2032,Hot/Dry,Shida Kartli,-2.827892804196736
+aggregated,2032,Median,Shida Kartli,-0.61360241329659
+aggregated,2032,Warm/Wet,Shida Kartli,-0.39387506019031093
+aggregated,2032,Hot/Dry,Tbilisi,-7.528156515398081
+aggregated,2032,Median,Tbilisi,-2.622132546704421
+aggregated,2032,Warm/Wet,Tbilisi,-0.7885361688005617
+aggregated,2033,Hot/Dry,Abkhazia,
+aggregated,2033,Median,Abkhazia,
+aggregated,2033,Warm/Wet,Abkhazia,
+aggregated,2033,Hot/Dry,Ajaria,-3.8193366023933066
+aggregated,2033,Median,Ajaria,-1.125984935529857
+aggregated,2033,Warm/Wet,Ajaria,-1.5019546900760616
+aggregated,2033,Hot/Dry,Guria,-12.814748232865824
+aggregated,2033,Median,Guria,-2.6337465250636143
+aggregated,2033,Warm/Wet,Guria,-6.416981801080141
+aggregated,2033,Hot/Dry,Imereti,-7.586885902854192
+aggregated,2033,Median,Imereti,-1.9841938885415686
+aggregated,2033,Warm/Wet,Imereti,-3.319059399144095
+aggregated,2033,Hot/Dry,Kakheti,-4.514667420623326
+aggregated,2033,Median,Kakheti,-1.3229912471021805
+aggregated,2033,Warm/Wet,Kakheti,-1.3236003414233721
+aggregated,2033,Hot/Dry,Kvemo Kartli,-3.524038975145274
+aggregated,2033,Median,Kvemo Kartli,-0.7006975303779939
+aggregated,2033,Warm/Wet,Kvemo Kartli,-0.7439320682783404
+aggregated,2033,Hot/Dry,Mtskheta-Mtianeti,-0.9165385835358677
+aggregated,2033,Median,Mtskheta-Mtianeti,-0.31752304586964897
+aggregated,2033,Warm/Wet,Mtskheta-Mtianeti,-0.3600388004731201
+aggregated,2033,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-1.0778042767565523
+aggregated,2033,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.28834304469407357
+aggregated,2033,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.37430838716827
+aggregated,2033,Hot/Dry,Samegrelo-Zemo Svaneti,-3.6814013731733155
+aggregated,2033,Median,Samegrelo-Zemo Svaneti,-0.7234207142330575
+aggregated,2033,Warm/Wet,Samegrelo-Zemo Svaneti,-1.1256317977825319
+aggregated,2033,Hot/Dry,Samtskhe-Javakheti,-1.3491999010143871
+aggregated,2033,Median,Samtskhe-Javakheti,-0.3592165385270505
+aggregated,2033,Warm/Wet,Samtskhe-Javakheti,-0.4279845501234689
+aggregated,2033,Hot/Dry,Shida Kartli,-1.5142650072864825
+aggregated,2033,Median,Shida Kartli,-0.3665687381696898
+aggregated,2033,Warm/Wet,Shida Kartli,-0.4235499850690445
+aggregated,2033,Hot/Dry,Tbilisi,-4.310209310730642
+aggregated,2033,Median,Tbilisi,-0.7165145630493015
+aggregated,2033,Warm/Wet,Tbilisi,-0.9932942531645921
+aggregated,2034,Hot/Dry,Abkhazia,
+aggregated,2034,Median,Abkhazia,
+aggregated,2034,Warm/Wet,Abkhazia,
+aggregated,2034,Hot/Dry,Ajaria,-2.7307395112576103
+aggregated,2034,Median,Ajaria,-1.168678256705462
+aggregated,2034,Warm/Wet,Ajaria,-2.506182972660625
+aggregated,2034,Hot/Dry,Guria,-9.863907673985494
+aggregated,2034,Median,Guria,-4.220228842422017
+aggregated,2034,Warm/Wet,Guria,-8.119410931428575
+aggregated,2034,Hot/Dry,Imereti,-5.404843166797761
+aggregated,2034,Median,Imereti,-2.2635270018831477
+aggregated,2034,Warm/Wet,Imereti,-5.070792646328897
+aggregated,2034,Hot/Dry,Kakheti,-4.112167248023084
+aggregated,2034,Median,Kakheti,-1.5548322282632512
+aggregated,2034,Warm/Wet,Kakheti,-2.6800475328315656
+aggregated,2034,Hot/Dry,Kvemo Kartli,-2.9908090759185058
+aggregated,2034,Median,Kvemo Kartli,-1.1902081888860465
+aggregated,2034,Warm/Wet,Kvemo Kartli,-2.2504109235219687
+aggregated,2034,Hot/Dry,Mtskheta-Mtianeti,-0.4781062511328571
+aggregated,2034,Median,Mtskheta-Mtianeti,-0.34461359972681294
+aggregated,2034,Warm/Wet,Mtskheta-Mtianeti,-0.5142190363402221
+aggregated,2034,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-0.5273311913513368
+aggregated,2034,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.326129240703807
+aggregated,2034,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.46672818828980667
+aggregated,2034,Hot/Dry,Samegrelo-Zemo Svaneti,-2.3932226405315333
+aggregated,2034,Median,Samegrelo-Zemo Svaneti,-1.1184272424927428
+aggregated,2034,Warm/Wet,Samegrelo-Zemo Svaneti,-1.9700520450818573
+aggregated,2034,Hot/Dry,Samtskhe-Javakheti,-0.8248601386186465
+aggregated,2034,Median,Samtskhe-Javakheti,-0.44873063358143384
+aggregated,2034,Warm/Wet,Samtskhe-Javakheti,-0.6753461992106367
+aggregated,2034,Hot/Dry,Shida Kartli,-0.9102469939187188
+aggregated,2034,Median,Shida Kartli,-0.4745583879175257
+aggregated,2034,Warm/Wet,Shida Kartli,-0.7215512989386639
+aggregated,2034,Hot/Dry,Tbilisi,-3.3574223405196193
+aggregated,2034,Median,Tbilisi,-1.2834998054685514
+aggregated,2034,Warm/Wet,Tbilisi,-1.908309816939493
+aggregated,2035,Hot/Dry,Abkhazia,
+aggregated,2035,Median,Abkhazia,
+aggregated,2035,Warm/Wet,Abkhazia,
+aggregated,2035,Hot/Dry,Ajaria,-4.648375301156619
+aggregated,2035,Median,Ajaria,-2.120851623798785
+aggregated,2035,Warm/Wet,Ajaria,-1.7635502027456624
+aggregated,2035,Hot/Dry,Guria,-14.899599847762559
+aggregated,2035,Median,Guria,-7.580057776640388
+aggregated,2035,Warm/Wet,Guria,-6.146285984743741
+aggregated,2035,Hot/Dry,Imereti,-9.941673516363423
+aggregated,2035,Median,Imereti,-4.989650038587854
+aggregated,2035,Warm/Wet,Imereti,-3.264718460326364
+aggregated,2035,Hot/Dry,Kakheti,-5.990679742769984
+aggregated,2035,Median,Kakheti,-3.762685490147618
+aggregated,2035,Warm/Wet,Kakheti,-1.085460755809251
+aggregated,2035,Hot/Dry,Kvemo Kartli,-5.0702639265103215
+aggregated,2035,Median,Kvemo Kartli,-2.944894668090356
+aggregated,2035,Warm/Wet,Kvemo Kartli,-0.8650485894825124
+aggregated,2035,Hot/Dry,Mtskheta-Mtianeti,-0.9281362371832813
+aggregated,2035,Median,Mtskheta-Mtianeti,-0.6238812516339749
+aggregated,2035,Warm/Wet,Mtskheta-Mtianeti,-0.3417365431966459
+aggregated,2035,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-1.4114423694518763
+aggregated,2035,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.6105684644671356
+aggregated,2035,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.34859990741568936
+aggregated,2035,Hot/Dry,Samegrelo-Zemo Svaneti,-4.155302735487268
+aggregated,2035,Median,Samegrelo-Zemo Svaneti,-1.934472788620056
+aggregated,2035,Warm/Wet,Samegrelo-Zemo Svaneti,-1.1092493105663976
+aggregated,2035,Hot/Dry,Samtskhe-Javakheti,-1.600893436222222
+aggregated,2035,Median,Samtskhe-Javakheti,-0.8486511066584939
+aggregated,2035,Warm/Wet,Samtskhe-Javakheti,-0.4246976684659529
+aggregated,2035,Hot/Dry,Shida Kartli,-1.8678274013265224
+aggregated,2035,Median,Shida Kartli,-1.0618521912820427
+aggregated,2035,Warm/Wet,Shida Kartli,-0.3764945025651656
+aggregated,2035,Hot/Dry,Tbilisi,-6.210398784293346
+aggregated,2035,Median,Tbilisi,-3.590270930084273
+aggregated,2035,Warm/Wet,Tbilisi,-0.7811850330527648
+aggregated,2036,Hot/Dry,Abkhazia,
+aggregated,2036,Median,Abkhazia,
+aggregated,2036,Warm/Wet,Abkhazia,
+aggregated,2036,Hot/Dry,Ajaria,-5.5238698135097195
+aggregated,2036,Median,Ajaria,-1.3415317409668006
+aggregated,2036,Warm/Wet,Ajaria,-1.7567962443446845
+aggregated,2036,Hot/Dry,Guria,-16.346141587647793
+aggregated,2036,Median,Guria,-5.701614001318717
+aggregated,2036,Warm/Wet,Guria,-5.994512364260359
+aggregated,2036,Hot/Dry,Imereti,-10.6885208373631
+aggregated,2036,Median,Imereti,-3.498957071597772
+aggregated,2036,Warm/Wet,Imereti,-3.2015748777900797
+aggregated,2036,Hot/Dry,Kakheti,-6.216007511741026
+aggregated,2036,Median,Kakheti,-2.306744599224629
+aggregated,2036,Warm/Wet,Kakheti,-1.4236938375269972
+aggregated,2036,Hot/Dry,Kvemo Kartli,-5.165779567345268
+aggregated,2036,Median,Kvemo Kartli,-1.5622834684092908
+aggregated,2036,Warm/Wet,Kvemo Kartli,-0.8870825977567591
+aggregated,2036,Hot/Dry,Mtskheta-Mtianeti,-1.1307655130968897
+aggregated,2036,Median,Mtskheta-Mtianeti,-0.4651681538186665
+aggregated,2036,Warm/Wet,Mtskheta-Mtianeti,-0.3265699270138498
+aggregated,2036,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-1.613243002565227
+aggregated,2036,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.3921962896529294
+aggregated,2036,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.37770640539905287
+aggregated,2036,Hot/Dry,Samegrelo-Zemo Svaneti,-4.922780802192591
+aggregated,2036,Median,Samegrelo-Zemo Svaneti,-1.2159640989245304
+aggregated,2036,Warm/Wet,Samegrelo-Zemo Svaneti,-1.347990430130693
+aggregated,2036,Hot/Dry,Samtskhe-Javakheti,-1.7123996657533382
+aggregated,2036,Median,Samtskhe-Javakheti,-0.5481480081032402
+aggregated,2036,Warm/Wet,Samtskhe-Javakheti,-0.4720847575129312
+aggregated,2036,Hot/Dry,Shida Kartli,-2.3443071768404735
+aggregated,2036,Median,Shida Kartli,-0.551608938503847
+aggregated,2036,Warm/Wet,Shida Kartli,-0.45815468852481445
+aggregated,2036,Hot/Dry,Tbilisi,-6.627112700212848
+aggregated,2036,Median,Tbilisi,-1.4201158772613098
+aggregated,2036,Warm/Wet,Tbilisi,-0.9467067287622797
+aggregated,2037,Hot/Dry,Abkhazia,
+aggregated,2037,Median,Abkhazia,
+aggregated,2037,Warm/Wet,Abkhazia,
+aggregated,2037,Hot/Dry,Ajaria,-4.170372248459685
+aggregated,2037,Median,Ajaria,-2.595535858799451
+aggregated,2037,Warm/Wet,Ajaria,-1.8055034625023296
+aggregated,2037,Hot/Dry,Guria,-13.083038446450004
+aggregated,2037,Median,Guria,-8.969725307182983
+aggregated,2037,Warm/Wet,Guria,-5.728047023232023
+aggregated,2037,Hot/Dry,Imereti,-8.35367742124356
+aggregated,2037,Median,Imereti,-5.912226788471457
+aggregated,2037,Warm/Wet,Imereti,-2.8441274054873134
+aggregated,2037,Hot/Dry,Kakheti,-5.322803483446023
+aggregated,2037,Median,Kakheti,-4.001819389645661
+aggregated,2037,Warm/Wet,Kakheti,-0.8281453575946074
+aggregated,2037,Hot/Dry,Kvemo Kartli,-4.095134770765512
+aggregated,2037,Median,Kvemo Kartli,-2.9719058157104996
+aggregated,2037,Warm/Wet,Kvemo Kartli,-0.6911697257438192
+aggregated,2037,Hot/Dry,Mtskheta-Mtianeti,-0.8707930452875132
+aggregated,2037,Median,Mtskheta-Mtianeti,-0.6434609175420007
+aggregated,2037,Warm/Wet,Mtskheta-Mtianeti,-0.3315341217625871
+aggregated,2037,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-1.1518080601167355
+aggregated,2037,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.7833192234856909
+aggregated,2037,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.33683239782733665
+aggregated,2037,Hot/Dry,Samegrelo-Zemo Svaneti,-3.49169838522279
+aggregated,2037,Median,Samegrelo-Zemo Svaneti,-2.5905701124828937
+aggregated,2037,Warm/Wet,Samegrelo-Zemo Svaneti,-1.1549908060658396
+aggregated,2037,Hot/Dry,Samtskhe-Javakheti,-1.3387190413595818
+aggregated,2037,Median,Samtskhe-Javakheti,-0.9718857197931072
+aggregated,2037,Warm/Wet,Samtskhe-Javakheti,-0.43240559020298974
+aggregated,2037,Hot/Dry,Shida Kartli,-1.5068777867035834
+aggregated,2037,Median,Shida Kartli,-1.0570575495810743
+aggregated,2037,Warm/Wet,Shida Kartli,-0.40780071388479655
+aggregated,2037,Hot/Dry,Tbilisi,-5.1848911222346175
+aggregated,2037,Median,Tbilisi,-3.9615758019332645
+aggregated,2037,Warm/Wet,Tbilisi,-0.7001850726555148
+aggregated,2038,Hot/Dry,Abkhazia,
+aggregated,2038,Median,Abkhazia,
+aggregated,2038,Warm/Wet,Abkhazia,
+aggregated,2038,Hot/Dry,Ajaria,-3.000314584310786
+aggregated,2038,Median,Ajaria,-1.7886704831516909
+aggregated,2038,Warm/Wet,Ajaria,-1.8233661843725173
+aggregated,2038,Hot/Dry,Guria,-11.402992650883093
+aggregated,2038,Median,Guria,-6.627629915101451
+aggregated,2038,Warm/Wet,Guria,-5.447807339423136
+aggregated,2038,Hot/Dry,Imereti,-6.989362693293344
+aggregated,2038,Median,Imereti,-3.805114415647566
+aggregated,2038,Warm/Wet,Imereti,-3.2743431549403823
+aggregated,2038,Hot/Dry,Kakheti,-3.8841244441853604
+aggregated,2038,Median,Kakheti,-1.9006089572434632
+aggregated,2038,Warm/Wet,Kakheti,-1.3250673621104312
+aggregated,2038,Hot/Dry,Kvemo Kartli,-2.969838489912391
+aggregated,2038,Median,Kvemo Kartli,-1.419966561565758
+aggregated,2038,Warm/Wet,Kvemo Kartli,-0.9226892095165624
+aggregated,2038,Hot/Dry,Mtskheta-Mtianeti,-0.5522760408917122
+aggregated,2038,Median,Mtskheta-Mtianeti,-0.35424562152388717
+aggregated,2038,Warm/Wet,Mtskheta-Mtianeti,-0.3288688473698187
+aggregated,2038,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-0.7149194969641854
+aggregated,2038,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.4124296755491059
+aggregated,2038,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.3802670880045582
+aggregated,2038,Hot/Dry,Samegrelo-Zemo Svaneti,-2.728715250734467
+aggregated,2038,Median,Samegrelo-Zemo Svaneti,-1.4463447643912843
+aggregated,2038,Warm/Wet,Samegrelo-Zemo Svaneti,-1.095286838936957
+aggregated,2038,Hot/Dry,Samtskhe-Javakheti,-0.933023616032159
+aggregated,2038,Median,Samtskhe-Javakheti,-0.48916564385187655
+aggregated,2038,Warm/Wet,Samtskhe-Javakheti,-0.5097139334756093
+aggregated,2038,Hot/Dry,Shida Kartli,-1.0083816526141192
+aggregated,2038,Median,Shida Kartli,-0.4886677318119581
+aggregated,2038,Warm/Wet,Shida Kartli,-0.40033298755166413
+aggregated,2038,Hot/Dry,Tbilisi,-3.8822687634422692
+aggregated,2038,Median,Tbilisi,-1.7317557159416026
+aggregated,2038,Warm/Wet,Tbilisi,-0.7202878739947494
+aggregated,2039,Hot/Dry,Abkhazia,
+aggregated,2039,Median,Abkhazia,
+aggregated,2039,Warm/Wet,Abkhazia,
+aggregated,2039,Hot/Dry,Ajaria,-5.045872294957377
+aggregated,2039,Median,Ajaria,-1.7869824945498891
+aggregated,2039,Warm/Wet,Ajaria,-1.1206539308403762
+aggregated,2039,Hot/Dry,Guria,-16.172398899905076
+aggregated,2039,Median,Guria,-7.3313444820987
+aggregated,2039,Warm/Wet,Guria,-4.049503794375227
+aggregated,2039,Hot/Dry,Imereti,-9.637663601721357
+aggregated,2039,Median,Imereti,-4.543627858849405
+aggregated,2039,Warm/Wet,Imereti,-2.0707021610553937
+aggregated,2039,Hot/Dry,Kakheti,-5.145884842202818
+aggregated,2039,Median,Kakheti,-1.6151166470243368
+aggregated,2039,Warm/Wet,Kakheti,-0.8193275218635279
+aggregated,2039,Hot/Dry,Kvemo Kartli,-3.5844408417606957
+aggregated,2039,Median,Kvemo Kartli,-1.1478284189187775
+aggregated,2039,Warm/Wet,Kvemo Kartli,-0.6239481456731397
+aggregated,2039,Hot/Dry,Mtskheta-Mtianeti,-0.8699188719485846
+aggregated,2039,Median,Mtskheta-Mtianeti,-0.36428203540916115
+aggregated,2039,Warm/Wet,Mtskheta-Mtianeti,-0.3204623225272485
+aggregated,2039,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-1.4041174546331803
+aggregated,2039,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.4430068036464405
+aggregated,2039,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.30797783431111725
+aggregated,2039,Hot/Dry,Samegrelo-Zemo Svaneti,-4.748394475993479
+aggregated,2039,Median,Samegrelo-Zemo Svaneti,-1.876918433146571
+aggregated,2039,Warm/Wet,Samegrelo-Zemo Svaneti,-0.8804036109112445
+aggregated,2039,Hot/Dry,Samtskhe-Javakheti,-1.3486546886462918
+aggregated,2039,Median,Samtskhe-Javakheti,-0.4831138722078805
+aggregated,2039,Warm/Wet,Samtskhe-Javakheti,-0.3871177868212641
+aggregated,2039,Hot/Dry,Shida Kartli,-1.2839570912877463
+aggregated,2039,Median,Shida Kartli,-0.533906138104939
+aggregated,2039,Warm/Wet,Shida Kartli,-0.3672927113223068
+aggregated,2039,Hot/Dry,Tbilisi,-4.230058194558012
+aggregated,2039,Median,Tbilisi,-1.4529529216855792
+aggregated,2039,Warm/Wet,Tbilisi,-0.5841826775095598
+aggregated,2040,Hot/Dry,Abkhazia,
+aggregated,2040,Median,Abkhazia,
+aggregated,2040,Warm/Wet,Abkhazia,
+aggregated,2040,Hot/Dry,Ajaria,-5.644467489917204
+aggregated,2040,Median,Ajaria,-1.6639664834054457
+aggregated,2040,Warm/Wet,Ajaria,-1.951124667087015
+aggregated,2040,Hot/Dry,Guria,-17.614075284730504
+aggregated,2040,Median,Guria,-7.252121101677432
+aggregated,2040,Warm/Wet,Guria,-7.724227862779003
+aggregated,2040,Hot/Dry,Imereti,-11.311940458097851
+aggregated,2040,Median,Imereti,-4.846612165383419
+aggregated,2040,Warm/Wet,Imereti,-4.564925820283875
+aggregated,2040,Hot/Dry,Kakheti,-5.840057310310257
+aggregated,2040,Median,Kakheti,-3.1896977169339777
+aggregated,2040,Warm/Wet,Kakheti,-2.129281789279972
+aggregated,2040,Hot/Dry,Kvemo Kartli,-4.327156758817168
+aggregated,2040,Median,Kvemo Kartli,-2.6751023008131796
+aggregated,2040,Warm/Wet,Kvemo Kartli,-1.1925757374526995
+aggregated,2040,Hot/Dry,Mtskheta-Mtianeti,-0.8497485903579332
+aggregated,2040,Median,Mtskheta-Mtianeti,-0.5153336490818674
+aggregated,2040,Warm/Wet,Mtskheta-Mtianeti,-0.3937170980282758
+aggregated,2040,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-1.4559105649654356
+aggregated,2040,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.5519138404822996
+aggregated,2040,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.3742605207913243
+aggregated,2040,Hot/Dry,Samegrelo-Zemo Svaneti,-5.304348888575916
+aggregated,2040,Median,Samegrelo-Zemo Svaneti,-1.6439286366786092
+aggregated,2040,Warm/Wet,Samegrelo-Zemo Svaneti,-1.9193252824345137
+aggregated,2040,Hot/Dry,Samtskhe-Javakheti,-1.4550431436491351
+aggregated,2040,Median,Samtskhe-Javakheti,-0.6508203199380773
+aggregated,2040,Warm/Wet,Samtskhe-Javakheti,-0.5064082827256016
+aggregated,2040,Hot/Dry,Shida Kartli,-1.9037688638074712
+aggregated,2040,Median,Shida Kartli,-0.8507599470599416
+aggregated,2040,Warm/Wet,Shida Kartli,-0.4752346565998806
+aggregated,2040,Hot/Dry,Tbilisi,-5.641742623499283
+aggregated,2040,Median,Tbilisi,-3.394639947788349
+aggregated,2040,Warm/Wet,Tbilisi,-1.5330607264951936
+aggregated,2041,Hot/Dry,Abkhazia,
+aggregated,2041,Median,Abkhazia,
+aggregated,2041,Warm/Wet,Abkhazia,
+aggregated,2041,Hot/Dry,Ajaria,-4.684182067021254
+aggregated,2041,Median,Ajaria,-1.7693905484122752
+aggregated,2041,Warm/Wet,Ajaria,-1.612563678164335
+aggregated,2041,Hot/Dry,Guria,-14.410134088958998
+aggregated,2041,Median,Guria,-7.9141407962330845
+aggregated,2041,Warm/Wet,Guria,-5.7493425453274085
+aggregated,2041,Hot/Dry,Imereti,-9.399358978251797
+aggregated,2041,Median,Imereti,-5.125449845355689
+aggregated,2041,Warm/Wet,Imereti,-2.909217022570189
+aggregated,2041,Hot/Dry,Kakheti,-6.613904746992205
+aggregated,2041,Median,Kakheti,-2.912701306560777
+aggregated,2041,Warm/Wet,Kakheti,-1.3011786294548244
+aggregated,2041,Hot/Dry,Kvemo Kartli,-5.196382835296404
+aggregated,2041,Median,Kvemo Kartli,-2.6035435189617573
+aggregated,2041,Warm/Wet,Kvemo Kartli,-0.7655855339503148
+aggregated,2041,Hot/Dry,Mtskheta-Mtianeti,-1.1322876639165997
+aggregated,2041,Median,Mtskheta-Mtianeti,-0.4197109722254879
+aggregated,2041,Warm/Wet,Mtskheta-Mtianeti,-0.34443200024861653
+aggregated,2041,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-1.289096033004725
+aggregated,2041,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.5526405928385287
+aggregated,2041,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.30323011212696827
+aggregated,2041,Hot/Dry,Samegrelo-Zemo Svaneti,-4.193036603022577
+aggregated,2041,Median,Samegrelo-Zemo Svaneti,-1.800025470932951
+aggregated,2041,Warm/Wet,Samegrelo-Zemo Svaneti,-1.005603134003323
+aggregated,2041,Hot/Dry,Samtskhe-Javakheti,-1.4637954097670018
+aggregated,2041,Median,Samtskhe-Javakheti,-0.8489427381460217
+aggregated,2041,Warm/Wet,Samtskhe-Javakheti,-0.45485010004291837
+aggregated,2041,Hot/Dry,Shida Kartli,-2.1656775054665616
+aggregated,2041,Median,Shida Kartli,-0.8317131175137433
+aggregated,2041,Warm/Wet,Shida Kartli,-0.40144488316677496
+aggregated,2041,Hot/Dry,Tbilisi,-6.9525687949747095
+aggregated,2041,Median,Tbilisi,-3.013095577158225
+aggregated,2041,Warm/Wet,Tbilisi,-0.8508711247146721
+aggregated,2042,Hot/Dry,Abkhazia,
+aggregated,2042,Median,Abkhazia,
+aggregated,2042,Warm/Wet,Abkhazia,
+aggregated,2042,Hot/Dry,Ajaria,-7.053559030252771
+aggregated,2042,Median,Ajaria,-2.3107305455352645
+aggregated,2042,Warm/Wet,Ajaria,-1.6871928316314353
+aggregated,2042,Hot/Dry,Guria,-20.402042876783582
+aggregated,2042,Median,Guria,-7.967328940063837
+aggregated,2042,Warm/Wet,Guria,-7.901805259290796
+aggregated,2042,Hot/Dry,Imereti,-13.796688639050586
+aggregated,2042,Median,Imereti,-5.53264613434537
+aggregated,2042,Warm/Wet,Imereti,-4.9514503629449536
+aggregated,2042,Hot/Dry,Kakheti,-7.264681968115866
+aggregated,2042,Median,Kakheti,-4.255320244249205
+aggregated,2042,Warm/Wet,Kakheti,-2.174821195511157
+aggregated,2042,Hot/Dry,Kvemo Kartli,-5.87401127144922
+aggregated,2042,Median,Kvemo Kartli,-3.543034548208354
+aggregated,2042,Warm/Wet,Kvemo Kartli,-1.7275479581072517
+aggregated,2042,Hot/Dry,Mtskheta-Mtianeti,-1.2584147500649578
+aggregated,2042,Median,Mtskheta-Mtianeti,-0.6474119737098079
+aggregated,2042,Warm/Wet,Mtskheta-Mtianeti,-0.48108927019089265
+aggregated,2042,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-1.9276251835299405
+aggregated,2042,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.6267160589407439
+aggregated,2042,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.6478552624608653
+aggregated,2042,Hot/Dry,Samegrelo-Zemo Svaneti,-7.15685154739046
+aggregated,2042,Median,Samegrelo-Zemo Svaneti,-2.133055687988147
+aggregated,2042,Warm/Wet,Samegrelo-Zemo Svaneti,-1.776475510205401
+aggregated,2042,Hot/Dry,Samtskhe-Javakheti,-2.237704797950528
+aggregated,2042,Median,Samtskhe-Javakheti,-1.1180681777065615
+aggregated,2042,Warm/Wet,Samtskhe-Javakheti,-0.6072070877688276
+aggregated,2042,Hot/Dry,Shida Kartli,-2.458665893245339
+aggregated,2042,Median,Shida Kartli,-1.2145588774381082
+aggregated,2042,Warm/Wet,Shida Kartli,-0.7453427968401769
+aggregated,2042,Hot/Dry,Tbilisi,-7.2059579653948305
+aggregated,2042,Median,Tbilisi,-4.544881736536851
+aggregated,2042,Warm/Wet,Tbilisi,-1.8895914448822424
+aggregated,2043,Hot/Dry,Abkhazia,
+aggregated,2043,Median,Abkhazia,
+aggregated,2043,Warm/Wet,Abkhazia,
+aggregated,2043,Hot/Dry,Ajaria,-5.687301932680256
+aggregated,2043,Median,Ajaria,-1.6141120990424298
+aggregated,2043,Warm/Wet,Ajaria,-1.3450714884912713
+aggregated,2043,Hot/Dry,Guria,-16.057591165209757
+aggregated,2043,Median,Guria,-7.161457888009878
+aggregated,2043,Warm/Wet,Guria,-4.993018118891754
+aggregated,2043,Hot/Dry,Imereti,-10.491782576413655
+aggregated,2043,Median,Imereti,-4.4807418005325985
+aggregated,2043,Warm/Wet,Imereti,-2.567555192024116
+aggregated,2043,Hot/Dry,Kakheti,-5.257197946045352
+aggregated,2043,Median,Kakheti,-3.578797729924787
+aggregated,2043,Warm/Wet,Kakheti,-0.8797976331332364
+aggregated,2043,Hot/Dry,Kvemo Kartli,-4.8767528172044905
+aggregated,2043,Median,Kvemo Kartli,-2.490758682677253
+aggregated,2043,Warm/Wet,Kvemo Kartli,-0.7424272910851499
+aggregated,2043,Hot/Dry,Mtskheta-Mtianeti,-0.9692014595155172
+aggregated,2043,Median,Mtskheta-Mtianeti,-0.5341563930419682
+aggregated,2043,Warm/Wet,Mtskheta-Mtianeti,-0.34718628375560456
+aggregated,2043,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-1.4850210658463538
+aggregated,2043,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.47042269202410125
+aggregated,2043,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.3165880733218245
+aggregated,2043,Hot/Dry,Samegrelo-Zemo Svaneti,-5.056763155219173
+aggregated,2043,Median,Samegrelo-Zemo Svaneti,-1.6281406293753378
+aggregated,2043,Warm/Wet,Samegrelo-Zemo Svaneti,-1.114199926298454
+aggregated,2043,Hot/Dry,Samtskhe-Javakheti,-2.026309324525272
+aggregated,2043,Median,Samtskhe-Javakheti,-0.6544930554371575
+aggregated,2043,Warm/Wet,Samtskhe-Javakheti,-0.4147593916035106
+aggregated,2043,Hot/Dry,Shida Kartli,-2.296058399337298
+aggregated,2043,Median,Shida Kartli,-0.8234559984575185
+aggregated,2043,Warm/Wet,Shida Kartli,-0.4286088698357986
+aggregated,2043,Hot/Dry,Tbilisi,-5.889003310717044
+aggregated,2043,Median,Tbilisi,-3.364100163451454
+aggregated,2043,Warm/Wet,Tbilisi,-0.7649561177038322
+aggregated,2044,Hot/Dry,Abkhazia,
+aggregated,2044,Median,Abkhazia,
+aggregated,2044,Warm/Wet,Abkhazia,
+aggregated,2044,Hot/Dry,Ajaria,-8.070403567411205
+aggregated,2044,Median,Ajaria,-1.1932352127751784
+aggregated,2044,Warm/Wet,Ajaria,-2.363083092251941
+aggregated,2044,Hot/Dry,Guria,-21.629919531285466
+aggregated,2044,Median,Guria,-4.316308904942417
+aggregated,2044,Warm/Wet,Guria,-7.611480264444026
+aggregated,2044,Hot/Dry,Imereti,-14.02180353859481
+aggregated,2044,Median,Imereti,-2.7171710300381164
+aggregated,2044,Warm/Wet,Imereti,-4.651463120610899
+aggregated,2044,Hot/Dry,Kakheti,-5.794832581528794
+aggregated,2044,Median,Kakheti,-2.251910365754611
+aggregated,2044,Warm/Wet,Kakheti,-1.3856352491342534
+aggregated,2044,Hot/Dry,Kvemo Kartli,-6.025207303196055
+aggregated,2044,Median,Kvemo Kartli,-2.024099366804066
+aggregated,2044,Warm/Wet,Kvemo Kartli,-1.0221123270215031
+aggregated,2044,Hot/Dry,Mtskheta-Mtianeti,-1.5368922905788054
+aggregated,2044,Median,Mtskheta-Mtianeti,-0.41112833204132926
+aggregated,2044,Warm/Wet,Mtskheta-Mtianeti,-0.36330105824521297
+aggregated,2044,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-2.4543104069024793
+aggregated,2044,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.3350277906260857
+aggregated,2044,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.5007676641356795
+aggregated,2044,Hot/Dry,Samegrelo-Zemo Svaneti,-7.228625864016834
+aggregated,2044,Median,Samegrelo-Zemo Svaneti,-0.8781646932699232
+aggregated,2044,Warm/Wet,Samegrelo-Zemo Svaneti,-2.102594541465322
+aggregated,2044,Hot/Dry,Samtskhe-Javakheti,-2.4905629015612334
+aggregated,2044,Median,Samtskhe-Javakheti,-0.5050030499649267
+aggregated,2044,Warm/Wet,Samtskhe-Javakheti,-0.6588025201481997
+aggregated,2044,Hot/Dry,Shida Kartli,-3.198985958097637
+aggregated,2044,Median,Shida Kartli,-0.5938115834058237
+aggregated,2044,Warm/Wet,Shida Kartli,-0.4912408398719208
+aggregated,2044,Hot/Dry,Tbilisi,-7.6911600124611255
+aggregated,2044,Median,Tbilisi,-2.2938985536952146
+aggregated,2044,Warm/Wet,Tbilisi,-1.2539466808209454
+aggregated,2045,Hot/Dry,Abkhazia,
+aggregated,2045,Median,Abkhazia,
+aggregated,2045,Warm/Wet,Abkhazia,
+aggregated,2045,Hot/Dry,Ajaria,-8.66151862783606
+aggregated,2045,Median,Ajaria,-1.3394541890184257
+aggregated,2045,Warm/Wet,Ajaria,-1.3869341998074702
+aggregated,2045,Hot/Dry,Guria,-24.421785207385696
+aggregated,2045,Median,Guria,-5.619289442386886
+aggregated,2045,Warm/Wet,Guria,-6.134082065057072
+aggregated,2045,Hot/Dry,Imereti,-15.582660494948115
+aggregated,2045,Median,Imereti,-2.9961259433471525
+aggregated,2045,Warm/Wet,Imereti,-3.2064500111989247
+aggregated,2045,Hot/Dry,Kakheti,-9.852570770686881
+aggregated,2045,Median,Kakheti,-1.6012982940853533
+aggregated,2045,Warm/Wet,Kakheti,-1.4965541811815086
+aggregated,2045,Hot/Dry,Kvemo Kartli,-8.773443487989866
+aggregated,2045,Median,Kvemo Kartli,-1.6364500894087541
+aggregated,2045,Warm/Wet,Kvemo Kartli,-1.0183148278949972
+aggregated,2045,Hot/Dry,Mtskheta-Mtianeti,-1.8602352202208863
+aggregated,2045,Median,Mtskheta-Mtianeti,-0.37362222561461067
+aggregated,2045,Warm/Wet,Mtskheta-Mtianeti,-0.3787018039672887
+aggregated,2045,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-2.5118290134893186
+aggregated,2045,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.33821709599844496
+aggregated,2045,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.3234103751434674
+aggregated,2045,Hot/Dry,Samegrelo-Zemo Svaneti,-8.006562169556204
+aggregated,2045,Median,Samegrelo-Zemo Svaneti,-1.1311454774111525
+aggregated,2045,Warm/Wet,Samegrelo-Zemo Svaneti,-0.9952293012422189
+aggregated,2045,Hot/Dry,Samtskhe-Javakheti,-2.9210205461291707
+aggregated,2045,Median,Samtskhe-Javakheti,-0.4639734756755587
+aggregated,2045,Warm/Wet,Samtskhe-Javakheti,-0.4141471058125745
+aggregated,2045,Hot/Dry,Shida Kartli,-3.837023906370831
+aggregated,2045,Median,Shida Kartli,-0.5345925854998654
+aggregated,2045,Warm/Wet,Shida Kartli,-0.47461703204821504
+aggregated,2045,Hot/Dry,Tbilisi,-10.792667185605652
+aggregated,2045,Median,Tbilisi,-1.882840930607827
+aggregated,2045,Warm/Wet,Tbilisi,-1.0560521825824623
+aggregated,2046,Hot/Dry,Abkhazia,
+aggregated,2046,Median,Abkhazia,
+aggregated,2046,Warm/Wet,Abkhazia,
+aggregated,2046,Hot/Dry,Ajaria,-13.81313821211269
+aggregated,2046,Median,Ajaria,-3.5282643929315185
+aggregated,2046,Warm/Wet,Ajaria,-2.1742091122294482
+aggregated,2046,Hot/Dry,Guria,-31.567773628133452
+aggregated,2046,Median,Guria,-12.580302197126898
+aggregated,2046,Warm/Wet,Guria,-9.144196947993322
+aggregated,2046,Hot/Dry,Imereti,-21.39716325985013
+aggregated,2046,Median,Imereti,-7.470498245471532
+aggregated,2046,Warm/Wet,Imereti,-4.5690865437728405
+aggregated,2046,Hot/Dry,Kakheti,-13.900197779511018
+aggregated,2046,Median,Kakheti,-3.452991956283924
+aggregated,2046,Warm/Wet,Kakheti,-2.1847995002056138
+aggregated,2046,Hot/Dry,Kvemo Kartli,-12.403150681318536
+aggregated,2046,Median,Kvemo Kartli,-3.0984945905334342
+aggregated,2046,Warm/Wet,Kvemo Kartli,-1.4698633012887825
+aggregated,2046,Hot/Dry,Mtskheta-Mtianeti,-3.5044289727807723
+aggregated,2046,Median,Mtskheta-Mtianeti,-0.6048888184730288
+aggregated,2046,Warm/Wet,Mtskheta-Mtianeti,-0.36920331893060165
+aggregated,2046,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-4.716236855137836
+aggregated,2046,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.9210332294072003
+aggregated,2046,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.4437409546691953
+aggregated,2046,Hot/Dry,Samegrelo-Zemo Svaneti,-12.09620039884831
+aggregated,2046,Median,Samegrelo-Zemo Svaneti,-2.706462265934391
+aggregated,2046,Warm/Wet,Samegrelo-Zemo Svaneti,-1.867610098708866
+aggregated,2046,Hot/Dry,Samtskhe-Javakheti,-5.63342608197533
+aggregated,2046,Median,Samtskhe-Javakheti,-1.2120922175733142
+aggregated,2046,Warm/Wet,Samtskhe-Javakheti,-0.47083052678476633
+aggregated,2046,Hot/Dry,Shida Kartli,-6.7538307477349235
+aggregated,2046,Median,Shida Kartli,-1.2723396652298362
+aggregated,2046,Warm/Wet,Shida Kartli,-0.5179332905241125
+aggregated,2046,Hot/Dry,Tbilisi,-16.261141919354372
+aggregated,2046,Median,Tbilisi,-3.256872039628192
+aggregated,2046,Warm/Wet,Tbilisi,-1.1483784836800055
+aggregated,2047,Hot/Dry,Abkhazia,
+aggregated,2047,Median,Abkhazia,
+aggregated,2047,Warm/Wet,Abkhazia,
+aggregated,2047,Hot/Dry,Ajaria,-8.04361531973072
+aggregated,2047,Median,Ajaria,-2.1793617310492834
+aggregated,2047,Warm/Wet,Ajaria,-1.7261685996185179
+aggregated,2047,Hot/Dry,Guria,-22.66877118531427
+aggregated,2047,Median,Guria,-9.137755480986186
+aggregated,2047,Warm/Wet,Guria,-5.8744353356483145
+aggregated,2047,Hot/Dry,Imereti,-15.12696717513316
+aggregated,2047,Median,Imereti,-5.601893957680105
+aggregated,2047,Warm/Wet,Imereti,-3.178078807687143
+aggregated,2047,Hot/Dry,Kakheti,-8.602918166672183
+aggregated,2047,Median,Kakheti,-2.715232174185445
+aggregated,2047,Warm/Wet,Kakheti,-1.281554371428257
+aggregated,2047,Hot/Dry,Kvemo Kartli,-7.446772787674135
+aggregated,2047,Median,Kvemo Kartli,-2.4577868817689392
+aggregated,2047,Warm/Wet,Kvemo Kartli,-1.126873198746651
+aggregated,2047,Hot/Dry,Mtskheta-Mtianeti,-1.678644623971735
+aggregated,2047,Median,Mtskheta-Mtianeti,-0.4583961672456951
+aggregated,2047,Warm/Wet,Mtskheta-Mtianeti,-0.3462795405471297
+aggregated,2047,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-2.4213481937730563
+aggregated,2047,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.6201030319452201
+aggregated,2047,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.3371111036214245
+aggregated,2047,Hot/Dry,Samegrelo-Zemo Svaneti,-7.031200037296827
+aggregated,2047,Median,Samegrelo-Zemo Svaneti,-2.533277812537051
+aggregated,2047,Warm/Wet,Samegrelo-Zemo Svaneti,-1.3763756428102596
+aggregated,2047,Hot/Dry,Samtskhe-Javakheti,-2.3957802355190267
+aggregated,2047,Median,Samtskhe-Javakheti,-0.9503792971303113
+aggregated,2047,Warm/Wet,Samtskhe-Javakheti,-0.5786627244200986
+aggregated,2047,Hot/Dry,Shida Kartli,-3.2618465876721245
+aggregated,2047,Median,Shida Kartli,-1.0760297433400439
+aggregated,2047,Warm/Wet,Shida Kartli,-0.4081345717930418
+aggregated,2047,Hot/Dry,Tbilisi,-9.650175988520402
+aggregated,2047,Median,Tbilisi,-2.6582643849486516
+aggregated,2047,Warm/Wet,Tbilisi,-1.3691900362234435
+aggregated,2048,Hot/Dry,Abkhazia,
+aggregated,2048,Median,Abkhazia,
+aggregated,2048,Warm/Wet,Abkhazia,
+aggregated,2048,Hot/Dry,Ajaria,-8.099949699391118
+aggregated,2048,Median,Ajaria,-2.676139577619196
+aggregated,2048,Warm/Wet,Ajaria,-1.5321000521695538
+aggregated,2048,Hot/Dry,Guria,-20.883945066173794
+aggregated,2048,Median,Guria,-9.532293328109532
+aggregated,2048,Warm/Wet,Guria,-5.31792958878026
+aggregated,2048,Hot/Dry,Imereti,-14.964934923949372
+aggregated,2048,Median,Imereti,-6.227170660949341
+aggregated,2048,Warm/Wet,Imereti,-3.2332759974639487
+aggregated,2048,Hot/Dry,Kakheti,-9.284853376233727
+aggregated,2048,Median,Kakheti,-2.691671217892292
+aggregated,2048,Warm/Wet,Kakheti,-1.0676207095984012
+aggregated,2048,Hot/Dry,Kvemo Kartli,-9.376849184209973
+aggregated,2048,Median,Kvemo Kartli,-2.824178152334568
+aggregated,2048,Warm/Wet,Kvemo Kartli,-0.9882483998081852
+aggregated,2048,Hot/Dry,Mtskheta-Mtianeti,-1.9659544258432788
+aggregated,2048,Median,Mtskheta-Mtianeti,-0.5761418977241135
+aggregated,2048,Warm/Wet,Mtskheta-Mtianeti,-0.35803551882847273
+aggregated,2048,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-2.5190797614118026
+aggregated,2048,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.7136293056641705
+aggregated,2048,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.39165139038938435
+aggregated,2048,Hot/Dry,Samegrelo-Zemo Svaneti,-7.307242884161184
+aggregated,2048,Median,Samegrelo-Zemo Svaneti,-2.292941277661484
+aggregated,2048,Warm/Wet,Samegrelo-Zemo Svaneti,-1.1138112623357017
+aggregated,2048,Hot/Dry,Samtskhe-Javakheti,-3.1890044539273816
+aggregated,2048,Median,Samtskhe-Javakheti,-0.8947724384813966
+aggregated,2048,Warm/Wet,Samtskhe-Javakheti,-0.43633910502988726
+aggregated,2048,Hot/Dry,Shida Kartli,-4.048531582886156
+aggregated,2048,Median,Shida Kartli,-1.0176557946603424
+aggregated,2048,Warm/Wet,Shida Kartli,-0.622196094923865
+aggregated,2048,Hot/Dry,Tbilisi,-11.164113795421883
+aggregated,2048,Median,Tbilisi,-3.2661438273212298
+aggregated,2048,Warm/Wet,Tbilisi,-0.9564822919946323
+aggregated,2049,Hot/Dry,Abkhazia,
+aggregated,2049,Median,Abkhazia,
+aggregated,2049,Warm/Wet,Abkhazia,
+aggregated,2049,Hot/Dry,Ajaria,-7.858663589239683
+aggregated,2049,Median,Ajaria,-1.5054298456537225
+aggregated,2049,Warm/Wet,Ajaria,-1.2169337699988887
+aggregated,2049,Hot/Dry,Guria,-21.709970215446205
+aggregated,2049,Median,Guria,-6.798550807806365
+aggregated,2049,Warm/Wet,Guria,-5.177045898701095
+aggregated,2049,Hot/Dry,Imereti,-14.613380516114646
+aggregated,2049,Median,Imereti,-5.809377112939373
+aggregated,2049,Warm/Wet,Imereti,-2.9204075899187387
+aggregated,2049,Hot/Dry,Kakheti,-8.809548898805787
+aggregated,2049,Median,Kakheti,-4.542325348312772
+aggregated,2049,Warm/Wet,Kakheti,-1.5678870464568462
+aggregated,2049,Hot/Dry,Kvemo Kartli,-8.29394693670217
+aggregated,2049,Median,Kvemo Kartli,-4.039292811871803
+aggregated,2049,Warm/Wet,Kvemo Kartli,-1.1433248248254557
+aggregated,2049,Hot/Dry,Mtskheta-Mtianeti,-1.9068915489392282
+aggregated,2049,Median,Mtskheta-Mtianeti,-0.7683591123338829
+aggregated,2049,Warm/Wet,Mtskheta-Mtianeti,-0.3464893389753456
+aggregated,2049,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-2.5141407796740793
+aggregated,2049,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.5967262404570022
+aggregated,2049,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.3293773187703266
+aggregated,2049,Hot/Dry,Samegrelo-Zemo Svaneti,-7.654775216381893
+aggregated,2049,Median,Samegrelo-Zemo Svaneti,-1.5514673882512824
+aggregated,2049,Warm/Wet,Samegrelo-Zemo Svaneti,-1.0946400208058122
+aggregated,2049,Hot/Dry,Samtskhe-Javakheti,-3.047330112277706
+aggregated,2049,Median,Samtskhe-Javakheti,-0.9069751069873888
+aggregated,2049,Warm/Wet,Samtskhe-Javakheti,-0.47760922928583227
+aggregated,2049,Hot/Dry,Shida Kartli,-3.824862479144329
+aggregated,2049,Median,Shida Kartli,-1.238206759041475
+aggregated,2049,Warm/Wet,Shida Kartli,-0.4827550733315178
+aggregated,2049,Hot/Dry,Tbilisi,-10.904904393754208
+aggregated,2049,Median,Tbilisi,-4.36129177537201
+aggregated,2049,Warm/Wet,Tbilisi,-1.1609605285298414
+aggregated,2050,Hot/Dry,Abkhazia,
+aggregated,2050,Median,Abkhazia,
+aggregated,2050,Warm/Wet,Abkhazia,
+aggregated,2050,Hot/Dry,Ajaria,-6.305856817046589
+aggregated,2050,Median,Ajaria,-2.2872787224890203
+aggregated,2050,Warm/Wet,Ajaria,-1.6569535772122066
+aggregated,2050,Hot/Dry,Guria,-19.47647295059258
+aggregated,2050,Median,Guria,-8.362083793809632
+aggregated,2050,Warm/Wet,Guria,-6.917333285888574
+aggregated,2050,Hot/Dry,Imereti,-12.156469952039942
+aggregated,2050,Median,Imereti,-5.8128840405369715
+aggregated,2050,Warm/Wet,Imereti,-3.8616532144280313
+aggregated,2050,Hot/Dry,Kakheti,-7.062493595680536
+aggregated,2050,Median,Kakheti,-4.6355533128378
+aggregated,2050,Warm/Wet,Kakheti,-1.448051909370065
+aggregated,2050,Hot/Dry,Kvemo Kartli,-5.310025932258057
+aggregated,2050,Median,Kvemo Kartli,-3.415275861537779
+aggregated,2050,Warm/Wet,Kvemo Kartli,-1.140949047605261
+aggregated,2050,Hot/Dry,Mtskheta-Mtianeti,-1.2636167230209026
+aggregated,2050,Median,Mtskheta-Mtianeti,-0.6177701495960548
+aggregated,2050,Warm/Wet,Mtskheta-Mtianeti,-0.35481738603323265
+aggregated,2050,Hot/Dry,Racha-Lechkhumi-Kvemo Svaneti,-1.6749942190503475
+aggregated,2050,Median,Racha-Lechkhumi-Kvemo Svaneti,-0.6875189406347744
+aggregated,2050,Warm/Wet,Racha-Lechkhumi-Kvemo Svaneti,-0.37410303330976546
+aggregated,2050,Hot/Dry,Samegrelo-Zemo Svaneti,-5.739877289045992
+aggregated,2050,Median,Samegrelo-Zemo Svaneti,-2.36214308056951
+aggregated,2050,Warm/Wet,Samegrelo-Zemo Svaneti,-1.7062990465632595
+aggregated,2050,Hot/Dry,Samtskhe-Javakheti,-1.676004299798521
+aggregated,2050,Median,Samtskhe-Javakheti,-0.8039218653956652
+aggregated,2050,Warm/Wet,Samtskhe-Javakheti,-0.5433790212114644
+aggregated,2050,Hot/Dry,Shida Kartli,-2.1485018641291305
+aggregated,2050,Median,Shida Kartli,-1.1872974091446196
+aggregated,2050,Warm/Wet,Shida Kartli,-0.5599202241170786
+aggregated,2050,Hot/Dry,Tbilisi,-6.59991838581449
+aggregated,2050,Median,Tbilisi,-4.195867433365251
+aggregated,2050,Warm/Wet,Tbilisi,-1.2338597696219438
