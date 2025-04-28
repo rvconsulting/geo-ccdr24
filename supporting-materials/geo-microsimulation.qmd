@@ -1946,9 +1946,10 @@ pp_microsim_cc01 <- pp_microsim13 |>
             join_by(region == RegNo))
 
 # Household income processed dataset
+# We also impact ag income with ag labor productivity
 ic_microsim_cc01 <- ic_microsim02 |>
   left_join(hh_basics, join_by(UID)) |> 
-  left_join(lvstk_pdcvty_loss,
+  left_join(labor_pdcvty_loss[,c(2,3,6)],
             join_by(RegNo))
 
 ##write.table(lab_loss_avg, "clipboard", sep="\t", row.names=FALSE)
@@ -2058,20 +2059,33 @@ And recalculate total income. First labor productivity alone. I learned about pi
 
 ```{r}
 ic_microsim_cc03 <- ic_microsim_cc02 |>
+  # Labor productivity applied to ag income
+  mutate(
+    agr_income_2030_labprod = 
+      agr_income_2023 *
+      (100 + labprod_Agriculture_2030)/100,
+    agr_income_2050_labprod = 
+      agr_income_2023 *
+      (100 + labprod_Agriculture_2050)/100) |> 
   mutate(
     totalinc_2030_baseline_labprod =
       totalinc_2030_baseline -
       rowSums(pick(labor_income_2030_baseline, 
-                   self_employment_income_2030_baseline), na.rm = TRUE) +
+                   self_employment_income_2030_baseline,
+                   agr_income_2023), na.rm = TRUE) 
+    +
       rowSums(pick(labor_income_2030_baseline_labprod, 
-                   self_employment_income_2030_baseline_labprod), na.rm = TRUE),
+                   self_employment_income_2030_baseline_labprod,
+                   agr_income_2030_labprod), na.rm = TRUE),
     
     totalinc_2050_baseline_labprod =
       totalinc_2050_baseline -
       rowSums(pick(labor_income_2050_baseline, 
-                   self_employment_income_2050_baseline), na.rm = TRUE) +
+                   self_employment_income_2050_baseline,
+                   agr_income_2023), na.rm = TRUE) +
       rowSums(pick(labor_income_2050_baseline_labprod, 
-                   self_employment_income_2050_baseline_labprod), na.rm = TRUE)
+                   self_employment_income_2050_baseline_labprod,
+                   agr_income_2030_labprod), na.rm = TRUE)
   ) |>
   mutate(
     totalinc_2030_baseline_labprod_coef =
@@ -2268,6 +2282,60 @@ poor_2050_baseline_labprod <- ca_microsim_cc02 |>
 
 # write.table(poor_2050_baseline_labprod, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
 ```
+
+Changes by region
+
+```{r}
+poor_2030_labprod_region <- ca_microsim_cc02 |> 
+  group_by(RegNo,poor_2030_baseline_labprod) |>  
+  summarize(
+    # no_hh_2023 = sum(weight_2023, na.rm = TRUE),
+    no_pp_2030_labprod = sum(weight_2030_baseline * hhsize, na.rm = TRUE)
+    ) |> 
+  pivot_wider(
+    id_cols = RegNo,
+    names_from = poor_2030_baseline_labprod,
+    values_from = c(
+      # no_hh_2023,
+      no_pp_2030_labprod)
+  ) |> 
+  mutate(
+    RegNo = as.integer(RegNo),
+    pct_poor = (`1` / (`1` + `0`))*100
+  ) |> 
+  rename(
+    poor = `1`,
+    non_poor = `0`
+  ) |> 
+  ungroup()
+
+poor_2030_baseline_region <- ca_microsim_cc02 |> 
+  group_by(RegNo,poor_2030_baseline) |>  
+  summarize(
+    # no_hh_2023 = sum(weight_2023, na.rm = TRUE),
+    no_pp_2030_baseline = sum(weight_2030_baseline * hhsize, na.rm = TRUE)
+    ) |> 
+  pivot_wider(
+    id_cols = RegNo,
+    names_from = poor_2030_baseline,
+    values_from = c(
+      # no_hh_2023,
+      no_pp_2030_baseline)
+  ) |> 
+  mutate(
+    RegNo = as.integer(RegNo),
+    pct_poor = (`1` / (`1` + `0`))*100
+  ) |> 
+  rename(
+    poor = `1`,
+    non_poor = `0`
+  ) |> 
+  ungroup()
+
+# write.table(poor_2030_labprod_region, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+
 
 # Maps
 
