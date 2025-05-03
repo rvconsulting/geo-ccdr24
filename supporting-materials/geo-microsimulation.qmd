@@ -64,7 +64,7 @@ pline61 <- 355.10 # Intl. Poverty line of USD6.85/Person/Day
 pline62 <- 404.9395 # Intl. Poverty line of USD6.85/Person/Day
 
 # Poverty line used in the script below
-pline <- pline62
+pline <- pline0
 
 # Years of interest for our macroeconomic scenario analysis
 analysis_years <- c(2030, 2050)
@@ -94,7 +94,7 @@ library(broom)     # More regressions
 library(zoo)       # Calculate moving window average and max value
 # library(Hmisc)     # Estimates deciles, quintiles but use :: version too
 # library(ineq) # Inequality measures
-# library(acid)
+# library(acid) # Inequality measures we use acid::weighted.gini()
 
 # Geopackages
 library(sf)        # to read and write shapefile maps
@@ -2042,12 +2042,12 @@ income_losses <- ic_microsim_cc03 |>
          totalinc_2030_baseline_cc_coef, 
          totalinc_2050_baseline_cc_coef)
 
-ca_microsim_cc01 <- ca_microsim01 |> 
+ca_microsim02 <- ca_microsim01 |> 
   left_join(income_losses, join_by(UID))
 
 # And now reduce total consumption
 
-ca_microsim_cc02 <- ca_microsim_cc01 |> 
+ca_microsim03 <- ca_microsim02 |> 
   mutate(tc_2030_baseline_cc = tc_2030_baseline *
            totalinc_2030_baseline_cc_coef,
          tc_2050_baseline_cc = tc_2050_baseline *
@@ -2072,7 +2072,7 @@ ca_microsim_cc02 <- ca_microsim_cc01 |>
 We first estimate quintiles from our scenario estimated consumption.
 
 ```{r}
-ca_microsim02 <- ca_microsim01
+ca_microsim04 <- ca_microsim03
 
 # Assuming you already have `analysis_years` and `scenarios` defined
 
@@ -2085,8 +2085,8 @@ for (yr in analysis_years) {
     qnt_var <- paste0("quintiles_", yr, "_", sc)
 
     # Extract income and weights
-    inc <- ca_microsim02[[inc_var]]
-    wgt <- ca_microsim02[[wgt_var]]
+    inc <- ca_microsim04[[inc_var]]
+    wgt <- ca_microsim04[[wgt_var]]
 
     # Replace NAs in income with zero
     inc[is.na(inc)] <- 0
@@ -2095,7 +2095,7 @@ for (yr in analysis_years) {
     cuts <- Hmisc::wtd.quantile(inc, weights = wgt, probs = seq(0.2, 0.8, 0.2))
 
     # Cut into quintile groups and assign to new column
-    ca_microsim02[[qnt_var]] <- cut(inc,
+    ca_microsim04[[qnt_var]] <- cut(inc,
                                     breaks = c(-Inf, cuts, Inf),
                                     labels = 1:5,
                                     include.lowest = TRUE)
@@ -2125,7 +2125,7 @@ hh_consumption_effects <- hh_consumption_effects %>%
 ```{r}
 # Only use subset of scenarios present in hh_consumption_effects
 sc_subset <- unique(hh_consumption_effects$scenario_id)
-ca_microsim03 <- ca_microsim02
+ca_microsim05 <- ca_microsim04
 
 for (yr in analysis_years) {
   for (sc in sc_subset) {
@@ -2138,7 +2138,7 @@ for (yr in analysis_years) {
       filter(year == yr, scenario_id == sc) %>%
       select(quintile, type, shock)
 
-    ca_microsim03 <- ca_microsim03 %>%
+    ca_microsim05 <- ca_microsim05 %>%
       mutate(.quintile_join = as.integer(.data[[quint_var]])) %>%
       left_join(shock_df, by = c(".quintile_join" = "quintile", "type" = "type")) %>%
       mutate(!!new_var := .data[[ae_var]] * (1 + shock)) %>%
@@ -2150,15 +2150,15 @@ for (yr in analysis_years) {
 And now we reestimate poverty for these columns.
 
 ```{r}
-ca_microsim04 <- ca_microsim03
+ca_microsim06 <- ca_microsim05
 for (yr in analysis_years) {
   for (sc in sc_subset) {
     
     ae_pc_col <- paste0("aecons_", yr, "_", sc, "_pc")
     poor_pc_col <- paste0("poor_", yr, "_", sc, "_pc")
     
-    ca_microsim04[[poor_pc_col]] <- if_else(
-      ca_microsim04[[ae_pc_col]] < pline, 1L, 0L
+    ca_microsim06[[poor_pc_col]] <- if_else(
+      ca_microsim06[[ae_pc_col]] < pline, 1L, 0L
     )
   }
 }
@@ -2170,7 +2170,7 @@ for (yr in analysis_years) {
 
 ```{r}
 # Initial year
-poor_2023 <- ca_microsim01 |>
+poor_2023 <- ca_microsim06 |>
   group_by(poor_2023) |> 
   summarize(
     no_hh_2023 = sum(hh_weight_2023, na.rm = TRUE),
@@ -2179,7 +2179,7 @@ poor_2023 <- ca_microsim01 |>
   ungroup()
 
 # Baseline
-poor_2030_baseline <- ca_microsim01 |>
+poor_2030_baseline <- ca_microsim06 |>
   group_by(poor_2030_baseline) |> 
   summarize(
     no_hh_2030_baseline = sum(hh_weight_2030_baseline, na.rm = TRUE),
@@ -2187,7 +2187,7 @@ poor_2030_baseline <- ca_microsim01 |>
     ) |> 
   ungroup()
 
-poor_2050_baseline <- ca_microsim01 |>
+poor_2050_baseline <- ca_microsim06 |>
   group_by(poor_2050_baseline) |> 
   summarize(
     no_hh_2050_baseline = sum(hh_weight_2050_baseline, na.rm = TRUE),
@@ -2196,7 +2196,7 @@ poor_2050_baseline <- ca_microsim01 |>
   ungroup()
 
 # Dry/Hot
-poor_2030_dryhot <- ca_microsim01 |>
+poor_2030_dryhot <- ca_microsim06 |>
   group_by(poor_2030_dryhot) |> 
   summarize(
     no_hh_2030_dryhot = sum(hh_weight_2030_dryhot, na.rm = TRUE),
@@ -2204,7 +2204,7 @@ poor_2030_dryhot <- ca_microsim01 |>
     ) |> 
   ungroup()
 
-poor_2050_dryhot <- ca_microsim01 |>
+poor_2050_dryhot <- ca_microsim06 |>
   group_by(poor_2050_dryhot) |> 
   summarize(
     no_hh_2050_dryhot = sum(hh_weight_2050_dryhot, na.rm = TRUE),
@@ -2213,7 +2213,7 @@ poor_2050_dryhot <- ca_microsim01 |>
   ungroup()
 
 # Wet/Warm
-poor_2030_wetwarm <- ca_microsim01 |>
+poor_2030_wetwarm <- ca_microsim06 |>
   group_by(poor_2030_wetwarm) |> 
   summarize(
     no_hh_2030_wetwarm = sum(hh_weight_2030_wetwarm, na.rm = TRUE),
@@ -2221,7 +2221,7 @@ poor_2030_wetwarm <- ca_microsim01 |>
     ) |> 
   ungroup()
 
-poor_2050_wetwarm <- ca_microsim01 |>
+poor_2050_wetwarm <- ca_microsim06 |>
   group_by(poor_2050_wetwarm) |> 
   summarize(
     no_hh_2050_wetwarm = sum(hh_weight_2050_wetwarm, na.rm = TRUE),
@@ -2230,7 +2230,7 @@ poor_2050_wetwarm <- ca_microsim01 |>
   ungroup()
 
 # NZS
-poor_2030_nzs <- ca_microsim01 |>
+poor_2030_nzs <- ca_microsim06 |>
   group_by(poor_2030_nzs) |> 
   summarize(
     no_hh_2030_nzs = sum(hh_weight_2030_nzs, na.rm = TRUE),
@@ -2238,7 +2238,7 @@ poor_2030_nzs <- ca_microsim01 |>
     ) |> 
   ungroup()
 
-poor_2050_nzs <- ca_microsim01 |>
+poor_2050_nzs <- ca_microsim06 |>
   group_by(poor_2050_nzs) |> 
   summarize(
     no_hh_2050_nzs = sum(hh_weight_2050_nzs, na.rm = TRUE),
@@ -2246,7 +2246,7 @@ poor_2050_nzs <- ca_microsim01 |>
     ) |> 
   ungroup()
 
-poor_2030_baseline_cc <- ca_microsim_cc02 |>
+poor_2030_baseline_cc <- ca_microsim06 |>
   group_by(poor_2030_baseline_cc) |>
   summarize(
     no_hh_2030_baseline_cc = sum(hh_weight_2030_baseline, na.rm = TRUE),
@@ -2254,7 +2254,7 @@ poor_2030_baseline_cc <- ca_microsim_cc02 |>
     ) |>
   ungroup()
 
-poor_2050_baseline_cc <- ca_microsim_cc02 |>
+poor_2050_baseline_cc <- ca_microsim06 |>
   group_by(poor_2050_baseline_cc) |>
   summarize(
     no_hh_2050_baseline_cc = sum(hh_weight_2050_baseline, na.rm = TRUE),
@@ -2265,7 +2265,7 @@ poor_2050_baseline_cc <- ca_microsim_cc02 |>
 # Price effects
 
 # Dry/Hot
-poor_2030_dryhot_pc <- ca_microsim04 |>
+poor_2030_dryhot_pc <- ca_microsim06 |>
   group_by(poor_2030_dryhot_pc) |> 
   summarize(
     no_hh_2030_dryhot = sum(hh_weight_2030_dryhot, na.rm = TRUE),
@@ -2273,7 +2273,7 @@ poor_2030_dryhot_pc <- ca_microsim04 |>
     ) |> 
   ungroup()
 
-poor_2050_dryhot_pc <- ca_microsim04 |>
+poor_2050_dryhot_pc <- ca_microsim06 |>
   group_by(poor_2050_dryhot_pc) |> 
   summarize(
     no_hh_2050_dryhot = sum(hh_weight_2050_dryhot, na.rm = TRUE),
@@ -2282,7 +2282,7 @@ poor_2050_dryhot_pc <- ca_microsim04 |>
   ungroup()
 
 # Wet/Warm
-poor_2030_wetwarm_pc <- ca_microsim04 |>
+poor_2030_wetwarm_pc <- ca_microsim06 |>
   group_by(poor_2030_wetwarm_pc) |> 
   summarize(
     no_hh_2030_wetwarm = sum(hh_weight_2030_wetwarm, na.rm = TRUE),
@@ -2290,7 +2290,7 @@ poor_2030_wetwarm_pc <- ca_microsim04 |>
     ) |> 
   ungroup()
 
-poor_2050_wetwarm_pc <- ca_microsim04 |>
+poor_2050_wetwarm_pc <- ca_microsim06 |>
   group_by(poor_2050_wetwarm_pc) |> 
   summarize(
     no_hh_2050_wetwarm = sum(hh_weight_2050_wetwarm, na.rm = TRUE),
@@ -2299,7 +2299,7 @@ poor_2050_wetwarm_pc <- ca_microsim04 |>
   ungroup()
 
 # NZS
-poor_2030_nzs_pc <- ca_microsim04 |>
+poor_2030_nzs_pc <- ca_microsim06 |>
   group_by(poor_2030_nzs_pc) |> 
   summarize(
     no_hh_2030_nzs = sum(hh_weight_2030_nzs, na.rm = TRUE),
@@ -2307,7 +2307,7 @@ poor_2030_nzs_pc <- ca_microsim04 |>
     ) |> 
   ungroup()
 
-poor_2050_nzs_pc <- ca_microsim04 |>
+poor_2050_nzs_pc <- ca_microsim06 |>
   group_by(poor_2050_nzs_pc) |> 
   summarize(
     no_hh_2050_nzs = sum(hh_weight_2050_nzs, na.rm = TRUE),
@@ -2333,6 +2333,126 @@ poor_2050_nzs_pc <- ca_microsim04 |>
 # write.table(poor_2030_nzs_pc, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
 # write.table(poor_2050_nzs_pc, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
 ```
+
+# Inequality measurements
+
+Here we estimate weighted inequality measurements.
+
+```{r}
+# Get list of income and weight variable pairs
+income_vars <- names(ca_microsim06)[grepl("^aecons_\\d{4}(_[a-zA-Z0-9]+)?$", names(ca_microsim06))]
+
+# We had to add the subscenarios by hand, because of poor planning in naming conventions
+lookup_table <- tibble(
+  Income_Variable = c(income_vars, 
+                      "aecons_2030_baseline_cc", 
+                      "aecons_2050_baseline_cc",
+                      "aecons_2030_dryhot_pc", 
+                      "aecons_2050_dryhot_pc",
+                      "aecons_2030_wetwarm_pc", 
+                      "aecons_2050_wetwarm_pc",
+                      "aecons_2030_nzs_pc", 
+                      "aecons_2050_nzs_pc"),
+  Weight_Variable = c(gsub("^aecons_", "hh_weight_", income_vars),
+                      "hh_weight_2030_baseline",
+                      "hh_weight_2050_baseline",
+                      "hh_weight_2030_dryhot",
+                      "hh_weight_2050_dryhot",
+                      "hh_weight_2030_wetwarm",
+                      "hh_weight_2050_wetwarm",
+                      "hh_weight_2030_nzs",
+                      "hh_weight_2050_nzs")
+)
+
+# Weighted FGT function
+weighted_FGT <- function(income, weight, pline, alpha) {
+  if (alpha == 0) {
+    return(sum(weight[income < pline], na.rm = TRUE) / sum(weight, na.rm = TRUE))
+  } else {
+    gap <- pmax(0, (pline - income) / pline)
+    return(sum((gap ^ alpha) * weight, na.rm = TRUE) / sum(weight, na.rm = TRUE))
+  }
+}
+
+# Measure calculation function
+calculate_measures <- function(income_var, weight_var) {
+  income <- ca_microsim06[[income_var]]
+  weight <- ca_microsim06[[weight_var]] * ca_microsim06$hhsize
+  
+  data.frame(
+    `Income Variable` = income_var,
+    `FGT (alpha=0) - Poverty Headcount` = weighted_FGT(income, weight, pline, alpha = 0),
+    `FGT (alpha=1) - Poverty Gap`       = weighted_FGT(income, weight, pline, alpha = 1),
+    `FGT (alpha=2) - Poverty Severity`  = weighted_FGT(income, weight, pline, alpha = 2),
+    `Gini Coefficient` = acid::weighted.gini(income, w = weight)
+  )
+}
+
+
+# Run it
+inequality_results <- pmap_dfr(
+  list(lookup_table$Income_Variable, lookup_table$Weight_Variable),
+  calculate_measures) |> 
+  select(-ends_with(".Gini"), -ends_with("bcGini"))
+
+# Review results
+print(inequality_results)
+# write.table(inequality_results, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+Plotting inequality among scenarios and years
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+# Prepare data as before
+inequality_results_long <- inequality_results %>%
+  mutate(
+    year = as.integer(sub("aecons_(\\d{4}).*", "\\1", Income.Variable)),
+    scenario = sub("aecons_\\d{4}_?", "", Income.Variable),
+    scenario = ifelse(scenario == "", "2023", scenario)
+  ) %>%
+  filter(year != 2023) %>%
+  mutate(
+    scenario = factor(scenario),
+    year = factor(year),
+    Poverty_Headcount = 100 * FGT..alpha.0....Poverty.Headcount,
+    Poverty_Gap = 100 * FGT..alpha.1....Poverty.Gap,
+    Poverty_Severity = 100 * FGT..alpha.2....Poverty.Severity
+  ) %>%
+  select(year, scenario, Poverty_Headcount, Poverty_Gap, Poverty_Severity) %>%
+  pivot_longer(
+    cols = c(Poverty_Headcount, Poverty_Gap, Poverty_Severity),
+    names_to = "Measure",
+    values_to = "Value"
+  ) %>%
+  mutate(Measure = dplyr::recode(as.character(Measure),
+  "Poverty_Headcount" = "Poverty Headcount",
+  "Poverty_Gap" = "Poverty Gap",
+  "Poverty_Severity" = "Poverty Severity"
+))
+
+
+# Plot with value labels
+ggplot(inequality_results_long, aes(x = scenario, y = Value, fill = scenario)) +
+  geom_col(position = position_dodge(width = 0.9), width = 0.8) +
+  geom_text(aes(label = sprintf("%.1f", Value)),
+          vjust = -0.3, size = 2.5, position = position_dodge(width = 0.9)) +
+  facet_grid(Measure ~ year, scales = "free_y") +
+  labs(
+    title = "Poverty Metrics by Scenario and Year",
+    x = "Scenario",
+    y = "Value (%)",
+    fill = "Scenario"
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+```
+
 
 Changes by region
 
@@ -2467,21 +2587,21 @@ tm_shape(poor_2023_region_map) +
             title.position = c('left', 'bottom'),
             title.size = 0.9)
 
-tmap_save(
-  map_object,
-  "data/outputs/vulnerability_img/other/poverty_by_region.svg",
-  width = 8,
-  height = 5,
-  units = "in"
-)
-tmap_save(
-  map_object,
-  "data/outputs/vulnerability_img/other/poverty_by_region.png",
-  width = 8,
-  height = 5,
-  units = "in",
-  dpi = 300
-)
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poverty_by_region.svg",
+#   width = 8,
+#   height = 5,
+#   units = "in"
+# )
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poverty_by_region.png",
+#   width = 8,
+#   height = 5,
+#   units = "in",
+#   dpi = 300
+# )
 map_object
 
 
