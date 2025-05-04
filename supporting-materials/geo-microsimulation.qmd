@@ -1409,6 +1409,9 @@ And now we perform the reweighting, using the original weights. Initially we had
 This has now been put into a for loop to facilitate multiple scenarios. See the original Armenia code for a simpler "by hand" version.
 
 ```{r}
+#| warning: false
+#| message: false
+
 rakedata_base <- as.data.frame(pp_microsim11)
 original_weight_sum <- sum(rakedata_base$weight)
 
@@ -2457,7 +2460,7 @@ ggplot(inequality_results_long, aes(x = scenario, y = Value, fill = scenario)) +
 Changes by region
 
 ```{r}
-poor_2030_cc_region <- ca_microsim_cc02 |> 
+poor_2030_cc_region <- ca_microsim06 |> 
   group_by(RegNo,poor_2030_baseline_cc) |>  
   summarize(
     # no_hh_2023 = sum(weight_2023, na.rm = TRUE),
@@ -2480,7 +2483,7 @@ poor_2030_cc_region <- ca_microsim_cc02 |>
   ) |> 
   ungroup()
 
-poor_2030_baseline_region <- ca_microsim_cc02 |> 
+poor_2030_baseline_region <- ca_microsim06 |> 
   group_by(RegNo,poor_2030_baseline) |>  
   summarize(
     # no_hh_2023 = sum(weight_2023, na.rm = TRUE),
@@ -2516,7 +2519,7 @@ poor_2030_baseline_region <- ca_microsim_cc02 |>
 #| label: fig-exposed-and-poor
 #| fig-cap: "Percent below poverty line by region"
 
-poor_2023_region <- ca_microsim01  |> 
+poor_2023_region <- ca_microsim06  |> 
   group_by(RegNo,poor_2023) |>  
   summarize(
     # no_hh_2023 = sum(weight_2023, na.rm = TRUE),
@@ -2606,6 +2609,153 @@ map_object
 
 
 # write.table(poor_numbers, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+Map request: Increase in poverty between Baseline and NZS and between Baseline and Hot/Dry at the regional level for 2030.
+
+```{r}
+poor_2030_baseline_region <- ca_microsim06 |> 
+  group_by(RegNo,poor_2030_baseline) |>  
+  summarize(
+    # no_hh_2023 = sum(weight_2023, na.rm = TRUE),
+    no_pp_2030_baseline = sum(hh_weight_2030_baseline * hhsize, na.rm = TRUE)
+    ) |> 
+  pivot_wider(
+    id_cols = RegNo,
+    names_from = poor_2030_baseline,
+    values_from = c(
+      # no_hh_2023,
+      no_pp_2030_baseline)
+  ) |> 
+  mutate(
+    RegNo = as.integer(RegNo),
+    pct_poor = (`1` / (`1` + `0`))*100
+  ) |> 
+  rename(
+    poor_2030_baseline = `1`,
+    non_poor = `0`
+  ) |> 
+  ungroup() |> 
+  select(RegNo, poor_2030_baseline)
+
+poor_2030_nzs_region <- ca_microsim06 |> 
+  group_by(RegNo,poor_2030_nzs) |>  
+  summarize(
+    # no_hh_2023 = sum(weight_2023, na.rm = TRUE),
+    no_pp_2030_nzs = sum(hh_weight_2030_nzs * hhsize, na.rm = TRUE)
+    ) |> 
+  pivot_wider(
+    id_cols = RegNo,
+    names_from = poor_2030_nzs,
+    values_from = c(
+      # no_hh_2023,
+      no_pp_2030_nzs)
+  ) |> 
+  mutate(
+    RegNo = as.integer(RegNo),
+    pct_poor = (`1` / (`1` + `0`))*100
+  ) |> 
+  rename(
+    poor_2030_nzs = `1`,
+    non_poor = `0`
+  ) |> 
+  ungroup() |> 
+  select(RegNo, poor_2030_nzs)
+
+poor_2030_dryhot_region <- ca_microsim06 |> 
+  group_by(RegNo,poor_2030_dryhot) |>  
+  summarize(
+    # no_hh_2023 = sum(weight_2023, na.rm = TRUE),
+    no_pp_2030_dryhot = sum(hh_weight_2030_dryhot * hhsize, na.rm = TRUE)
+    ) |> 
+  pivot_wider(
+    id_cols = RegNo,
+    names_from = poor_2030_dryhot,
+    values_from = c(
+      # no_hh_2023,
+      no_pp_2030_dryhot)
+  ) |> 
+  mutate(
+    RegNo = as.integer(RegNo),
+    pct_poor = (`1` / (`1` + `0`))*100
+  ) |> 
+  rename(
+    poor_2030_dryhot = `1`,
+    non_poor = `0`
+  ) |> 
+  ungroup() |> 
+  select(RegNo, poor_2030_dryhot)
+
+poor_2030_scenarios_diff <- poor_2030_baseline_region |> 
+  left_join(poor_2030_nzs_region, join_by(RegNo)) |> 
+  left_join(poor_2030_dryhot_region, join_by(RegNo)) |> 
+  mutate(
+    poor_2030_nzs_diff = (poor_2030_nzs - poor_2030_baseline)/poor_2030_baseline * 100,
+    poor_2030_dryhot_diff = (poor_2030_dryhot - poor_2030_baseline) / poor_2030_baseline *100
+  )
+
+```
+
+And now we map it.
+
+```{r}
+poor_2030_scenarios_diff_map <- adm1 |> 
+  left_join(poor_2030_scenarios_diff, join_by(RegNo)) |> 
+  mutate(
+    region = case_when(
+      region == "Racha-Lechkhumi and Kvemo Svaneti" ~
+      "Racha-Lechkhumi\nand Kvemo Svaneti",
+      region == "Samegrelo-Zemo Svaneti" ~
+      "Samegrelo-\nZemo\nSvaneti",
+      region == "Mtskheta-Mtianeti" ~
+      "Mtskheta-\nMtianeti",
+      region == "Samtskhe-Javakheti" ~
+      "Samtskhe-\nJavakheti",
+      .default = region
+    ),
+    pct_nzs_label = if_else(
+      is.na(poor_2030_nzs_diff), 
+      "Unavailable",
+      paste(
+        region,
+        sprintf("\n%.1f%%", poor_2030_nzs_diff)
+      )
+    ),
+    pct_dryhot_label = if_else(
+      is.na(poor_2030_dryhot_diff), 
+      "Unavailable",
+      paste(
+        region,
+        sprintf("\n%.1f%%", poor_2030_dryhot_diff)
+      )
+    )
+  )
+
+map_object <-
+tm_shape(poor_2030_scenarios_diff_map) +
+  tm_polygons("poor_2030_nzs_diff",
+              title="Percent", 
+              legend.show = TRUE,
+              style = "fixed",
+              scale = 0.5,
+              breaks = c(-1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2, 2.5, 3),
+              palette = "-RdYlGn",
+              textNA = "Unavailable",
+              colorNA = "grey"
+              ) +
+  tm_text(c("pct_nzs_label"), size = .7, col = "black")+
+  tm_layout(
+    #legend.outside = TRUE,
+    legend.position = c("right", "top"),
+    #title.snap.to.legend = FALSE,
+    title = 
+      "Percent difference between NZS and Baseline",
+    frame = FALSE,
+#            outer.margins=c(.10,.10, .10, .10), 
+            title.position = c('left', 'bottom'),
+            title.size = 0.9)
+map_object
+
 ```
 
 
