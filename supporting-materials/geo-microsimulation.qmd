@@ -2738,7 +2738,7 @@ tm_shape(poor_2030_scenarios_diff_map) +
               legend.show = TRUE,
               style = "fixed",
               scale = 0.5,
-              breaks = c(-1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2, 2.5, 3),
+              breaks = c(-3, -2, -1, 0, 1,2,3),
               palette = "-RdYlGn",
               textNA = "Unavailable",
               colorNA = "grey"
@@ -2754,8 +2754,165 @@ tm_shape(poor_2030_scenarios_diff_map) +
 #            outer.margins=c(.10,.10, .10, .10), 
             title.position = c('left', 'bottom'),
             title.size = 0.9)
-map_object
 
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_nzs_diff.png",
+#   width = 8,
+#   height = 5,
+#   units = "in",
+#   dpi = 300
+# )
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_nzs_diff.svg",
+#   width = 8,
+#   height = 5,
+#   units = "in"
+# )
+
+map_object <-
+tm_shape(poor_2030_scenarios_diff_map) +
+  tm_polygons("poor_2030_dryhot_diff",
+              title="Percent", 
+              legend.show = TRUE,
+              style = "fixed",
+              scale = 0.5,
+              breaks = c(-3, -2, -1, 0, 1,2,3),
+              palette = "-RdYlGn",
+              textNA = "Unavailable",
+              colorNA = "grey"
+              ) +
+  tm_text(c("pct_dryhot_label"), size = .7, col = "black")+
+  tm_layout(
+    #legend.outside = TRUE,
+    legend.position = c("right", "top"),
+    #title.snap.to.legend = FALSE,
+    title = 
+      "Percent difference between Dry/Hot and Baseline",
+    frame = FALSE,
+#            outer.margins=c(.10,.10, .10, .10), 
+            title.position = c('left', 'bottom'),
+            title.size = 0.9)
+
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.png",
+  width = 8,
+  height = 5,
+  units = "in",
+  dpi = 300
+)
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.svg",
+  width = 8,
+  height = 5,
+  units = "in"
+)
+
+```
+
+Maps show a very interesting behavior in Mtskheta-Mtianeti, where most of the changes in poverty between scenarios concentrate. Here, we will explore a few possible pathways to explain why that is happening.
+
+```{r}
+lmarket_region <- pp_microsim13 |> 
+  group_by(region, lmarket) |> 
+  summarize(
+    pp_labor = sum(weight_2030_dryhot, na.rm = T)
+  ) |> 
+  pivot_wider(
+    id_cols = region,
+    names_from = lmarket,
+    values_from = pp_labor
+  ) |> 
+  left_join(regions[,c(1,4)], join_by(region == RegNo))
+
+# write.table(lmarket_region, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+Employment does not appear to be the culprit as changes between scenarios appear similar for all regions. Now we will explore changes in sources of income.
+
+```{r}
+income_regions <- pp_microsim13 |>
+  filter(lmarket <= 3) |> 
+  group_by(region) |> 
+  summarize(
+    lab_inc_baseline = sum(monthly_labor_income_2030_baseline * weight_2030_baseline, na.rm = T),
+    lab_inc_dryhot = sum(monthly_labor_income_2030_dryhot * weight_2030_dryhot, na.rm = T),
+    lab_inc_nzs = sum(monthly_labor_income_2030_nzs * weight_2030_nzs, na.rm = T)
+  ) |> 
+  left_join(regions[,c(1,4)], join_by(region == RegNo))
+
+# write.table(income_regions, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+Income does not give us any particular indications either, so the last thing we can check out is the share that labor income has in this region versus other regions.
+
+```{r}
+income_share_regions <- ic_microsim01 |> 
+  left_join(hh_basics, join_by(UID)) |>
+  mutate(
+    weight_2023 = Weights/4,
+    shr_lab = (coalesce(labor_income_2023,0.0001) + coalesce(self_employment_income_2023,0)) / totalinc_2023,
+    shr_agr = coalesce(agr_income_2023,0.0001)/totalinc_2023,
+    shr_ssp = coalesce(PensStipDaxm,0.0001)/totalinc_2023,
+    shr_rem = coalesce(Ucxoetidan,0.0001)/totalinc_2023,
+    shr_csh = coalesce(Axloblebisagan,0.0001)/totalinc_2023
+  ) |> 
+  group_by(RegNo) |>
+  summarize(
+    avg_shr_lab = weighted.mean(shr_lab, weight_2023, na.rm = T),
+    avg_shr_agr = weighted.mean(shr_agr, weight_2023, na.rm = T),
+    avg_shr_ssp = weighted.mean(shr_ssp, weight_2023, na.rm = T),
+    avg_shr_rem = weighted.mean(shr_rem, weight_2023, na.rm = T),
+    avg_shr_csh = weighted.mean(shr_csh, weight_2023, na.rm = T)
+  ) |> 
+  left_join(regions[,c(1,4)], join_by(RegNo == RegNo))
+
+# write.table(income_share_regions, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+This exploration did not yield  anything noteworthy. So, now we turn our attention to distance above poverty line.
+
+```{r}
+distance_pl <- ca_microsim06 |> 
+  filter(aecons_2023 > pline0) |> 
+  mutate(
+    distance_above_pl = coalesce(aecons_2023,0) - pline0
+  ) |> 
+  group_by(RegNo) |> 
+  summarize(
+    avg_distance_above_pl = weighted.mean(distance_above_pl, weights)
+  ) |> 
+  left_join(regions[,c(1,4)], join_by(RegNo == RegNo))
+distance_pl |> 
+  gt()
+
+# write.table(distance_pl, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+And sure enough, the combination between mean distance above the poverty line, the share of total income that comes from labor, and the share of workers in manufacture explain the regional results quite well.
+
+Now we need to explain why impacts from prices are so relevant and the only mechanism that we used for that was rurality, quintiles, and adult equivalent consumption, so we will explore once again the distance above the poverty line and the changes by region, urban/rural, and quintile.
+
+```{r}
+distance_pl <- ca_microsim06 |> 
+  mutate(
+    distance_above_pl = if_else(
+      aecons_2030_baseline > pline0,
+      coalesce(aecons_2030_baseline,0) - pline0,
+      0),
+    no_pp = hh_weight_2030_baseline * hhsize
+  ) |> 
+  group_by(type, quintiles_2030_baseline) |> 
+  summarize(
+    avg_distance_above_pl = weighted.mean(distance_above_pl, hh_weight_2030_baseline),
+    no_pp = sum(no_pp, na.rm = T)
+  ) 
+distance_pl |> 
+  gt()
+# write.table(distance_pl, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
 ```
 
 
