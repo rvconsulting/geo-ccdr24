@@ -2337,13 +2337,25 @@ poor_2050_nzs_pc <- ca_microsim06 |>
 # write.table(poor_2050_nzs_pc, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
 ```
 
+Scenario drivers.
+
+```{r}
+macro_drivers <- macro_data |> filter(year==2030) |> select(c(scenario_id,ends_with("growth")))
+# write.table(macro_drivers, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+
+
 # Inequality measurements
 
 Here we estimate weighted inequality measurements.
 
 ```{r}
+ca_microsim07 <- ca_microsim06 #|> 
+  # filter(RegNo == 8)
+
 # Get list of income and weight variable pairs
-income_vars <- names(ca_microsim06)[grepl("^aecons_\\d{4}(_[a-zA-Z0-9]+)?$", names(ca_microsim06))]
+income_vars <- names(ca_microsim07)[grepl("^aecons_\\d{4}(_[a-zA-Z0-9]+)?$", names(ca_microsim07))]
 
 # We had to add the subscenarios by hand, because of poor planning in naming conventions
 lookup_table <- tibble(
@@ -2379,8 +2391,8 @@ weighted_FGT <- function(income, weight, pline, alpha) {
 
 # Measure calculation function
 calculate_measures <- function(income_var, weight_var) {
-  income <- ca_microsim06[[income_var]]
-  weight <- ca_microsim06[[weight_var]] * ca_microsim06$hhsize
+  income <- ca_microsim07[[income_var]]
+  weight <- ca_microsim07[[weight_var]] * ca_microsim07$hhsize
   
   data.frame(
     `Income Variable` = income_var,
@@ -2795,23 +2807,222 @@ tm_shape(poor_2030_scenarios_diff_map) +
             title.position = c('left', 'bottom'),
             title.size = 0.9)
 
-tmap_save(
-  map_object,
-  "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.png",
-  width = 8,
-  height = 5,
-  units = "in",
-  dpi = 300
-)
-tmap_save(
-  map_object,
-  "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.svg",
-  width = 8,
-  height = 5,
-  units = "in"
-)
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.png",
+#   width = 8,
+#   height = 5,
+#   units = "in",
+#   dpi = 300
+# )
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.svg",
+#   width = 8,
+#   height = 5,
+#   units = "in"
+# )
 
 ```
+
+Map request: Increase in poverty between Baseline and NZS + PC and between Baseline and Hot/Dry + PC at the regional level for 2030. Effects of prices.
+
+```{r}
+poor_2030_baseline_region <- ca_microsim06 |> 
+  group_by(RegNo,poor_2030_baseline) |>  
+  summarize(
+    # no_hh_2023 = sum(weight_2023, na.rm = TRUE),
+    no_pp_2030_baseline = sum(hh_weight_2030_baseline * hhsize, na.rm = TRUE)
+    ) |> 
+  pivot_wider(
+    id_cols = RegNo,
+    names_from = poor_2030_baseline,
+    values_from = c(
+      # no_hh_2023,
+      no_pp_2030_baseline)
+  ) |> 
+  mutate(
+    RegNo = as.integer(RegNo),
+    pct_poor = (`1` / (`1` + `0`))*100
+  ) |> 
+  rename(
+    poor_2030_baseline = `1`,
+    non_poor = `0`
+  ) |> 
+  ungroup() |> 
+  select(RegNo, poor_2030_baseline)
+
+poor_2030_nzs_region <- ca_microsim06 |> 
+  group_by(RegNo,poor_2030_nzs_pc) |>  
+  summarize(
+    # no_hh_2023 = sum(weight_2023, na.rm = TRUE),
+    no_pp_2030_nzs = sum(hh_weight_2030_nzs * hhsize, na.rm = TRUE)
+    ) |> 
+  pivot_wider(
+    id_cols = RegNo,
+    names_from = poor_2030_nzs_pc,
+    values_from = c(
+      # no_hh_2023,
+      no_pp_2030_nzs)
+  ) |> 
+  mutate(
+    RegNo = as.integer(RegNo),
+    pct_poor = (`1` / (`1` + `0`))*100
+  ) |> 
+  rename(
+    poor_2030_nzs = `1`,
+    non_poor = `0`
+  ) |> 
+  ungroup() |> 
+  select(RegNo, poor_2030_nzs)
+
+poor_2030_dryhot_region <- ca_microsim06 |> 
+  group_by(RegNo,poor_2030_dryhot_pc) |>  
+  summarize(
+    # no_hh_2023 = sum(weight_2023, na.rm = TRUE),
+    no_pp_2030_dryhot = sum(hh_weight_2030_dryhot * hhsize, na.rm = TRUE)
+    ) |> 
+  pivot_wider(
+    id_cols = RegNo,
+    names_from = poor_2030_dryhot_pc,
+    values_from = c(
+      # no_hh_2023,
+      no_pp_2030_dryhot)
+  ) |> 
+  mutate(
+    RegNo = as.integer(RegNo),
+    pct_poor = (`1` / (`1` + `0`))*100
+  ) |> 
+  rename(
+    poor_2030_dryhot = `1`,
+    non_poor = `0`
+  ) |> 
+  ungroup() |> 
+  select(RegNo, poor_2030_dryhot)
+
+poor_2030_scenarios_pc_diff <- poor_2030_baseline_region |> 
+  left_join(poor_2030_nzs_region, join_by(RegNo)) |> 
+  left_join(poor_2030_dryhot_region, join_by(RegNo)) |> 
+  mutate(
+    poor_2030_nzs_diff = (poor_2030_nzs - poor_2030_baseline)/poor_2030_baseline * 100,
+    poor_2030_dryhot_diff = (poor_2030_dryhot - poor_2030_baseline) / poor_2030_baseline *100
+  )
+
+```
+
+And now we map it.
+
+```{r}
+poor_2030_scenarios_pc_diff_map <- adm1 |> 
+  left_join(poor_2030_scenarios_pc_diff, join_by(RegNo)) |> 
+  mutate(
+    region = case_when(
+      region == "Racha-Lechkhumi and Kvemo Svaneti" ~
+      "Racha-Lechkhumi\nand Kvemo Svaneti",
+      region == "Samegrelo-Zemo Svaneti" ~
+      "Samegrelo-\nZemo\nSvaneti",
+      region == "Mtskheta-Mtianeti" ~
+      "Mtskheta-\nMtianeti",
+      region == "Samtskhe-Javakheti" ~
+      "Samtskhe-\nJavakheti",
+      .default = region
+    ),
+    pct_nzs_label = if_else(
+      is.na(poor_2030_nzs_diff), 
+      "Unavailable",
+      paste(
+        region,
+        sprintf("\n%.1f%%", poor_2030_nzs_diff)
+      )
+    ),
+    pct_dryhot_label = if_else(
+      is.na(poor_2030_dryhot_diff), 
+      "Unavailable",
+      paste(
+        region,
+        sprintf("\n%.1f%%", poor_2030_dryhot_diff)
+      )
+    )
+  )
+
+map_object <-
+tm_shape(poor_2030_scenarios_pc_diff_map) +
+  tm_polygons(fill = "poor_2030_nzs_diff",
+              fill.scale = tm_scale_intervals(
+                style = "fixed",
+                midpoint = 0,
+                breaks = c(-1,0,1, 2,4,6,8,10,12),
+                values = "-brewer.rd_yl_gn",
+                value.na = NA,
+                label.na = "Unavailable"),
+              fill.legend = tm_legend(
+                title = "Percent")
+              ) +
+  tm_title("Percent difference between\nNZS + PC and Baseline") +
+  tm_text(c("pct_nzs_label"), size = .7, col = "black")+
+  tm_layout(
+    #legend.outside = TRUE,
+    legend.position = c("right", "top"),
+    frame = FALSE,
+            title.position = c('left', 'bottom'),
+            title.size = 0.9)
+
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_nzs_pc_diff.png",
+#   width = 8,
+#   height = 5,
+#   units = "in",
+#   dpi = 300
+# )
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_nzs_pc_diff.svg",
+#   width = 8,
+#   height = 5,
+#   units = "in"
+# )
+
+map_object <-
+tm_shape(poor_2030_scenarios_pc_diff_map) +
+  tm_polygons(fill = "poor_2030_dryhot_diff",
+              fill.scale = tm_scale_intervals(
+                style = "fixed",
+                midpoint = 0,
+                breaks = c(-1, 0, 1,2,4,6,8,10,12),
+                values = "-brewer.rd_yl_gn",
+                value.na = NA,
+                label.na = "Unavailable"),
+              fill.legend = tm_legend(
+                title = "Percent")
+              ) +
+  tm_text(c("pct_dryhot_label"), size = .7, col = "black") +
+  tm_title("Percent difference between\nDry/Hot + PC and Baseline") +
+  tm_layout(
+    legend.position = c("right", "top"),
+    frame = FALSE,
+#           outer.margins=c(.10,.10, .10, .10), 
+            title.position = c('left', 'bottom'),
+            title.size = 0.9)
+
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_pc_diff.png",
+#   width = 8,
+#   height = 5,
+#   units = "in",
+#   dpi = 300
+# )
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_pc_diff.svg",
+#   width = 8,
+#   height = 5,
+#   units = "in"
+# )
+
+```
+
 
 Maps show a very interesting behavior in Mtskheta-Mtianeti, where most of the changes in poverty between scenarios concentrate. Here, we will explore a few possible pathways to explain why that is happening.
 
@@ -2898,6 +3109,7 @@ Now we need to explain why impacts from prices are so relevant and the only mech
 
 ```{r}
 distance_pl <- ca_microsim06 |> 
+  # filter(RegNo==8) |> 
   mutate(
     distance_above_pl = if_else(
       aecons_2030_baseline > pline0,
@@ -2923,32 +3135,32 @@ distance_pl |>
 #| message: false
 #| label: save-to-excel
 
-wb <- loadWorkbook("data/outputs/microsimulation_results.xlsx")
-names(wb)
-writeData(
-  wb, 
-  "Poverty", 
-  poor_2023 , 
-  startRow = 3, 
-  startCol = 1, 
-  rowNames = F,
-  na.string = "")
-writeData(
-  wb, 
-  "Poverty", 
-  poor_2030_baseline , 
-  startRow = 3 + (dim(poor_2023)[1] + 3) * 1, 
-  startCol = 1, 
-  rowNames = F,
-  na.string = "")
-writeData(
-  wb, 
-  "Poverty", 
-  poor_2050_baseline , 
-  startRow = 3 + (dim(poor_2023)[1] + 3) * 2, 
-  startCol = 1, 
-  rowNames = F,
-  na.string = "")
+# wb <- loadWorkbook("data/outputs/microsimulation_results.xlsx")
+# names(wb)
+# writeData(
+#   wb, 
+#   "Poverty", 
+#   poor_2023 , 
+#   startRow = 3, 
+#   startCol = 1, 
+#   rowNames = F,
+#   na.string = "")
+# writeData(
+#   wb, 
+#   "Poverty", 
+#   poor_2030_baseline , 
+#   startRow = 3 + (dim(poor_2023)[1] + 3) * 1, 
+#   startCol = 1, 
+#   rowNames = F,
+#   na.string = "")
+# writeData(
+#   wb, 
+#   "Poverty", 
+#   poor_2050_baseline , 
+#   startRow = 3 + (dim(poor_2023)[1] + 3) * 2, 
+#   startCol = 1, 
+#   rowNames = F,
+#   na.string = "")
 # saveWorkbook(
 #   wb,
 #   "data/outputs/microsimulation_results.xlsx",
