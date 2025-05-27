@@ -1,0 +1,997 @@
+---
+title: "Own Account Agriculture Data Request"
+author:
+  - name: "Renato Vargas"
+    id: rv
+    email: renovargas@gmail.com
+    affiliation: 
+      - name: Consultant for The World Bank
+            
+format:
+  html:
+    toc: true
+    number-sections: true
+    number-depth: 3
+    highlight-style: github
+  # docx:
+  #   toc: true
+  #   number-sections: true
+  #   highlight-style: arrow
+  # pdf:
+  #   toc: true
+  #   number-sections: true
+  #   colorlinks: true
+editor: source
+editor_options: 
+  chunk_output_type: console
+bibliography: references.bib
+csl: apa-6th-edition.csl
+---
+
+# Introduction
+
+In this data request, we aim to describe the people who receive some income from agriculture (or produce subsistence agriculture) but are not classified as agriculture workers. Relevant aspects to consider are:
+
+- Age, 
+- Other sources of income (maybe they have another job?), 
+- Position in the income distribution (for example the decile they’re in).
+- Other relevant households characteristics.
+
+
+## Preamble
+
+We start with a clean environment, making sure that any objects from a previous session are not present and declare some relevant variables.
+
+```{r}
+#| warning: false
+#| messAge: false
+
+# Clean workspace
+rm(list = ls())
+
+# Georgia country ISO code
+iso <- "GEO"
+
+# Survey year
+survey_year <- 2023
+
+# Poverty line
+pline <- 212.8149
+
+# Exchange rate USD per GEL (Multiply by this to show results in USD)
+er <- 0.37
+```
+
+Rather than calling our libraries as we go, we will make sure we have everything we need from the beginning.
+
+```{r}
+#| output: false
+#| lst-label: lst-load-packAges
+
+library(tidyverse) # includes dplyr, ggplot2, purr...
+library(haven)     # to read SPSS and Stata datasets
+library(readxl)    # to read from MS-Excel
+library(openxlsx2)  # to write to MS-Excel.
+library(gt)        # pretty tables
+library(flextable) # pretty tables
+# library(Hmisc)   # Estimates deciles, quintiles but use :: version too
+# library(ineq)    # Inequality measures
+# library(acid)    # Inequality measures we use acid::weighted.gini()
+
+# GeopackAges
+library(sf)        # to read and write shapefile maps
+library(terra)     # to perform geocalculations
+library(tmap)      # for static and interactive maps
+```
+
+# Datasets
+
+We then load the datasets that we need for this study. These are based on Georgia's Integrated Living Conditions Survey 2023 [@geostat_integrated_2023]. We make a note that the household identification variable is `UID`.
+
+```{r}
+#| warning: false
+#| messAge: false
+#| output: false
+#| lst-label: original-datasets
+
+## Household Unique ID, Weights, Location and other basic variables
+hh_basics <- read_sav(
+  "data/ilcs_2023/sysschedule.sav") |>
+  mutate(
+    UID = as.integer(UID))
+
+# Household size (includes no. of family members)
+hh_size <- read_sav(
+  "data/ilcs_2023/familysize.sav")|> 
+  mutate(
+    UID = as.integer(UID))
+
+# Processed income at household level
+hh_income <- read_sav(
+  "data/ilcs_2023/tblincomes.sav")|> 
+  mutate(
+    UID = as.integer(UID))
+
+# Consumption aggregate at household level 
+hh_expenditure <- read_sav(
+  "data/ilcs_2023/tblexpenditures.sav")|> 
+  rename(# rename total expenditure variables
+         total_expenditure = MTlianixarjebi_,
+         total_expenditure_aeq06 = MTlianimoxmareba_EqAdScale,
+         total_expenditure_aeq08 = Mtlianimoxmareba_EqAdScale_08) |> 
+  mutate(
+    UID = as.integer(UID))
+
+# Characteristics of the dwelling
+hh_chars <- read_sav(
+  "data/ilcs_2023/tblshinda01.sav")|>
+  mutate(
+    UID = as.integer(UID))
+
+# Persons (pp)
+pp <- read_sav(
+  "data/ilcs_2023/tblshinda02.sav") |> 
+  mutate(
+    UID = as.integer(UID),
+    MemberNo = as.integer(MemberNo))
+
+# Labor (pp)
+pp_labor <- read_sav(
+  "data/ilcs_2023/tblshinda05_1.sav") |> 
+  mutate(
+    UID = as.integer(UID),
+    MemberNo = as.integer(MemberNo),
+    Q5  = as.integer(Q5),
+    Q12 = as.integer(Q12)) 
+
+# Poverty
+poverty <- read_dta(
+  "data/ilcs_2023/POVERTY_stata.dta") |> 
+  rename(official_pline = pline) |> 
+  mutate(
+    UID = as.integer(UID),
+    poor_2023 = if_else(aecons < pline, 1, 0))
+
+# Ind. Poverty
+ind_poverty <- read_dta(
+  "data/ilcs_2023/IND_POVERTY_stata.dta") |> 
+  rename(MemberNo = memberno) |> 
+  mutate(
+    UID = as.integer(UID),
+    MemberNo = as.integer(MemberNo))
+
+# Food diary
+food_q <- read_sav(
+  "data/ilcs_2023/tblconsumption.sav") |> 
+  rename(UID = UID)
+
+food_price <- read_sav( 
+  "data/ilcs_2023/tblavgprices.sav")
+
+# Maps
+adm1 <- sf::read_sf("data/gis/geo-adm1.shp") |>
+  dplyr::select(RegNo, region, ADM1_PCODE, ADM1_EN, ADM1_KA, geometry) |>
+  dplyr::arrange(ADM1_PCODE)
+
+regions <- as.data.frame(adm1) |> 
+  select(-geometry)
+```
+
+We also need look-up tables.
+
+```{r}
+#| warning: false
+#| messAge: false
+#| label: look-up-tables
+
+sam_activities <- read_excel(
+    "data/sam/classifications.xlsx",
+    sheet = "SAM-REV2",
+    col_names = T,
+    col_types = c("text", "text", "text","text", "numeric")
+  )
+
+sam_factors <- read_excel(
+    "data/sam/classifications.xlsx",
+    sheet = "SAM factors",
+    col_names = T,
+    col_types = "text",
+  )
+
+coicop <- read_excel(
+    "data/sam/classifications.xlsx",
+    sheet = "COICOP",
+    col_names = T,
+    col_types = "text",
+  ) |> 
+  mutate(simple_code = as.integer(gsub("\\.", "", Coicop)))
+
+coicop_filtered <- coicop |> 
+  filter( nchar(as.character(simple_code)) >= 5)
+
+```
+
+
+We also have Continuous Labor Survey data at the individual level, which will come in handy if we do not get access to the labor part of the ILCS. See data folder for documents describing the datasets.
+
+```{r}
+#| warning: false
+#| messAge: false
+#| output: false
+#| lst-label: labor-survey
+
+# Labor Force Survey
+lfs_2023 <- read_sav(
+  "data/lfs_2023/LFS_ECSTAT_ENG_2023.sav") |> 
+  rename(UID = UID)
+
+# Labor Force Survey Demographic Characteristics
+lfs_2023_dem <- read_sav(
+  "data/lfs_2023/LFS_Demographic_ENG_2023.sav") |> 
+  rename(UID = UID)
+
+```
+
+# Generating descriptor variables (SAM disaggregates)
+
+## Skill level
+
+For skill level, we will use information on schooling from `pp$Education` (`TblShinda02`), which has the following levels:
+
+1.  Illiterate
+2.  Do not have primary education but can read and write
+3.  Pre-primary education
+4.  Primary education
+5.  Lower secondary education
+6.  Upper secondary education
+7.  Vocational education without secondary general education
+8.  Vocational education on the base of lower secondary education with secondary general education certificate
+9.  Vocational education on the base of secondary general education (except higher professional education)
+10. Higher professional program
+11. Bachelor or equivalent
+12. Master or equivalent
+13. Doctor or equivalent
+
+We need three skill levels for our SAM template, so we map these levels to:
+
+Low skill (1 - 5): Illiterate through lower secondary.
+Medium skill (6 - 9): Upper secondary through vocational education.
+High skill (10 - 13): Higher professional program through Doctor.
+
+
+```{r}
+#| warning: false
+#| messAge: false
+#| label: skill-level
+
+pp_factor_descriptors <- pp |>
+  select(UID, MemberNo, Gender, Age, Education) |> 
+  mutate(
+    MemberId = 
+      paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |>
+  mutate(Gender = factor(
+    Gender,
+    levels = c(1, 2),
+    labels = c("Female", "Male")
+  )) |> 
+  mutate(
+    SkillLevel = case_when(
+      Education >= 0 & Education <= 5 ~ 1,
+      Education > 5 & Education <= 9 ~ 2,
+      Education > 9 & Education <= 13 ~ 3,
+      TRUE ~ NA ) ) |> 
+  mutate(
+    SkillLevel = factor(
+      SkillLevel, 
+      levels = c( 1, 2, 3),
+      labels = c( "Low Skill", "Medium Skill", "High Skill"))
+  )
+```
+
+Now that we have skill levels, we need to add information on urban/rural (from `hh_basics`) and quintile (from `ind_poverty`), and type of income earner (from `pp_labor`).
+
+```{r}
+#| warning: false
+#| messAge: false
+#| label: factor-income-descriptors
+
+urb_rur <- hh_basics |> 
+  select(UID,QuartNo, UrbanOrRural, RegNo, Weights) |> 
+  mutate(
+    UrbanOrRural = factor(
+      UrbanOrRural,
+      levels = c(2,1),
+      labels = c("Rural", "Urban")
+    ),
+    weight = Weights / 4
+  )
+
+quintiles <- poverty |> 
+  select(UID, quintilc) |> 
+  rename(Quintile = quintilc) |> 
+  mutate(
+    Quintile = factor(
+      Quintile,
+      levels = c(1:5),
+      labels = c("Q1", "Q2", "Q3", "Q4", "Q5")
+    )
+  )
+
+income <- hh_income |> 
+  select(
+    UID, 
+    ShemDaq, # labor income
+    ShemTviTdasaqm, # self_employment_income
+    Shem_Sof, # agriculture income
+    Qonebidan, # property income
+    PensStipDaxm, # Pensions, stipends
+    Ucxoetidan, # Remittances from abroad
+    Axloblebisagan, # Money received as a gift
+    ShemosavaliDaTransf # Total income
+    ) |> 
+  rename(
+    labinc = ShemDaq,
+    selfemp = ShemTviTdasaqm,
+    aginc = Shem_Sof,
+    propertinc = Qonebidan,
+    pensions = PensStipDaxm,
+    remittances = Ucxoetidan,
+    gifts = Axloblebisagan,
+    totalinc = ShemosavaliDaTransf
+  )
+
+pp_factor_descriptors <- pp_factor_descriptors |> 
+  left_join(urb_rur, join_by(UID)) |> 
+  left_join(quintiles, join_by(UID)) |> 
+  left_join(income, join_by(UID))
+```
+
+## Labor status and Economic Activities
+
+We work with labor status from `Shinda05_1`. Since, upon import NACE 2 codes are converted to numbers, we need to convert them back to text, so that we can keep zeros to the left for proper order. We then extract the first two digits and find the correspondence to Rev. 2 from the SAM using the look-up table `sam_activities`. For proper order, we convert the SAM activities columns for job 1 and job 2 to factor, using the order from the dataset `sam_factors`.
+
+```{r}
+#| warning: false
+#| messAge: false
+#| label: nace-codes
+
+pp_emstatus <- pp_labor |> 
+  mutate(
+    MemberId = 
+      paste0(sprintf("%06d", UID), sprintf("%02d", MemberNo))) |>
+  mutate(
+    # Job 1 NACE Rev 2 code. 
+    Q5  = if_else(!is.na(Q5),paste0(sprintf("%04d", Q5)), NA),
+    # Job 2 NACE Rev 2 code.
+    Q12 = if_else(!is.na(Q12),paste0(sprintf("%04d", Q12)), NA)) |> 
+  mutate(
+    job1 = if_else(!is.na(Q5),substr(Q5, 1, 2), NA),
+    job2 = if_else(!is.na(Q12),substr(Q12, 1, 2), NA)
+  ) |> 
+  # We match to Rev 2 and SAM classifications (for job 1 and job 2)
+  left_join(
+    sam_activities[,c(1,3)], 
+    join_by(job1 == rev2_2d)) |> 
+  left_join(
+    sam_activities[,c(1,3)],
+    join_by(job2 == rev2_2d),
+    suffix = 
+      c("_job1", "_job2")) |> 
+  # And convert to factors for proper order
+  mutate(
+    SAM_job1 = factor(
+      SAM_job1, 
+      levels = sam_factors$SAM,
+      # labels = sam_factors$SAM_description
+      ),
+    SAM_job2 = factor(
+      SAM_job2, 
+      levels = sam_factors$SAM,
+      # labels = sam_factors$SAM_description
+      )
+  )
+```
+
+## Types of income
+
+Before making our multi-dimensional tables, we need to identify different types of income. f-lab (wAges) and f-surp (capital income). The instruction is that f-surp needs to be split into wAges to entrepreneurs/self employed and capital income.
+
+```{r}
+#| warning: false
+#| messAge: false
+#| label: identify-incomes
+
+pp_emstatus <- pp_emstatus |> 
+  mutate(
+    # We add accross three months for each source (and coalesce the NAs to 0)
+    flab_job1 = 
+      rowSums(
+        across(starts_with("Q8_faqti_"), \(x) coalesce(x, 0))),
+    flab_job2 = 
+      rowSums(
+        across(starts_with("Q14_faqti_"), \(x) coalesce(x, 0))),
+    fsurp = 
+      rowSums(
+        across(starts_with("Q10_faqti_"), \(x) coalesce(x, 0)))
+  ) |> 
+  # We also add factor labels to Employment Status
+  mutate(
+    Q7 = factor(
+      Q7,
+      levels = c(1:6),
+      labels = c(
+        "Employee", "Employer", "Own Account (Non-Ag.)", 
+        "Own Account (Ag.)", "Unpaid Worker", "Other"))
+    ) |> 
+  mutate(
+    Q13 = factor(
+      Q13,
+      levels = c(1:6),
+      labels = c(
+        "Employee", "Employer", "Own Account (Non-Ag.)", 
+        "Own Account (Ag.)", "Unpaid Worker", "Other"))
+    )
+```
+
+And we add our labor market variables to our `pp_factor_descriptors` dataset.
+
+```{r}
+#| warning: false
+#| messAge: false
+#| label: join-factor-descriptors-EmStatus
+
+pp_emstatus <- pp_emstatus |>
+  select(-UID,-MemberNo) |> 
+  left_join(pp_factor_descriptors, join_by(MemberId)) |> 
+  relocate(c(UID, MemberNo, MemberId, QuartNo), .before = 1) |> 
+  mutate(cohort = factor(case_when(
+    Age >= 0  & Age < 16 ~ "P0015",
+    Age >= 16 & Age < 30 ~ "P1629",
+    Age >= 30 & Age < 40 ~ "P3039",
+    Age >= 40 & Age < 50 ~ "P4049",
+    Age >= 50 & Age < 60 ~ "P5059",
+    Age >= 60  ~ "P60up"
+  ), levels = c("P0015","P1629", "P3039", "P4049", "P5059", "P60up")))
+```
+
+
+
+# Own-account work in agriculture
+
+In Georgia's Integrated Living Conditions Survey 2023 [@geostat_integrated_2023], own-account agriculture workers show no labor income by design. This follows new ILO recommendations, where agriculture income is tallied at the household level.
+
+## Primary job
+
+First identify the share of workers that have own account agriculture as primary job.
+
+```{r}
+test <- pp_emstatus |> 
+  filter(!is.na(Q7)) |> 
+  group_by(Q7) |> 
+  summarize(
+    People = sum(weight),
+    LIncome1 = weighted.mean(flab_job1, weight, na.rm = T),
+    SIncome1 = weighted.mean(fsurp, weight, na.rm = T)
+  ) |> 
+  ungroup() |>
+  mutate(
+    Percent = People / sum(People, na.rm = T)*100
+  ) |> 
+  relocate(Percent, .after = People)
+
+write.table(test, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+## Secondary job
+
+```{r}
+test <- pp_emstatus |> 
+  filter(!is.na(Q13)) |> 
+  group_by(Q13) |> 
+  summarize(
+    People = sum(weight),
+    LIncome2 = weighted.mean(flab_job2, weight, na.rm = T),
+    SIncome1 = weighted.mean(fsurp, weight, na.rm = T)
+  ) |> 
+  ungroup() |>
+  mutate(
+    Percent = People / sum(People, na.rm = T)*100
+  ) |> 
+  relocate(Percent, .after = People)
+
+write.table(test, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+## Own account work by activity
+
+```{r}
+test <- pp_emstatus |> 
+  filter(!is.na(Q7) & SAM_job1 == "a-agri") |> 
+  group_by(SAM_job1,Q7) |> 
+  summarize(
+    People = sum(weight),
+    LIncome1 = weighted.mean(flab_job1, weight, na.rm = T),
+    SIncome1 = weighted.mean(fsurp, weight, na.rm = T)
+  ) |> 
+  ungroup() |>
+  mutate(
+    Percent = People / sum(People, na.rm = T)*100
+  ) |> 
+  relocate(Percent, .after = People)
+
+write.table(test, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+## Other income
+
+Here we obtain the shares of different types of income for:
+
+All Workers
+
+```{r}
+test <- pp_emstatus |> 
+  filter(!is.na(Q7) ) |> 
+  group_by(Quintile) |> 
+  mutate(
+    shr_lab = coalesce(labinc,0.0001) / totalinc,
+    shr_slf = coalesce(selfemp,0.0001) / totalinc,
+    shr_agr = coalesce(aginc ,0.0001)/ totalinc,
+    shr_ppt = coalesce(propertinc ,0.0001)/ totalinc,
+    shr_ssp = coalesce(pensions,0.0001)/ totalinc,
+    shr_rem = coalesce(remittances,0.0001)/ totalinc,
+    shr_gft = coalesce(gifts,0.0001)/totalinc
+  ) |> 
+  summarize(
+    People = sum(weight),
+    avg_shr_lab = weighted.mean(shr_lab, weight, na.rm = T),
+    avg_shr_slf = weighted.mean(shr_slf, weight, na.rm = T),
+    avg_shr_agr = weighted.mean(shr_agr, weight, na.rm = T),
+    avg_shr_ssp = weighted.mean(shr_ssp, weight, na.rm = T),
+    avg_shr_rem = weighted.mean(shr_rem, weight, na.rm = T),
+    avg_shr_gft = weighted.mean(shr_gft, weight, na.rm = T)
+  ) |> 
+  ungroup() |>
+  mutate(
+    Percent = People / sum(People, na.rm = T)
+  ) |> 
+  relocate(Percent, .after = People)
+
+write.table(test, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+
+
+Employee
+
+```{r}
+test <- pp_emstatus |> 
+  filter(Q7 == "Employee" & SAM_job1 == "a-agri") |> 
+  group_by(Quintile) |> 
+  mutate(
+    shr_lab = coalesce(labinc,0.0001) / totalinc,
+    shr_slf = coalesce(selfemp,0.0001) / totalinc,
+    shr_agr = coalesce(aginc ,0.0001)/ totalinc,
+    shr_ppt = coalesce(propertinc ,0.0001)/ totalinc,
+    shr_ssp = coalesce(pensions,0.0001)/ totalinc,
+    shr_rem = coalesce(remittances,0.0001)/ totalinc,
+    shr_gft = coalesce(gifts,0.0001)/totalinc
+  ) |> 
+  summarize(
+    People = sum(weight),
+    avg_shr_lab = weighted.mean(shr_lab, weight, na.rm = T),
+    avg_shr_slf = weighted.mean(shr_slf, weight, na.rm = T),
+    avg_shr_agr = weighted.mean(shr_agr, weight, na.rm = T),
+    avg_shr_ssp = weighted.mean(shr_ssp, weight, na.rm = T),
+    avg_shr_rem = weighted.mean(shr_rem, weight, na.rm = T),
+    avg_shr_gft = weighted.mean(shr_gft, weight, na.rm = T)
+  ) |> 
+  ungroup() |>
+  mutate(
+    Percent = People / sum(People, na.rm = T)
+  ) |> 
+  relocate(Percent, .after = People)
+
+write.table(test, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+Own Account (Ag.)
+
+```{r}
+test <- pp_emstatus |> 
+  filter(Q7 == "Own Account (Ag.)" & SAM_job1 == "a-agri") |> 
+  group_by(Quintile) |> 
+  mutate(
+    shr_lab = coalesce(labinc,0.0001) / totalinc,
+    shr_slf = coalesce(selfemp,0.0001) / totalinc,
+    shr_agr = coalesce(aginc ,0.0001)/ totalinc,
+    shr_ppt = coalesce(propertinc ,0.0001)/ totalinc,
+    shr_ssp = coalesce(pensions,0.0001)/ totalinc,
+    shr_rem = coalesce(remittances,0.0001)/ totalinc,
+    shr_gft = coalesce(gifts,0.0001)/totalinc
+  ) |> 
+  summarize(
+    People = sum(weight),
+    avg_shr_lab = weighted.mean(shr_lab, weight, na.rm = T),
+    avg_shr_slf = weighted.mean(shr_slf, weight, na.rm = T),
+    avg_shr_agr = weighted.mean(shr_agr, weight, na.rm = T),
+    avg_shr_ssp = weighted.mean(shr_ssp, weight, na.rm = T),
+    avg_shr_rem = weighted.mean(shr_rem, weight, na.rm = T),
+    avg_shr_gft = weighted.mean(shr_gft, weight, na.rm = T)
+  ) |> 
+  ungroup() |>
+  mutate(
+    Percent = People / sum(People, na.rm = T)
+  ) |> 
+  relocate(Percent, .after = People)
+
+write.table(test, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+Unpaid Worker
+
+```{r}
+test <- pp_emstatus |> 
+  filter(Q7 == "Unpaid Worker" & SAM_job1 == "a-agri") |> 
+  group_by(Quintile) |> 
+  mutate(
+    shr_lab = coalesce(labinc,0.0001) / totalinc,
+    shr_slf = coalesce(selfemp,0.0001) / totalinc,
+    shr_agr = coalesce(aginc ,0.0001)/ totalinc,
+    shr_ppt = coalesce(propertinc ,0.0001)/ totalinc,
+    shr_ssp = coalesce(pensions,0.0001)/ totalinc,
+    shr_rem = coalesce(remittances,0.0001)/ totalinc,
+    shr_gft = coalesce(gifts,0.0001)/totalinc
+  ) |> 
+  summarize(
+    People = sum(weight),
+    avg_shr_lab = weighted.mean(shr_lab, weight, na.rm = T),
+    avg_shr_slf = weighted.mean(shr_slf, weight, na.rm = T),
+    avg_shr_agr = weighted.mean(shr_agr, weight, na.rm = T),
+    avg_shr_ssp = weighted.mean(shr_ssp, weight, na.rm = T),
+    avg_shr_rem = weighted.mean(shr_rem, weight, na.rm = T),
+    avg_shr_gft = weighted.mean(shr_gft, weight, na.rm = T)
+  ) |> 
+  ungroup() |>
+  mutate(
+    Percent = People / sum(People, na.rm = T)
+  ) |> 
+  relocate(Percent, .after = People)
+
+write.table(test, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+
+## Age groups
+
+All workers
+
+```{r}
+
+test <- pp_emstatus |> 
+  filter(!is.na(Q7)) |> 
+  group_by(cohort) |> 
+  mutate(
+    shr_lab = coalesce(labinc,0.0001) / totalinc,
+    shr_slf = coalesce(selfemp,0.0001) / totalinc,
+    shr_agr = coalesce(aginc ,0.0001)/ totalinc,
+    shr_ppt = coalesce(propertinc ,0.0001)/ totalinc,
+    shr_ssp = coalesce(pensions,0.0001)/ totalinc,
+    shr_rem = coalesce(remittances,0.0001)/ totalinc,
+    shr_gft = coalesce(gifts,0.0001)/totalinc
+  ) |> 
+  summarize(
+    People = sum(weight),
+    avg_shr_lab = weighted.mean(shr_lab, weight, na.rm = T),
+    avg_shr_slf = weighted.mean(shr_slf, weight, na.rm = T),
+    avg_shr_agr = weighted.mean(shr_agr, weight, na.rm = T),
+    avg_shr_ssp = weighted.mean(shr_ssp, weight, na.rm = T),
+    avg_shr_rem = weighted.mean(shr_rem, weight, na.rm = T),
+    avg_shr_gft = weighted.mean(shr_gft, weight, na.rm = T)
+  ) |> 
+  ungroup() |>
+  mutate(
+    Percent = People / sum(People, na.rm = T)
+  ) |> 
+  relocate(Percent, .after = People)
+
+write.table(test, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+Employees
+
+```{r}
+
+test <- pp_emstatus |> 
+  filter(Q7 == "Employee" & SAM_job1 == "a-agri") |> 
+  group_by(cohort) |> 
+  mutate(
+    shr_lab = coalesce(labinc,0.0001) / totalinc,
+    shr_slf = coalesce(selfemp,0.0001) / totalinc,
+    shr_agr = coalesce(aginc ,0.0001)/ totalinc,
+    shr_ppt = coalesce(propertinc ,0.0001)/ totalinc,
+    shr_ssp = coalesce(pensions,0.0001)/ totalinc,
+    shr_rem = coalesce(remittances,0.0001)/ totalinc,
+    shr_gft = coalesce(gifts,0.0001)/totalinc
+  ) |> 
+  summarize(
+    People = sum(weight),
+    avg_shr_lab = weighted.mean(shr_lab, weight, na.rm = T),
+    avg_shr_slf = weighted.mean(shr_slf, weight, na.rm = T),
+    avg_shr_agr = weighted.mean(shr_agr, weight, na.rm = T),
+    avg_shr_ssp = weighted.mean(shr_ssp, weight, na.rm = T),
+    avg_shr_rem = weighted.mean(shr_rem, weight, na.rm = T),
+    avg_shr_gft = weighted.mean(shr_gft, weight, na.rm = T)
+  ) |> 
+  ungroup() |>
+  mutate(
+    Percent = People / sum(People, na.rm = T)
+  ) |> 
+  relocate(Percent, .after = People)
+
+write.table(test, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+Own account
+
+```{r}
+
+test <- pp_emstatus |> 
+  filter(Q7 == "Own Account (Ag.)" & SAM_job1 == "a-agri") |> 
+  group_by(cohort) |> 
+  mutate(
+    shr_lab = coalesce(labinc,0.0001) / totalinc,
+    shr_slf = coalesce(selfemp,0.0001) / totalinc,
+    shr_agr = coalesce(aginc ,0.0001)/ totalinc,
+    shr_ppt = coalesce(propertinc ,0.0001)/ totalinc,
+    shr_ssp = coalesce(pensions,0.0001)/ totalinc,
+    shr_rem = coalesce(remittances,0.0001)/ totalinc,
+    shr_gft = coalesce(gifts,0.0001)/totalinc
+  ) |> 
+  summarize(
+    People = sum(weight),
+    avg_shr_lab = weighted.mean(shr_lab, weight, na.rm = T),
+    avg_shr_slf = weighted.mean(shr_slf, weight, na.rm = T),
+    avg_shr_agr = weighted.mean(shr_agr, weight, na.rm = T),
+    avg_shr_ssp = weighted.mean(shr_ssp, weight, na.rm = T),
+    avg_shr_rem = weighted.mean(shr_rem, weight, na.rm = T),
+    avg_shr_gft = weighted.mean(shr_gft, weight, na.rm = T)
+  ) |> 
+  ungroup() |>
+  mutate(
+    Percent = People / sum(People, na.rm = T)
+  ) |> 
+  relocate(Percent, .after = People)
+
+write.table(test, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+Unpaid
+
+```{r}
+
+test <- pp_emstatus |> 
+  filter(Q7 == "Unpaid Worker" & SAM_job1 == "a-agri") |> 
+  group_by(cohort) |> 
+  mutate(
+    shr_lab = coalesce(labinc,0.0001) / totalinc,
+    shr_slf = coalesce(selfemp,0.0001) / totalinc,
+    shr_agr = coalesce(aginc ,0.0001)/ totalinc,
+    shr_ppt = coalesce(propertinc ,0.0001)/ totalinc,
+    shr_ssp = coalesce(pensions,0.0001)/ totalinc,
+    shr_rem = coalesce(remittances,0.0001)/ totalinc,
+    shr_gft = coalesce(gifts,0.0001)/totalinc
+  ) |> 
+  summarize(
+    People = sum(weight),
+    avg_shr_lab = weighted.mean(shr_lab, weight, na.rm = T),
+    avg_shr_slf = weighted.mean(shr_slf, weight, na.rm = T),
+    avg_shr_agr = weighted.mean(shr_agr, weight, na.rm = T),
+    avg_shr_ssp = weighted.mean(shr_ssp, weight, na.rm = T),
+    avg_shr_rem = weighted.mean(shr_rem, weight, na.rm = T),
+    avg_shr_gft = weighted.mean(shr_gft, weight, na.rm = T)
+  ) |> 
+  ungroup() |>
+  mutate(
+    Percent = People / sum(People, na.rm = T)
+  ) |> 
+  relocate(Percent, .after = People)
+
+write.table(test, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+## Gender
+
+All workers
+
+```{r}
+
+test <- pp_emstatus |> 
+  filter(!is.na(Q7)) |> 
+  group_by(Gender) |> 
+  mutate(
+    shr_lab = coalesce(labinc,0.0001) / totalinc,
+    shr_slf = coalesce(selfemp,0.0001) / totalinc,
+    shr_agr = coalesce(aginc ,0.0001)/ totalinc,
+    shr_ppt = coalesce(propertinc ,0.0001)/ totalinc,
+    shr_ssp = coalesce(pensions,0.0001)/ totalinc,
+    shr_rem = coalesce(remittances,0.0001)/ totalinc,
+    shr_gft = coalesce(gifts,0.0001)/totalinc
+  ) |> 
+  summarize(
+    People = sum(weight),
+    avg_shr_lab = weighted.mean(shr_lab, weight, na.rm = T),
+    avg_shr_slf = weighted.mean(shr_slf, weight, na.rm = T),
+    avg_shr_agr = weighted.mean(shr_agr, weight, na.rm = T),
+    avg_shr_ssp = weighted.mean(shr_ssp, weight, na.rm = T),
+    avg_shr_rem = weighted.mean(shr_rem, weight, na.rm = T),
+    avg_shr_gft = weighted.mean(shr_gft, weight, na.rm = T)
+  ) |> 
+  ungroup() |>
+  mutate(
+    Percent = People / sum(People, na.rm = T)
+  ) |> 
+  relocate(Percent, .after = People)
+
+write.table(test, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+Employees
+
+```{r}
+
+test <- pp_emstatus |> 
+  filter(Q7 == "Employee" & SAM_job1 == "a-agri") |> 
+  group_by(Gender) |> 
+  mutate(
+    shr_lab = coalesce(labinc,0.0001) / totalinc,
+    shr_slf = coalesce(selfemp,0.0001) / totalinc,
+    shr_agr = coalesce(aginc ,0.0001)/ totalinc,
+    shr_ppt = coalesce(propertinc ,0.0001)/ totalinc,
+    shr_ssp = coalesce(pensions,0.0001)/ totalinc,
+    shr_rem = coalesce(remittances,0.0001)/ totalinc,
+    shr_gft = coalesce(gifts,0.0001)/totalinc
+  ) |> 
+  summarize(
+    People = sum(weight),
+    avg_shr_lab = weighted.mean(shr_lab, weight, na.rm = T),
+    avg_shr_slf = weighted.mean(shr_slf, weight, na.rm = T),
+    avg_shr_agr = weighted.mean(shr_agr, weight, na.rm = T),
+    avg_shr_ssp = weighted.mean(shr_ssp, weight, na.rm = T),
+    avg_shr_rem = weighted.mean(shr_rem, weight, na.rm = T),
+    avg_shr_gft = weighted.mean(shr_gft, weight, na.rm = T)
+  ) |> 
+  ungroup() |>
+  mutate(
+    Percent = People / sum(People, na.rm = T)
+  ) |> 
+  relocate(Percent, .after = People)
+
+write.table(test, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+Own account
+
+```{r}
+
+test <- pp_emstatus |> 
+  filter(Q7 == "Own Account (Ag.)" & SAM_job1 == "a-agri") |> 
+  group_by(Gender) |> 
+  mutate(
+    shr_lab = coalesce(labinc,0.0001) / totalinc,
+    shr_slf = coalesce(selfemp,0.0001) / totalinc,
+    shr_agr = coalesce(aginc ,0.0001)/ totalinc,
+    shr_ppt = coalesce(propertinc ,0.0001)/ totalinc,
+    shr_ssp = coalesce(pensions,0.0001)/ totalinc,
+    shr_rem = coalesce(remittances,0.0001)/ totalinc,
+    shr_gft = coalesce(gifts,0.0001)/totalinc
+  ) |> 
+  summarize(
+    People = sum(weight),
+    avg_shr_lab = weighted.mean(shr_lab, weight, na.rm = T),
+    avg_shr_slf = weighted.mean(shr_slf, weight, na.rm = T),
+    avg_shr_agr = weighted.mean(shr_agr, weight, na.rm = T),
+    avg_shr_ssp = weighted.mean(shr_ssp, weight, na.rm = T),
+    avg_shr_rem = weighted.mean(shr_rem, weight, na.rm = T),
+    avg_shr_gft = weighted.mean(shr_gft, weight, na.rm = T)
+  ) |> 
+  ungroup() |>
+  mutate(
+    Percent = People / sum(People, na.rm = T)
+  ) |> 
+  relocate(Percent, .after = People)
+
+write.table(test, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+Unpaid
+
+```{r}
+
+test <- pp_emstatus |> 
+  filter(Q7 == "Unpaid Worker" & SAM_job1 == "a-agri") |> 
+  group_by(Gender) |> 
+  mutate(
+    shr_lab = coalesce(labinc,0.0001) / totalinc,
+    shr_slf = coalesce(selfemp,0.0001) / totalinc,
+    shr_agr = coalesce(aginc ,0.0001)/ totalinc,
+    shr_ppt = coalesce(propertinc ,0.0001)/ totalinc,
+    shr_ssp = coalesce(pensions,0.0001)/ totalinc,
+    shr_rem = coalesce(remittances,0.0001)/ totalinc,
+    shr_gft = coalesce(gifts,0.0001)/totalinc
+  ) |> 
+  summarize(
+    People = sum(weight),
+    avg_shr_lab = weighted.mean(shr_lab, weight, na.rm = T),
+    avg_shr_slf = weighted.mean(shr_slf, weight, na.rm = T),
+    avg_shr_agr = weighted.mean(shr_agr, weight, na.rm = T),
+    avg_shr_ssp = weighted.mean(shr_ssp, weight, na.rm = T),
+    avg_shr_rem = weighted.mean(shr_rem, weight, na.rm = T),
+    avg_shr_gft = weighted.mean(shr_gft, weight, na.rm = T)
+  ) |> 
+  ungroup() |>
+  mutate(
+    Percent = People / sum(People, na.rm = T)
+  ) |> 
+  relocate(Percent, .after = People)
+
+write.table(test, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
+
+# Save to Excel 
+
+
+```{r}
+# Define the file path
+file_path <- "data/outputs/own_agriculture_data.xlsx"
+
+# Check if the file exists
+if (file.exists(file_path)) {
+  # If the file exists, load the workbook
+  wb <- wb_load(file_path)
+} else {
+  # If the file doesn't exist, create a new workbook
+  wb <- wb_workbook()
+}
+
+# Print the sheet names in the workbook
+sheet_names <- wb_get_sheet_names(wb)
+sheet_names
+
+# Define objects to add
+objects_to_add <- c(
+  "share_own_ag"
+)
+
+# Define sheets to add
+sheets_to_add <- c(
+  "Share Own Ag"
+  )
+
+for (sheet in sheets_to_add) {
+  # Add content to the workbook
+  if (! sheet %in% names(wb)) {
+  # Add a new sheet
+  wb_add_worksheet(wb, sheet)}
+}
+
+flexlsx::wb_add_flextable(
+  wb,
+  sheet = "Share Own Ag",
+  share_own_ag,
+  start_col = 1,
+  start_row = 3
+)
+
+# for (i in seq_along(objects_to_add)){
+#   writeData(
+#   wb,
+#   sheets_to_add[i], 
+#   get(objects_to_add[i]), 
+#   startRow = 5, 
+#   startCol = 1, 
+#   rowNames = FALSE)
+# }
+
+wb$save(file = "data/outputs/own_agriculture_data.xlsx", overwrite = T)
+```

@@ -104,7 +104,7 @@ library(tmap)      # for static and interactive maps
 
 ## Datasets
 
-We then load the datasets that we need for this study. These are based on Georgia's Integrated Living Conditions Survey 2022 [@geostat_integrated_2023]. We make a note that the household identification variable is `UID`.
+We then load the datasets that we need for this study. These are based on Georgia's Integrated Living Conditions Survey 2023 [@geostat_integrated_2023]. We make a note that the household identification variable is `UID`.
 
 ```{r}
 #| warning: false
