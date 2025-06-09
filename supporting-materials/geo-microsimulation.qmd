@@ -2750,7 +2750,8 @@ tm_shape(poor_2030_scenarios_diff_map) +
               legend.show = TRUE,
               style = "fixed",
               scale = 0.5,
-              breaks = c(-3, -2, -1, 0, 1,2,3),
+              # breaks = c(-3, -2, -1, 0, 1,2,3),
+              breaks = c(-4,-2,0,2,4,6,8,10,12),
               palette = "-RdYlGn",
               textNA = "Unavailable",
               colorNA = "grey"
@@ -2761,27 +2762,27 @@ tm_shape(poor_2030_scenarios_diff_map) +
     legend.position = c("right", "top"),
     #title.snap.to.legend = FALSE,
     title = 
-      "Percent difference between NZS and Baseline",
+      "Percent difference between\nNZS and Baseline",
     frame = FALSE,
 #            outer.margins=c(.10,.10, .10, .10), 
             title.position = c('left', 'bottom'),
             title.size = 0.9)
 
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_nzs_diff.png",
-#   width = 8,
-#   height = 5,
-#   units = "in",
-#   dpi = 300
-# )
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_nzs_diff.svg",
-#   width = 8,
-#   height = 5,
-#   units = "in"
-# )
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_nzs_diff.png",
+  width = 8,
+  height = 5,
+  units = "in",
+  dpi = 300
+)
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_nzs_diff.svg",
+  width = 8,
+  height = 5,
+  units = "in"
+)
 
 map_object <-
 tm_shape(poor_2030_scenarios_diff_map) +
@@ -2790,7 +2791,8 @@ tm_shape(poor_2030_scenarios_diff_map) +
               legend.show = TRUE,
               style = "fixed",
               scale = 0.5,
-              breaks = c(-3, -2, -1, 0, 1,2,3),
+              # breaks = c(-3, -2, -1, 0, 1,2,3),
+              breaks = c(-4,-2,0,2,4,6,8,10,12),
               palette = "-RdYlGn",
               textNA = "Unavailable",
               colorNA = "grey"
@@ -2801,27 +2803,27 @@ tm_shape(poor_2030_scenarios_diff_map) +
     legend.position = c("right", "top"),
     #title.snap.to.legend = FALSE,
     title = 
-      "Percent difference between Dry/Hot and Baseline",
+      "Percent difference between\nDry/Hot and Baseline",
     frame = FALSE,
 #            outer.margins=c(.10,.10, .10, .10), 
             title.position = c('left', 'bottom'),
             title.size = 0.9)
 
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.png",
-#   width = 8,
-#   height = 5,
-#   units = "in",
-#   dpi = 300
-# )
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.svg",
-#   width = 8,
-#   height = 5,
-#   units = "in"
-# )
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.png",
+  width = 8,
+  height = 5,
+  units = "in",
+  dpi = 300
+)
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.svg",
+  width = 8,
+  height = 5,
+  units = "in"
+)
 
 ```
 
@@ -2951,7 +2953,8 @@ tm_shape(poor_2030_scenarios_pc_diff_map) +
               fill.scale = tm_scale_intervals(
                 style = "fixed",
                 midpoint = 0,
-                breaks = c(-1,0,1, 2,4,6,8,10,12),
+                # breaks = c(-1,0,1, 2,4,6,8,10,12),
+                breaks = c(-4,-2,0,2,4,6,8,10,12),
                 values = "-brewer.rd_yl_gn",
                 value.na = NA,
                 label.na = "Unavailable"),
@@ -2967,21 +2970,21 @@ tm_shape(poor_2030_scenarios_pc_diff_map) +
             title.position = c('left', 'bottom'),
             title.size = 0.9)
 
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_nzs_pc_diff.png",
-#   width = 8,
-#   height = 5,
-#   units = "in",
-#   dpi = 300
-# )
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_nzs_pc_diff.svg",
-#   width = 8,
-#   height = 5,
-#   units = "in"
-# )
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_nzs_pc_diff.png",
+  width = 8,
+  height = 5,
+  units = "in",
+  dpi = 300
+)
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_nzs_pc_diff.svg",
+  width = 8,
+  height = 5,
+  units = "in"
+)
 
 map_object <-
 tm_shape(poor_2030_scenarios_pc_diff_map) +
@@ -2989,7 +2992,8 @@ tm_shape(poor_2030_scenarios_pc_diff_map) +
               fill.scale = tm_scale_intervals(
                 style = "fixed",
                 midpoint = 0,
-                breaks = c(-1, 0, 1,2,4,6,8,10,12),
+                # breaks = c(-1, 0, 1,2,4,6,8,10,12),
+                breaks = c(-4,-2,0,2,4,6,8,10,12),
                 values = "-brewer.rd_yl_gn",
                 value.na = NA,
                 label.na = "Unavailable"),
@@ -3005,21 +3009,21 @@ tm_shape(poor_2030_scenarios_pc_diff_map) +
             title.position = c('left', 'bottom'),
             title.size = 0.9)
 
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_pc_diff.png",
-#   width = 8,
-#   height = 5,
-#   units = "in",
-#   dpi = 300
-# )
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_pc_diff.svg",
-#   width = 8,
-#   height = 5,
-#   units = "in"
-# )
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_dryhot_pc_diff.png",
+  width = 8,
+  height = 5,
+  units = "in",
+  dpi = 300
+)
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_dryhot_pc_diff.svg",
+  width = 8,
+  height = 5,
+  units = "in"
+)
 
 ```
 
