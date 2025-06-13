@@ -146,6 +146,12 @@ hh_chars <- read_sav(
   mutate(
     UID = as.integer(UID))
 
+# Comfort of the household
+hh_comfort <- read_sav(
+  "data/ilcs_2023/tblshinda01_comfort.sav")|>
+  mutate(
+    UID = as.integer(UID))
+
 # Persons (pp)
 pp <- read_sav(
   "data/ilcs_2023/tblshinda02.sav") |> 
@@ -3170,6 +3176,144 @@ distance_pl |>
 #   "data/outputs/microsimulation_results.xlsx",
 #   overwrite = T)
 ```
+# Social Protection
+
+## Regression dummy variables
+
+Dwelling characteristics.
+
+```{r}
+# dwelling <- hh_chars |> 
+#   mutate(
+#     floor_cement = if_else(
+#       Floor == 1, 1, 0 
+#     ),
+#     floor_parquet = if_else(
+#       Floor == 3, 1, 0
+#     ),
+#     roof_tile = if_else(
+#       Ceiling == 2, 1, 0
+#     ),
+#     roof_concrete = if_else(
+#       Ceiling == 3, 1, 0
+#     ),
+#     wall_concrete = if_else(
+#       Walls == 1, 1, 0
+#     ),
+#     has_kitchen = if_else(
+#       Kitchen == 1, 1, 0
+#     ),
+#     # central_heat
+#     # heat_gas
+#     # heat_wood
+#     num_rooms = HowManyRooms,
+#     own_house = if_else(
+#       OwnerOfHome == 1, 1, 0
+#     )
+#   ) |> 
+#   select(UID, floor_cement,floor_parquet, roof_tile, roof_concrete, has_kitchen
+#          num_rooms,)
+```
+
+Household comfort
+
+```{r}
+# comfort <- hh_comfort %>%
+#   mutate(dummy = 1) %>%
+#   pivot_wider(
+#     names_from = Comfort,
+#     values_from = dummy,
+#     values_fill = list(dummy = 0),
+#     names_prefix = "comfort_"
+#   ) |> 
+#   rename(central_heat = comfort_6) |> 
+#   select(UID, central_heat)
+```
+
+# Social Protection Transfers
+
+Find out for those who are poor in scenario how much they lost and how much it would take to bring them back to their original state.
+
+```{r}
+ca_microsim08 <- ca_microsim07 |> 
+  mutate(
+    # Dry/Hot
+    ssp_transfer_2030_dryhot = if_else(
+      poor_2030_dryhot == 1, aecons_2030_baseline - aecons_2030_dryhot, NA
+    ),
+    ssp_transfer_2050_dryhot = if_else(
+      poor_2050_dryhot == 1, aecons_2050_baseline - aecons_2050_dryhot, NA
+    ),
+    #Dry/Hot PC
+    ssp_transfer_2030_dryhot_pc = if_else(
+      poor_2030_dryhot_pc == 1, aecons_2030_baseline - aecons_2030_dryhot_pc,NA
+    ),
+    ssp_transfer_2050_dryhot_pc = if_else(
+      poor_2050_dryhot_pc == 1, aecons_2050_baseline - aecons_2050_dryhot_pc,NA
+    ),
+    # NZS
+    ssp_transfer_2030_nzs = if_else(
+      poor_2030_nzs == 1, aecons_2030_baseline - aecons_2030_nzs, NA
+    ),
+    ssp_transfer_2050_nzs = if_else(
+      poor_2050_nzs == 1, aecons_2050_baseline - aecons_2050_nzs, NA
+    ),
+    # NZS PC
+    ssp_transfer_2030_nzs_pc = if_else(
+      poor_2030_nzs_pc == 1, aecons_2030_baseline - aecons_2030_nzs_pc, NA
+    ),
+    ssp_transfer_2050_nzs_pc = if_else(
+      poor_2050_nzs_pc == 1, aecons_2050_baseline - aecons_2050_nzs_pc, NA
+    ),
+    # Shares of HH consumption
+    shr_transfer_2030_dryhot = ssp_transfer_2030_dryhot / aecons_2030_baseline * 100,
+    shr_transfer_2050_dryhot = ssp_transfer_2050_dryhot / aecons_2030_baseline * 100,
+    shr_transfer_2030_dryhot_pc = ssp_transfer_2030_dryhot_pc / aecons_2030_baseline * 100,
+    shr_transfer_2050_dryhot_pc = ssp_transfer_2050_dryhot_pc / aecons_2030_baseline * 100,
+    shr_transfer_2030_nzs = ssp_transfer_2030_nzs / aecons_2030_baseline * 100,
+    shr_transfer_2050_nzs = ssp_transfer_2050_nzs / aecons_2030_baseline * 100,
+    shr_transfer_2030_nzs_pc = ssp_transfer_2030_nzs_pc / aecons_2030_baseline * 100,
+    shr_transfer_2050_nzs_pc = ssp_transfer_2050_nzs_pc / aecons_2030_baseline * 100,
+  )
+```
+
+And now we tabulate
+
+```{r}
+ssp_table <- ca_microsim08 |>
+  mutate(
+    sspw_2030_dryhot = ssp_transfer_2030_dryhot * hh_weight_2030_dryhot * 12,
+    sspw_2050_dryhot = ssp_transfer_2050_dryhot * hh_weight_2050_dryhot * 12,
+    sspw_2030_dryhot_pc = ssp_transfer_2030_dryhot_pc * hh_weight_2030_dryhot * 12,
+    sspw_2050_dryhot_pc = ssp_transfer_2050_dryhot_pc * hh_weight_2050_dryhot * 12,
+    sspw_2030_nzs = ssp_transfer_2030_nzs * hh_weight_2030_nzs * 12,
+    sspw_2050_nzs = ssp_transfer_2050_nzs * hh_weight_2050_nzs * 12,
+    sspw_2030_nzs_pc = ssp_transfer_2030_nzs_pc * hh_weight_2030_nzs * 12,
+    sspw_2050_nzs_pc = ssp_transfer_2050_nzs_pc * hh_weight_2050_nzs * 12,
+  ) |> 
+  # filter(poor_2030_dryhot == 1) |> 
+  group_by(RegNo) |>
+  summarize(
+    total_ssp_2030_dryhot = sum(sspw_2030_dryhot, na.rm = T),
+    total_ssp_2050_dryhot = sum(sspw_2050_dryhot, na.rm = T),
+    total_ssp_2030_dryhot_pc = sum(sspw_2030_dryhot_pc, na.rm = T),
+    total_ssp_2050_dryhot_pc = sum(sspw_2050_dryhot_pc, na.rm = T),
+    total_ssp_2030_nzs = sum(sspw_2030_nzs, na.rm = T),
+    total_ssp_2050_nzs = sum(sspw_2050_nzs, na.rm = T),
+    total_ssp_2030_nzs_pc = sum(sspw_2030_nzs_pc, na.rm = T),
+    total_ssp_2050_nzs_pc = sum(sspw_2050_nzs_pc, na.rm = T),
+    shr_tf_2030_dryhot = weighted.mean(shr_transfer_2030_dryhot, hh_weight_2030_dryhot, na.rm = T),
+    shr_tf_2050_dryhot = weighted.mean(shr_transfer_2050_dryhot, hh_weight_2050_dryhot, na.rm = T),
+    shr_tf_2030_dryhot_pc = weighted.mean(shr_transfer_2030_dryhot_pc, hh_weight_2030_dryhot, na.rm = T),
+    shr_tf_2050_dryhot_pc = weighted.mean(shr_transfer_2050_dryhot_pc, hh_weight_2050_dryhot, na.rm = T),
+    shr_tf_2030_nzs = weighted.mean(shr_transfer_2030_nzs, hh_weight_2030_nzs, na.rm = T),
+    shr_tf_2050_nzs = weighted.mean(shr_transfer_2050_nzs, hh_weight_2050_nzs, na.rm = T),
+    shr_tf_2030_nzs_pc = weighted.mean(shr_transfer_2030_nzs_pc, hh_weight_2030_nzs, na.rm = T),
+    shr_tf_2050_nzs_pc = weighted.mean(shr_transfer_2050_nzs_pc, hh_weight_2050_nzs, na.rm = T)
+  )
+# write.table(ssp_table, file = pipe("xclip -selection clipboard"), sep = "\t", row.names = FALSE)
+```
+
 
 # End
 
