@@ -2774,21 +2774,21 @@ tm_shape(poor_2030_scenarios_diff_map) +
             title.position = c('left', 'bottom'),
             title.size = 0.9)
 
-tmap_save(
-  map_object,
-  "data/outputs/vulnerability_img/other/poor_2030_nzs_diff.png",
-  width = 8,
-  height = 5,
-  units = "in",
-  dpi = 300
-)
-tmap_save(
-  map_object,
-  "data/outputs/vulnerability_img/other/poor_2030_nzs_diff.svg",
-  width = 8,
-  height = 5,
-  units = "in"
-)
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_nzs_diff.png",
+#   width = 8,
+#   height = 5,
+#   units = "in",
+#   dpi = 300
+# )
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_nzs_diff.svg",
+#   width = 8,
+#   height = 5,
+#   units = "in"
+# )
 
 map_object <-
 tm_shape(poor_2030_scenarios_diff_map) +
@@ -2815,21 +2815,21 @@ tm_shape(poor_2030_scenarios_diff_map) +
             title.position = c('left', 'bottom'),
             title.size = 0.9)
 
-tmap_save(
-  map_object,
-  "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.png",
-  width = 8,
-  height = 5,
-  units = "in",
-  dpi = 300
-)
-tmap_save(
-  map_object,
-  "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.svg",
-  width = 8,
-  height = 5,
-  units = "in"
-)
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.png",
+#   width = 8,
+#   height = 5,
+#   units = "in",
+#   dpi = 300
+# )
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.svg",
+#   width = 8,
+#   height = 5,
+#   units = "in"
+# )
 
 ```
 
@@ -2976,21 +2976,21 @@ tm_shape(poor_2030_scenarios_pc_diff_map) +
             title.position = c('left', 'bottom'),
             title.size = 0.9)
 
-tmap_save(
-  map_object,
-  "data/outputs/vulnerability_img/other/poor_2030_nzs_pc_diff.png",
-  width = 8,
-  height = 5,
-  units = "in",
-  dpi = 300
-)
-tmap_save(
-  map_object,
-  "data/outputs/vulnerability_img/other/poor_2030_nzs_pc_diff.svg",
-  width = 8,
-  height = 5,
-  units = "in"
-)
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_nzs_pc_diff.png",
+#   width = 8,
+#   height = 5,
+#   units = "in",
+#   dpi = 300
+# )
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_nzs_pc_diff.svg",
+#   width = 8,
+#   height = 5,
+#   units = "in"
+# )
 
 map_object <-
 tm_shape(poor_2030_scenarios_pc_diff_map) +
@@ -3015,21 +3015,21 @@ tm_shape(poor_2030_scenarios_pc_diff_map) +
             title.position = c('left', 'bottom'),
             title.size = 0.9)
 
-tmap_save(
-  map_object,
-  "data/outputs/vulnerability_img/other/poor_2030_dryhot_pc_diff.png",
-  width = 8,
-  height = 5,
-  units = "in",
-  dpi = 300
-)
-tmap_save(
-  map_object,
-  "data/outputs/vulnerability_img/other/poor_2030_dryhot_pc_diff.svg",
-  width = 8,
-  height = 5,
-  units = "in"
-)
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_pc_diff.png",
+#   width = 8,
+#   height = 5,
+#   units = "in",
+#   dpi = 300
+# )
+# tmap_save(
+#   map_object,
+#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_pc_diff.svg",
+#   width = 8,
+#   height = 5,
+#   units = "in"
+# )
 
 ```
 
@@ -3282,17 +3282,17 @@ And now we tabulate
 ```{r}
 ssp_table <- ca_microsim08 |>
   mutate(
-    sspw_2030_dryhot = ssp_transfer_2030_dryhot * hh_weight_2030_dryhot * 12,
-    sspw_2050_dryhot = ssp_transfer_2050_dryhot * hh_weight_2050_dryhot * 12,
-    sspw_2030_dryhot_pc = ssp_transfer_2030_dryhot_pc * hh_weight_2030_dryhot * 12,
-    sspw_2050_dryhot_pc = ssp_transfer_2050_dryhot_pc * hh_weight_2050_dryhot * 12,
-    sspw_2030_nzs = ssp_transfer_2030_nzs * hh_weight_2030_nzs * 12,
-    sspw_2050_nzs = ssp_transfer_2050_nzs * hh_weight_2050_nzs * 12,
-    sspw_2030_nzs_pc = ssp_transfer_2030_nzs_pc * hh_weight_2030_nzs * 12,
-    sspw_2050_nzs_pc = ssp_transfer_2050_nzs_pc * hh_weight_2050_nzs * 12,
+    sspw_2030_dryhot = ssp_transfer_2030_dryhot * hh_weight_2030_dryhot * adult_equivalent * 12,
+    sspw_2050_dryhot = ssp_transfer_2050_dryhot * hh_weight_2050_dryhot * adult_equivalent * 12,
+    sspw_2030_dryhot_pc = ssp_transfer_2030_dryhot_pc * hh_weight_2030_dryhot * adult_equivalent * 12,
+    sspw_2050_dryhot_pc = ssp_transfer_2050_dryhot_pc * hh_weight_2050_dryhot * adult_equivalent * 12,
+    sspw_2030_nzs = ssp_transfer_2030_nzs * hh_weight_2030_nzs * adult_equivalent * 12,
+    sspw_2050_nzs = ssp_transfer_2050_nzs * hh_weight_2050_nzs * adult_equivalent * 12,
+    sspw_2030_nzs_pc = ssp_transfer_2030_nzs_pc * hh_weight_2030_nzs * adult_equivalent * 12,
+    sspw_2050_nzs_pc = ssp_transfer_2050_nzs_pc * hh_weight_2050_nzs * adult_equivalent * 12,
   ) |> 
   # filter(poor_2030_dryhot == 1) |> 
-  group_by(RegNo) |>
+  # group_by(RegNo) |>
   summarize(
     total_ssp_2030_dryhot = sum(sspw_2030_dryhot, na.rm = T),
     total_ssp_2050_dryhot = sum(sspw_2050_dryhot, na.rm = T),
