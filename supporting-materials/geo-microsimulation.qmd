@@ -292,7 +292,7 @@ The macro scenario dataset is an input provided by the Macroeconomic CGE simulat
 #| output: false
 #| lst-label: lst-import-macro-scenarios
 
-scenario_file <- "data/sam/MacroScenarioInformation_GEO.xlsx"
+scenario_file <- "data/sam/MacroScenarioInformation_GEO_old4.xlsx"
 scenario_varlist <- read_xlsx("data/sam/GEO_Macro_varlist.xlsx") |> 
   select(-category)
 # prices_2030 <-
@@ -342,7 +342,7 @@ And finally, direct effects on consumption of Macro scenarios.
 ```{r}
 # HH Consumption Macro Effect
 hh_consumption_effects <- read_excel(
-    "data/sam/MacroconsumptionEffect_HH_GEO.xlsx",
+    "data/sam/MacroconsumptionEffect_HH_GEO_old.xlsx",
     sheet = "HH_consumption_value",
     col_names = F,
     range = "A90:AD119"
@@ -2579,7 +2579,7 @@ poor_2023_region_map <- adm1 |>
       "Unavailable",
       paste(
         region,
-        sprintf("\n%.1f%%", pct_poor)
+        sprintf("\n%.1f", pct_poor)
       )
     )
   )
@@ -2608,21 +2608,21 @@ tm_shape(poor_2023_region_map) +
             title.position = c('left', 'bottom'),
             title.size = 0.9)
 
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poverty_by_region.svg",
-#   width = 8,
-#   height = 5,
-#   units = "in"
-# )
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poverty_by_region.png",
-#   width = 8,
-#   height = 5,
-#   units = "in",
-#   dpi = 300
-# )
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poverty_by_region.svg",
+  width = 8,
+  height = 5,
+  units = "in"
+)
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poverty_by_region.png",
+  width = 8,
+  height = 5,
+  units = "in",
+  dpi = 300
+)
 map_object
 
 
@@ -2736,7 +2736,7 @@ poor_2030_scenarios_diff_map <- adm1 |>
       "Unavailable",
       paste(
         region,
-        sprintf("\n%.1f%%", poor_2030_nzs_diff)
+        sprintf("\n%.1f", poor_2030_nzs_diff)
       )
     ),
     pct_dryhot_label = if_else(
@@ -2744,7 +2744,7 @@ poor_2030_scenarios_diff_map <- adm1 |>
       "Unavailable",
       paste(
         region,
-        sprintf("\n%.1f%%", poor_2030_dryhot_diff)
+        sprintf("\n%.1f", poor_2030_dryhot_diff)
       )
     )
   )
@@ -2768,27 +2768,27 @@ tm_shape(poor_2030_scenarios_diff_map) +
     legend.position = c("right", "top"),
     #title.snap.to.legend = FALSE,
     title = 
-      "Percent difference between\nNZS and Baseline",
+      "Percent difference between\nNZE and baseline",
     frame = FALSE,
 #            outer.margins=c(.10,.10, .10, .10), 
             title.position = c('left', 'bottom'),
             title.size = 0.9)
 
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_nzs_diff.png",
-#   width = 8,
-#   height = 5,
-#   units = "in",
-#   dpi = 300
-# )
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_nzs_diff.svg",
-#   width = 8,
-#   height = 5,
-#   units = "in"
-# )
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_nzs_diff.png",
+  width = 8,
+  height = 5,
+  units = "in",
+  dpi = 300
+)
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_nzs_diff.svg",
+  width = 8,
+  height = 5,
+  units = "in"
+)
 
 map_object <-
 tm_shape(poor_2030_scenarios_diff_map) +
@@ -2809,27 +2809,27 @@ tm_shape(poor_2030_scenarios_diff_map) +
     legend.position = c("right", "top"),
     #title.snap.to.legend = FALSE,
     title = 
-      "Percent difference between\nDry/Hot and Baseline",
+      "Percent difference between\nDry/Hot and baseline",
     frame = FALSE,
 #            outer.margins=c(.10,.10, .10, .10), 
             title.position = c('left', 'bottom'),
             title.size = 0.9)
 
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.png",
-#   width = 8,
-#   height = 5,
-#   units = "in",
-#   dpi = 300
-# )
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.svg",
-#   width = 8,
-#   height = 5,
-#   units = "in"
-# )
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.png",
+  width = 8,
+  height = 5,
+  units = "in",
+  dpi = 300
+)
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_dryhot_diff.svg",
+  width = 8,
+  height = 5,
+  units = "in"
+)
 
 ```
 
@@ -2940,7 +2940,7 @@ poor_2030_scenarios_pc_diff_map <- adm1 |>
       "Unavailable",
       paste(
         region,
-        sprintf("\n%.1f%%", poor_2030_nzs_diff)
+        sprintf("\n%.1f", poor_2030_nzs_diff)
       )
     ),
     pct_dryhot_label = if_else(
@@ -2948,7 +2948,7 @@ poor_2030_scenarios_pc_diff_map <- adm1 |>
       "Unavailable",
       paste(
         region,
-        sprintf("\n%.1f%%", poor_2030_dryhot_diff)
+        sprintf("\n%.1f", poor_2030_dryhot_diff)
       )
     )
   )
@@ -2967,7 +2967,7 @@ tm_shape(poor_2030_scenarios_pc_diff_map) +
               fill.legend = tm_legend(
                 title = "Percent")
               ) +
-  tm_title("Percent difference between\nNZS + PC and Baseline") +
+  tm_title("Percent difference between\nNZE + consumption effects and baseline") +
   tm_text(c("pct_nzs_label"), size = .7, col = "black")+
   tm_layout(
     #legend.outside = TRUE,
@@ -2976,21 +2976,21 @@ tm_shape(poor_2030_scenarios_pc_diff_map) +
             title.position = c('left', 'bottom'),
             title.size = 0.9)
 
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_nzs_pc_diff.png",
-#   width = 8,
-#   height = 5,
-#   units = "in",
-#   dpi = 300
-# )
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_nzs_pc_diff.svg",
-#   width = 8,
-#   height = 5,
-#   units = "in"
-# )
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_nzs_pc_diff.png",
+  width = 8,
+  height = 5,
+  units = "in",
+  dpi = 300
+)
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_nzs_pc_diff.svg",
+  width = 8,
+  height = 5,
+  units = "in"
+)
 
 map_object <-
 tm_shape(poor_2030_scenarios_pc_diff_map) +
@@ -3007,7 +3007,7 @@ tm_shape(poor_2030_scenarios_pc_diff_map) +
                 title = "Percent")
               ) +
   tm_text(c("pct_dryhot_label"), size = .7, col = "black") +
-  tm_title("Percent difference between\nDry/Hot + PC and Baseline") +
+  tm_title("Percent difference between\nDry/Hot + consumption effects and baseline") +
   tm_layout(
     legend.position = c("right", "top"),
     frame = FALSE,
@@ -3015,21 +3015,21 @@ tm_shape(poor_2030_scenarios_pc_diff_map) +
             title.position = c('left', 'bottom'),
             title.size = 0.9)
 
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_pc_diff.png",
-#   width = 8,
-#   height = 5,
-#   units = "in",
-#   dpi = 300
-# )
-# tmap_save(
-#   map_object,
-#   "data/outputs/vulnerability_img/other/poor_2030_dryhot_pc_diff.svg",
-#   width = 8,
-#   height = 5,
-#   units = "in"
-# )
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_dryhot_pc_diff.png",
+  width = 8,
+  height = 5,
+  units = "in",
+  dpi = 300
+)
+tmap_save(
+  map_object,
+  "data/outputs/vulnerability_img/other/poor_2030_dryhot_pc_diff.svg",
+  width = 8,
+  height = 5,
+  units = "in"
+)
 
 ```
 
